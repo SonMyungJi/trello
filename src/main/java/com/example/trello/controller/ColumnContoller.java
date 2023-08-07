@@ -2,12 +2,16 @@ package com.example.trello.controller;
 
 import com.example.trello.dto.ColumnListResponseDto;
 import com.example.trello.dto.ColumnResponseDto;
+import com.example.trello.entity.Column;
+import com.example.trello.repository.ColumnRepository;
 import com.example.trello.service.ColumnService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 
 @RestController
@@ -15,6 +19,7 @@ import java.util.concurrent.RejectedExecutionException;
 public class ColumnContoller {
 
     private final ColumnService columnService;
+    private final ColumnRepository columnRepository;
 
     //컬럼 조회
     @GetMapping("/column")
@@ -40,6 +45,8 @@ public class ColumnContoller {
             return ResponseEntity.badRequest().build();
         }
     }
+    // 컬럼 이동
+
     //컬럼 삭제
     @DeleteMapping("/column/{coulmn id}")
     public ResponseEntity<String> columnDelete(@PathVariable Long id) {

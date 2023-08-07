@@ -20,6 +20,8 @@ public class Column {
     @jakarta.persistence.Column(name = "column_name", nullable = false, unique = true)
     private String columnName;
 
+
+
 //    public List<Cards> getCards() {
 //        return cards;
 //    }
