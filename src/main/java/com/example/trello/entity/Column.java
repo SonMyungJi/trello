@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+
 @Entity
 @Getter
 @Setter
@@ -20,7 +22,8 @@ public class Column {
     @jakarta.persistence.Column(name = "column_name", nullable = false, unique = true)
     private String columnName;
 
-
+//    @OneToMany(mappedBy = "cards")
+//    private List<cards> cardsList = new ArrayList<>();
 
 //    public List<Cards> getCards() {
 //        return cards;
