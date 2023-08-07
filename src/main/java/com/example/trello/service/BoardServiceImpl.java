@@ -2,6 +2,7 @@ package com.example.trello.service;
 
 import com.example.trello.dto.BoardRequestDto;
 import com.example.trello.dto.BoardResponseDto;
+import com.example.trello.dto.BoardUserResponseDto;
 import com.example.trello.entity.Board;
 import com.example.trello.entity.User;
 import com.example.trello.repository.BoardRepository;
@@ -10,11 +11,56 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class BoardServiceImpl implements BoardService{
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
+
+    @Override
+    public List<BoardResponseDto> getBoards(){
+        List<Board> boards = boardRepository.findAll();
+        List<BoardResponseDto> boardResponseDtos = new ArrayList<>();
+
+        for (Board board : boards){
+            boardResponseDtos.add(new BoardResponseDto(board));
+        }
+
+        return boardResponseDtos;
+    }
+
+    @Override
+    public BoardResponseDto getBoard(Long id){
+        Board board = boardRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("조회할 보드가 존재하지 않습니다.")
+        );
+
+        return new BoardResponseDto(board);
+    }
+
+    @Override
+    public List<BoardUserResponseDto> getBoardsUser(){
+        List<Board> boards = boardRepository.findAll();
+        List<BoardUserResponseDto> boardUserResponseDtos = new ArrayList<>();
+
+        for (Board board : boards){
+            boardUserResponseDtos.add(new BoardUserResponseDto(board));
+        }
+
+        return boardUserResponseDtos;
+    }
+
+    @Override
+    public BoardUserResponseDto getBoardUser(Long id){
+        Board board = boardRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("조회할 보드가 존재하지 않습니다.")
+        );
+
+        return new BoardUserResponseDto(board);
+    }
 
     @Override
     public BoardResponseDto createBoard(BoardRequestDto boardRequestDto, User user){

@@ -32,20 +32,28 @@ public class Board extends TimeStamped{
     @JoinColumn(name = "user_id", nullable = false)
     private User creator; // 보드 생성자
 
-    @ManyToMany
+
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "board_users",
+            joinColumns = @JoinColumn(name = "board_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
     private Set<User> users = new HashSet<>(); // 보드에 포함된 유저목록
 
     public Board(BoardRequestDto boardRequestDto, User user){
         this.boardName = boardRequestDto.getBoardName();
         this.boardContents = boardRequestDto.getBoardContents();
-        this.boardColor = boardRequestDto.getBoardContents();
+        this.boardColor = boardRequestDto.getBoardColor();
         this.creator = user;
+        this.users.add(user);
     }
 
     public void update(BoardRequestDto boardRequestDto){
         this.boardName = boardRequestDto.getBoardName();
         this.boardContents = boardRequestDto.getBoardContents();
-        this.boardColor = boardRequestDto.getBoardContents();
+        this.boardColor = boardRequestDto.getBoardColor();
     }
 
 
