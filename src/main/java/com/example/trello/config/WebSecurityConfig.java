@@ -57,7 +57,7 @@ public class WebSecurityConfig {
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         // .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/boards/**").permitAll()
-                        // .requestMatchers(HttpMethod.GET, "/api/comment/**").permitAll()
+                         .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
                         .anyRequest().authenticated()
         );
 

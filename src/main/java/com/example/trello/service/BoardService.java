@@ -34,7 +34,7 @@ public interface BoardService {
     /**
      * 보드 초대
      * @param boardid 초대할 보드번호
-     * @param userid 초대할 유저번호
+     * @param userid 초대받을 유저번호
      * @param user 초대 요청자
      */
     void inviteBoard(Long boardid, Long userid, User user);

@@ -6,6 +6,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -14,12 +17,10 @@ public class Board extends TimeStamped{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // board_id
+    private Long id; // 보드 번호
 
     @Column(nullable = false)
     private String boardName; // 보드 이름
-
-
 
     @Column(nullable = false)
     private String boardContents; // 보드 설명
@@ -29,13 +30,16 @@ public class Board extends TimeStamped{
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private User creator; // 보드 생성자
+
+    @ManyToMany
+    private Set<User> users = new HashSet<>(); // 보드에 포함된 유저목록
 
     public Board(BoardRequestDto boardRequestDto, User user){
         this.boardName = boardRequestDto.getBoardName();
         this.boardContents = boardRequestDto.getBoardContents();
         this.boardColor = boardRequestDto.getBoardContents();
-        this.user = user;
+        this.creator = user;
     }
 
     public void update(BoardRequestDto boardRequestDto){
