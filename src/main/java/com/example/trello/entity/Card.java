@@ -28,12 +28,6 @@ public class Card {
     private String cardColor;
 
     @Column
-    private Long userId;
-
-    @Column
-    private Long columnId;
-
-    @Column
     private Date dueDate;
 
     @ManyToOne
@@ -52,8 +46,6 @@ public class Card {
         this.cardName = requestDto.getCardName();
         this.cardDesc = requestDto.getCardDesc();
         this.cardColor = requestDto.getCardColor();
-        this.userId = requestDto.getUserId();
-        this.columnId = requestDto.getColumnId();
         this.dueDate = requestDto.getDueDate();
     }
 }

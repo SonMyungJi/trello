@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CardService {
     private final CardRepository cardRepository;
+    private final ColumnService columnService;
 
     public CardResponseDto getCard(Long cardId, User user) {
         Card card = findCard(cardId);
@@ -35,11 +36,13 @@ public class CardService {
             throw new IllegalArgumentException("권한이 없습니다");
         }
 
+        ColumnEntity column = columnService.findColumn(requestDto.getColumnId());
+
         card.setCardName(requestDto.getCardName());
         card.setCardDesc(requestDto.getCardDesc());
         card.setCardColor(requestDto.getCardColor());
-        card.setUserId(requestDto.getUserId());
-        card.setColumnId(requestDto.getColumnId());
+        card.setUser(user);
+        card.setColumn(column);
 
         return new CardResponseDto(card);
     }
