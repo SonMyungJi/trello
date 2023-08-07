@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class CardController {
+
     private final CardService cardService;
 
     @GetMapping("/card/{cardId}")

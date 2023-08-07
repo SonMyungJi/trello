@@ -5,10 +5,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Set;
 
 public class UserDetailsImpl implements UserDetails {
     private final User user;
-    public UserDetailsImpl(User user) {
+    public UserDetailsImpl(User user, Set<GrantedAuthority> authorities) {
         this.user = user;
     }
     public User getUser() {

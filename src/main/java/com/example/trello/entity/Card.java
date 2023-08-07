@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -32,6 +33,9 @@ public class Card {
     @Column
     private Long columnId;
 
+    @Column
+    private Date dueDate;
+
     @ManyToOne
     @JoinColumn(name = "userId")
     private User user;
@@ -43,12 +47,13 @@ public class Card {
     @OneToMany(mappedBy = "card", cascade = CascadeType.REMOVE)
     private List<Comment> comments;
 
-    public Card(CardRequestDto requestDto, User user) {
+    public Card(ColumnEntity column, CardRequestDto requestDto) {
+        this.column = column;
         this.cardName = requestDto.getCardName();
         this.cardDesc = requestDto.getCardDesc();
         this.cardColor = requestDto.getCardColor();
         this.userId = requestDto.getUserId();
         this.columnId = requestDto.getColumnId();
-        this.user = user;
+        this.dueDate = requestDto.getDueDate();
     }
 }

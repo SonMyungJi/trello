@@ -22,8 +22,8 @@ public class CardService {
 
     @Transactional
     public CardResponseDto createCard(Long columnId, CardRequestDto requestDto, User user) {
-        ColumnEntity columnEntity = columnService.findColumn(columnId);
-        Card card = cardRepository.save(new Card(requestDto, user));
+        ColumnEntity column = columnService.findColumn(columnId);
+        Card card = cardRepository.save(new Card(column, requestDto));
         return new CardResponseDto(card);
     }
 

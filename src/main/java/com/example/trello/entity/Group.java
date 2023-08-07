@@ -1,6 +1,5 @@
 package com.example.trello.entity;
 
-import com.example.trello.dto.CommentResponseDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,16 +12,14 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class User {
+public class Group {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username;
-    private String nickname;
-    private String password;
+    private String name;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "group")
     private List<UserGroup> userGroups = new ArrayList<>();
 }
