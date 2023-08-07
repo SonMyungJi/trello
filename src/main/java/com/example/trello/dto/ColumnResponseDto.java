@@ -9,7 +9,7 @@ import lombok.Setter;
 public class ColumnResponseDto {
     private Long columnId;
     private String columnName;
-//    private List<CardResponseDto> cards;
+//    private List<CardResponseDto> columnList = new ArrayList<>();
 
     public ColumnResponseDto(Column column) {
         this.columnId = column.getColumnId();

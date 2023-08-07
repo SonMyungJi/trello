@@ -1,8 +1,13 @@
 package com.example.trello.service;
 
+import com.example.trello.dto.ColumnListResponseDto;
+import com.example.trello.dto.ColumnResponseDto;
 import com.example.trello.entity.Column;
 import com.example.trello.repository.ColumnRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ColumnService {
@@ -10,23 +15,27 @@ public class ColumnService {
     private ColumnRepository columnRepository;
 
     //컬럼 조회
-    public Column findByColumnWithCard(Long id) {
-        return columnRepository.findById(id).orElse(null);
+    public ColumnListResponseDto findByColumnWithCard() {
+        List<ColumnResponseDto> columnList = columnRepository.findAll().stream()
+                .map(ColumnResponseDto::new)
+                .collect(Collectors.toList());
+
+        return new ColumnListResponseDto(columnList);
     }
 
     //컬럼 생성
-    public Column createColumn(String columnName) {
+    public ColumnResponseDto createColumn(String columnName) {
         Column column = new Column();
         column.setColumnName(columnName);
-        return columnRepository.save(column);
+        return new ColumnResponseDto(column);
     }
 
     //컬럼 이름 수정
-    public Column updateColumnName(Long id, String newName) {
+    public ColumnResponseDto updateColumnName(Long id, String newName) {
         Column column = columnRepository.findById(id).orElse(null);
         if (column != null) {
             column.setColumnName(newName);
-            return columnRepository.save(column);
+            return new ColumnResponseDto(column);
         }
         return null;
     }
@@ -35,8 +44,9 @@ public class ColumnService {
 
 
     //컬럼 삭제
-    public void columnDelete(Long id) {
+    public String columnDelete(Long id) {
         columnRepository.deleteById(id);
+        return "컬럼 삭제 성공";
     }
 
 
