@@ -22,9 +22,9 @@ public class CardController {
         return ResponseEntity.ok().body(new ApiResponseDto("카드 조회", HttpStatus.OK.value()));
     }
 
-    @PostMapping("/column/{columnId}/card")
-    ResponseEntity<CardResponseDto> createCard(@PathVariable Long columnId, @RequestBody CardRequestDto requestDto) {
-        CardResponseDto result = cardService.createCard(columnId, requestDto);
+    @PostMapping("/column/{sectionId}/card")
+    ResponseEntity<CardResponseDto> createCard(@PathVariable Long sectionId, @RequestBody CardRequestDto requestDto) {
+        CardResponseDto result = cardService.createCard(sectionId, requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 

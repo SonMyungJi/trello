@@ -2,10 +2,8 @@ package com.example.trello.service;
 
 import com.example.trello.dto.CardRequestDto;
 import com.example.trello.dto.CardResponseDto;
-import com.example.trello.entity.Board;
 import com.example.trello.entity.Card;
-import com.example.trello.entity.Columns;
-import com.example.trello.entity.User;
+import com.example.trello.entity.Section;
 import com.example.trello.repository.CardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CardService {
     private final CardRepository cardRepository;
-    private final ColumnService columnService;
+    private final SectionService sectionService;
 
     public CardResponseDto getCard(Long cardId) {
         Card card = findCard(cardId);
@@ -24,10 +22,10 @@ public class CardService {
     }
 
     @Transactional
-    public CardResponseDto createCard(Long columnsId, CardRequestDto requestDto) {
-        Columns columns = columnService.findColumn(columnsId);
+    public CardResponseDto createCard(Long sectionId, CardRequestDto requestDto) {
+        Section section = sectionService.findSection(sectionId);
 
-        Card card = cardRepository.save(new Card(columns, requestDto));
+        Card card = cardRepository.save(new Card(section, requestDto));
         return new CardResponseDto(card);
     }
 
