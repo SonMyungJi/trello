@@ -14,7 +14,7 @@ public interface BoardService {
      * 보드 전체조회
      * @return 보드 전체목록 + 정보
      */
-    List<BoardResponseDto> getBoards();
+    List<BoardResponseDto> getBoards(Long groupid);
 
     /**
      * 보드 개별조회
@@ -22,21 +22,21 @@ public interface BoardService {
      * @return 보드 정보
      */
 
-    BoardResponseDto getBoard(Long id);
+    BoardResponseDto getBoard(Long id, Long groupid);
 
-    /**
-     * 보드 유저 조회 (전체보드)
-     * @return 보드 정보 + 유저 정보 (전체)
-     */
-    List<BoardUserResponseDto> getBoardsUser();
-
-    /**
-     * 보드 유저 조회 (선택보드)
-     * @param id 보드 번호
-     * @return 보드 정보 + 유저 정보 (선택)
-     */
-
-    BoardUserResponseDto getBoardUser(Long id);
+//    /**
+//     * 보드 유저 조회 (전체보드)
+//     * @return 보드 정보 + 유저 정보 (전체)
+//     */
+//    List<BoardUserResponseDto> getBoardsUser();
+//
+//    /**
+//     * 보드 유저 조회 (선택보드)
+//     * @param id 보드 번호
+//     * @return 보드 정보 + 유저 정보 (선택)
+//     */
+//
+//    BoardUserResponseDto getBoardUser(Long id);
 
 
     /**
@@ -45,7 +45,7 @@ public interface BoardService {
      * @param user 보드 생성자
      * @return 보드 생성 결과
      */
-    BoardResponseDto createBoard(BoardRequestDto boardRequestDto, User user);
+    BoardResponseDto createBoard(BoardRequestDto boardRequestDto, User user, Long groupid);
 
 
     /**
@@ -55,7 +55,7 @@ public interface BoardService {
      * @param user 수정 요청자
      * @return 수정된 보드 정보
      */
-    BoardResponseDto updateBoard(Long id, BoardRequestDto boardRequestDto,  User user);
+    BoardResponseDto updateBoard(Long id, BoardRequestDto boardRequestDto,  User user, Long groupid);
 
     /**
      * 보드 삭제
