@@ -1,6 +1,7 @@
 package com.example.trello.service;
 
 import com.example.trello.entity.Board;
+import com.example.trello.entity.GroupEntity;
 import com.example.trello.entity.User;
 import com.example.trello.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

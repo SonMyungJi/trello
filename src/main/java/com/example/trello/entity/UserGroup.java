@@ -22,4 +22,9 @@ public class UserGroup {
     @ManyToOne
     @JoinColumn(name = "group_id")
     private GroupEntity group;
+
+    public UserGroup(User user, GroupEntity group) {
+        this.user = user;
+        this.group = group;
+    }
 }
