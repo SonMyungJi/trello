@@ -9,8 +9,10 @@ import java.util.Set;
 
 public class UserDetailsImpl implements UserDetails {
     private final User user;
+    private final Set<GrantedAuthority> authorities;
     public UserDetailsImpl(User user, Set<GrantedAuthority> authorities) {
         this.user = user;
+        this.authorities = authorities;
     }
     public User getUser() {
         return this.user;
@@ -18,7 +20,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return authorities;
     }
 
     @Override
