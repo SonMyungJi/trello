@@ -26,7 +26,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         Set<GrantedAuthority> authorities = new HashSet<>();
 
         // 사용자 그룹을 기반으로 권한 부여
-        user.getGroups().forEach(group -> {
+        user.getUserGroups().forEach(group -> {
             String groupId = "ROLE_" + group.getId();
             authorities.add(new SimpleGrantedAuthority(groupId));
         });

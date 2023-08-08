@@ -13,6 +13,6 @@ public class GroupService {
     private final GroupRepository groupRepository;
 
     public boolean userBelongsToGroup(User user, GroupEntity group) {
-        return user.getGroups() != null && user.getGroups().equals(group);
+        return user.getUserGroups() != null && user.getUserGroups().equals(group);
     }
 }
