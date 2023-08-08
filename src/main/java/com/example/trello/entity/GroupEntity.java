@@ -5,9 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -20,8 +18,8 @@ public class GroupEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany(mappedBy = "groups")
-    private Set<User> users = new HashSet<>();
+    @OneToMany(mappedBy = "group")
+    private Set<UserGroup> userGroups = new HashSet<>();
 
     @OneToMany(mappedBy = "group")
     private Set<Board> boards = new HashSet<>();
