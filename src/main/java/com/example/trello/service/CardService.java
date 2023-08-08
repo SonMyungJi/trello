@@ -3,7 +3,6 @@ package com.example.trello.service;
 import com.example.trello.dto.CardRequestDto;
 import com.example.trello.dto.CardResponseDto;
 import com.example.trello.entity.Card;
-import com.example.trello.entity.ColumnEntity;
 import com.example.trello.entity.User;
 import com.example.trello.repository.CardRepository;
 import lombok.RequiredArgsConstructor;
