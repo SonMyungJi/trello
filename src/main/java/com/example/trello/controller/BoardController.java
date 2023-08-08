@@ -1,11 +1,11 @@
 package com.example.trello.controller;
 
 
+import com.example.trello.security.UserDetailsImpl;
 import com.example.trello.dto.ApiResponseDto;
 import com.example.trello.dto.BoardRequestDto;
 import com.example.trello.dto.BoardResponseDto;
 import com.example.trello.dto.BoardUserResponseDto;
-import com.example.trello.auth.UserDetailsImpl;
 import com.example.trello.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
