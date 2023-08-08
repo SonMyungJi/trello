@@ -28,4 +28,9 @@ public class GroupService {
         UserGroup userGroup = new UserGroup(user, group);
         userGroupRepository.save(userGroup);
     }
+
+    public GroupEntity findGroup(Long groupId) {
+        return groupRepository.findById(groupId).orElseThrow(() ->
+                new IllegalArgumentException("해당 그룹은 존재하지 않습니다."));
+    }
 }

@@ -20,4 +20,8 @@ public class Board {
     @ManyToOne
     @JoinColumn(name = "groupId")
     private GroupEntity group;
+
+    public Board(GroupEntity group) {
+        this.group = group;
+    }
 }
