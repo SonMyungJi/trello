@@ -2,7 +2,7 @@ package com.example.trello.service;
 
 import com.example.trello.dto.ColumnListResponseDto;
 import com.example.trello.dto.ColumnResponseDto;
-import com.example.trello.entity.Column;
+import com.example.trello.entity.Columns;
 import com.example.trello.repository.ColumnRepository;
 import org.springframework.stereotype.Service;
 
@@ -24,17 +24,17 @@ public class ColumnService {
     }
 
     //컬럼 생성
-    public ColumnResponseDto createColumn(String columnName) {
-        Column column = new Column();
-        column.setColumnName(columnName);
-        return new ColumnResponseDto(column);
+    public ColumnResponseDto createColumn(String columnsName) {
+        Columns column = new Columns();
+        column.setColumnsName(columnsName);
+        return new ColumnResponseDto(columnRepository.save(column));
     }
 
     //컬럼 이름 수정
     public ColumnResponseDto updateColumnName(Long id, String newName) {
-        Column column = columnRepository.findById(id).orElse(null);
+        Columns column = columnRepository.findById(id).orElse(null);
         if (column != null) {
-            column.setColumnName(newName);
+            column.setColumnsName(newName);
             return new ColumnResponseDto(column);
         }
         return null;

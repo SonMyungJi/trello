@@ -7,9 +7,9 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class ColumnRequestDto {
-    private String columnName;
+    private String columnsName;
 
-    public ColumnRequestDto(String columnName) {
-        this.columnName = columnName;
+    public ColumnRequestDto(String columnsName) {
+        this.columnsName = columnsName;
     }
 }

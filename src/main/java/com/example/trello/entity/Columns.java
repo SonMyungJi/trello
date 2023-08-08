@@ -5,22 +5,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-
 @Entity
 @Getter
 @Setter
-@Table(name = "column")
+@Table(name = "columns")
 @NoArgsConstructor
-public class Column {
+public class Columns {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @jakarta.persistence.Column(name = "column_id" )
-    private Long columnId;
+    @Column(name = "columns_id" )
+    private Long columnsId;
 
-    @jakarta.persistence.Column(name = "column_name", nullable = false, unique = true)
-    private String columnName;
+    @Column(name = "columns_name", nullable = false, unique = true)
+    private String columnsName;
 
 //    @OneToMany(mappedBy = "cards")
 //    private List<cards> cardsList = new ArrayList<>();
