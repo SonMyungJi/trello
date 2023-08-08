@@ -91,7 +91,7 @@ public class BoardServiceImpl implements BoardService{
                 () -> new IllegalArgumentException("수정할 보드가 존재하지 않습니다.")
         );
 
-        if(board.getCreator().getId().equals(user.getId())){
+        if(board.getCreator().getUserId().equals(user.getUserId())){
             board.update(boardRequestDto);
         } else {
             throw new IllegalArgumentException("보드 생성자만 수정이 가능합니다.");
@@ -108,7 +108,7 @@ public class BoardServiceImpl implements BoardService{
                 () -> new IllegalArgumentException("삭제할 보드가 존재하지 않습니다.")
         );
 
-        if(board.getCreator().getId().equals(user.getId())){
+        if(board.getCreator().getUserId().equals(user.getUserId())){
             boardRepository.delete(board);
         } else {
             throw new IllegalArgumentException("보드 생성자만 삭제가 가능합니다.");
@@ -122,7 +122,7 @@ public class BoardServiceImpl implements BoardService{
                 () -> new IllegalArgumentException("초대할 보드가 존재하지 않습니다.")
         );
 
-        if(!board.getCreator().getId().equals(user.getId())){
+        if(!board.getCreator().getUserId().equals(user.getUserId())){
             throw new IllegalArgumentException("보드 생성자만 초대할 수 있습니다.");
         }
 

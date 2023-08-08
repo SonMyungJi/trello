@@ -17,16 +17,10 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final CardService cardService;
-    private final GroupService groupService;
 
     @Transactional
     public CommentResponseDto createComment(Long cardId, CommentRequestDto requestDto, User user) {
         Card card = cardService.findCard(cardId);
-
-        // 유저가 그룹의 멤버인지 확인
-        if (!groupService.userBelongsToGroup(user, card.getColumns().getBoard().getGroup())) {
-            throw new RuntimeException("User is not a member of the group.");
-        }
 
         Comment comment= commentRepository.save(new Comment(card, requestDto, user));
         return new CommentResponseDto(comment);
@@ -35,11 +29,6 @@ public class CommentService {
     @Transactional
     public CommentResponseDto updateComment(Long commentId, CommentRequestDto requestDto, User user) {
         Comment comment = findComment(commentId);
-
-        // 유저가 그룹의 멤버인지 확인
-        if (!groupService.userBelongsToGroup(user, comment.getCard().getColumns().getBoard().getGroup())) {
-            throw new RuntimeException("User is not a member of the group.");
-        }
 
         if(!(comment.getUser().equals(user))) {
             throw new IllegalArgumentException("권한이 없습니다");
@@ -52,11 +41,6 @@ public class CommentService {
 
     public void deleteComment(Long commentId, User user) {
         Comment comment = findComment(commentId);
-
-        // 유저가 그룹의 멤버인지 확인
-        if (!groupService.userBelongsToGroup(user, comment.getCard().getColumns().getBoard().getGroup())) {
-            throw new RuntimeException("User is not a member of the group.");
-        }
 
         if (!comment.getUser().equals(user)) {
             throw new IllegalArgumentException("권한이 없습니다");

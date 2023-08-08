@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.6/dist/flatpickr.min.css">
+    <title>Trello-Style Card Modal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff;
+            color: #000;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .popup-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .popup {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: flex;
+            max-width: 800px;
+            width: 80%;
+        }
+
+        .left-column {
+            flex: 2;
+            padding: 10px;
+            border-right: 1px solid #ccc;
+        }
+
+        .color-picker {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .color-option {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #ccc;
+            border-radius: 50%;
+            margin-right: 5px;
+            cursor: pointer;
+        }
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        textarea {
+            width: 100%;
+            height: 80px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            resize: vertical;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        button {
+            background-color: #000;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #333;
+        }
+
+        .right-column {
+            flex: 1;
+            padding: 10px;
+        }
+
+        .comment-list {
+            border-top: 1px solid #ccc;
+            margin-top: 20px;
+            padding-top: 10px;
+        }
+
+        .comment-item {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        /* 추가 스타일링을 원하신다면 여기에 작성하십시오. */
+    </style>
+</head>
+<body>
+<div class="popup-container">
+    <div class="popup">
+        <div class="left-column">
+            <label for="cardTitle">Title</label>
+            <input type="text" id="cardTitle" placeholder="Enter card title">
+            <br></br>
+            <label for="cardDescription">Desc</label>
+            <textarea id="cardDescription" placeholder="Enter card description"></textarea>
+            <br></br>
+            <label for="card-admin">Members </label>
+            <input type="text" id="card-admin" placeholder="#Member" oninput="showSuggestions()">
+            <div id="suggestions" style="display: none;">
+                <div class="user-item" onclick="selectUser('#User1')">User1</div>
+                <div class="user-item" onclick="selectUser('#User2')">User2</div>
+                <div class="user-item" onclick="selectUser('#User3')">User3</div>
+                <!-- 다른 사용자 목록 항목 추가 -->
+            </div>
+
+            <br></br>
+            <label for="cardDue" style="display: inline-block; margin-right: 10px;">Due Date</label>
+            <input type="text" id="cardDue" placeholder="Open Calender">
+            <br></br>
+            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                <label style="margin-right: 10px;">Color</label>
+                <div class="color-picker">
+                    <div class="color-option" style="background-color: #ff5555" data-color="#ff5555"></div>
+                    <div class="color-option" style="background-color: #55ff55" data-color="#55ff55"></div>
+                    <div class="color-option" style="background-color: #5555ff" data-color="#5555ff"></div>
+                    <div class="color-option" style="background-color: #ff55ff" data-color="#ff55ff"></div>
+                    <div class="color-option" style="background-color: #55ffff" data-color="#55ffff"></div>
+                    <div class="color-option" style="background-color: #ffff55" data-color="#ffff55"></div>
+                </div>
+            </div>
+
+        </div>
+        <div class="right-column">
+            <!-- 오른쪽 column 내용 -->
+            <label>Comment</label>
+            <div class="comment-list">
+                <div class="comment-item">
+                    <strong>User1:</strong> This is a comment.
+                </div>
+                <div class="comment-item">
+                    <strong>User2:</strong> Another comment here.
+                </div>
+                <!-- 댓글 리스트 항목 추가 -->
+            </div>
+            <div class="comment-input">
+                <textarea placeholder="Write a comment"></textarea>
+                <button>Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.6/dist/flatpickr.min.js"></script>
+<script>
+    const showPopupBtn = document.getElementById('showPopupBtn');
+    const cardPopupContainer = document.getElementById('cardPopup');
+
+    showPopupBtn.addEventListener('click', () => {
+        cardPopupContainer.style.display = 'block'; // 팝업 보이기
+    });
+
+
+    // 담당자
+    function showSuggestions() {
+        const input = document.getElementById('card-admin');
+        const suggestions = document.getElementById('suggestions');
+
+        if (input.value.startsWith('#')) {
+            suggestions.style.display = 'block';
+        } else {
+            suggestions.style.display = 'none';
+        }
+    }
+
+    function selectUser(username) {
+        const input = document.getElementById('card-admin');
+        input.value = username;
+        suggestions.style.display = 'none';
+    }
+
+
+    // 달력
+    const cardDueInput = document.getElementById('cardDue');
+    const openDatePickerBtn = document.getElementById('openDatePicker');
+
+    const datePicker = flatpickr(cardDueInput, {
+        dateFormat: 'Y-m-d',
+        defaultDate: '',
+        minDate: 'today',
+        disableMobile: true,
+    });
+
+    openDatePickerBtn.addEventListener('click', () => {
+        datePicker.open();
+    });
+
+
+    // 색상 설정
+    const cardColorInput = document.getElementById('cardColor');
+    const colorOptions = document.querySelectorAll('.color-option');
+
+    colorOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            const selectedColor = option.getAttribute('data-color');
+            cardColorInput.value = selectedColor;
+        });
+    });
+
+
+    // 댓글 추가 버튼 클릭 시 댓글 추가
+    const commentSection = document.querySelector('.comment-section');
+
+    document.getElementById('createCardBtn').addEventListener('click', () => {
+        const commentInput = document.getElementById('commentInput');
+        if (commentInput.value) {
+            const comment = document.createElement('div');
+            comment.className = 'comment';
+            comment.textContent = commentInput.value;
+            commentSection.appendChild(comment);
+            commentInput.value = '';
+        }
+    });
+
+    const createCardBtn = document.getElementById('createCardBtn');
+    createCardBtn.addEventListener('click', () => {
+        const cardTitle = document.getElementById('cardTitle').value;
+        const cardDescription = document.getElementById('cardDescription').value;
+        const cardMember = document.getElementById('card-admin').value;
+        const cardDue = cardDueInput.value; // 달력에서 선택한 날짜 가져오기
+        const cardColor = document.getElementById('cardColor').value;
+
+        cardPopupContainer.style.display = 'none'; // 팝업 숨기기
+    });
+
+
+</script>
+</body>
+</html>

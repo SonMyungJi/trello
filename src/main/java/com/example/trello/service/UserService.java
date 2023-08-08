@@ -71,12 +71,12 @@ public class UserService {
         Optional<User> inputUpdateUser = userRepository.findById(userId);
 
         if(!inputUpdateUser.isPresent()) {
-            return ResponseEntity.status(400).body(new ApiResponseDto(HttpStatus.BAD_REQUEST.value(), "해당 유저가 존재하지 않습니다."));
+            return ResponseEntity.status(400).body(new ApiResponseDto("해당 유저가 존재하지 않습니다.", HttpStatus.BAD_REQUEST.value()));
         }
 
         // 비밀번호와 확인 비밀번호 일치 여부 판단
         if (!updateRequestDto.getPassword().equals(updateRequestDto.getCheckPassword())) {
-            return ResponseEntity.status(400).body(new ApiResponseDto(HttpStatus.BAD_REQUEST.value(), "비밀번호가 일치하지 않습니다."));
+            return ResponseEntity.status(400).body(new ApiResponseDto("비밀번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST.value()));
         }
 
         String password = passwordEncoder.encode(updateRequestDto.getPassword());
@@ -95,11 +95,11 @@ public class UserService {
         Optional<User> inputDeleteUser = userRepository.findById(userId);
 
         if(!inputDeleteUser.isPresent()) {
-            return ResponseEntity.status(400).body(new ApiResponseDto(HttpStatus.BAD_REQUEST.value(), "해당 유저가 존재하지 않습니다."));
+            return ResponseEntity.status(400).body(new ApiResponseDto("해당 유저가 존재하지 않습니다.", HttpStatus.BAD_REQUEST.value()));
         }
         deleteUser(user);
         userRepository.delete(user);
-        return ResponseEntity.status(400).body(new ApiResponseDto(HttpStatus.BAD_REQUEST.value(), "탈퇴가 완료되었습니다."));
+        return ResponseEntity.status(400).body(new ApiResponseDto("탈퇴가 완료되었습니다.", HttpStatus.BAD_REQUEST.value()));
     }
 
     private void deleteUser(User user) {

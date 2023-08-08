@@ -21,7 +21,7 @@ public class BoardUserResponseDto {
         this.boardContents = board.getBoardContents();
         this.created = board.getCreatedAt();
         this.users = board.getBoardUsers().stream()
-                .map(user -> new UserResponseDto(user.getId(), user.getUser().getUsername()))
+                .map(user -> new UserResponseDto(user.getUser()))
                 .collect(Collectors.toSet());
     }
 }
