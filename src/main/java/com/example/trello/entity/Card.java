@@ -18,7 +18,7 @@ import java.util.Set;
 public class Card {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long cardId;
 
     @Column
     private String cardName;
@@ -36,14 +36,14 @@ public class Card {
     private Date dueDate;
 
     @ManyToOne
-    @JoinColumn(name = "columns_id")
-    private Columns columns;
+    @JoinColumn(name = "sectionId")
+    private Section section;
 
     @OneToMany(mappedBy = "card", cascade = CascadeType.REMOVE)
     private Set<Comment> comments = new HashSet<>();
 
-    public Card(Columns columns, CardRequestDto requestDto) {
-        this.columns = columns;
+    public Card(Section section, CardRequestDto requestDto) {
+        this.section = section;
         this.cardName = requestDto.getCardName();
         this.cardDesc = requestDto.getCardDesc();
         this.cardColor = requestDto.getCardColor();
