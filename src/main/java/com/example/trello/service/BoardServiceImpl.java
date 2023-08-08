@@ -4,8 +4,11 @@ import com.example.trello.dto.BoardRequestDto;
 import com.example.trello.dto.BoardResponseDto;
 import com.example.trello.dto.BoardUserResponseDto;
 import com.example.trello.entity.Board;
+import com.example.trello.entity.BoardUser;
+import com.example.trello.entity.BoardUserRoleEnum;
 import com.example.trello.entity.User;
 import com.example.trello.repository.BoardRepository;
+import com.example.trello.repository.BoardUserRepository;
 import com.example.trello.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,7 @@ import java.util.List;
 public class BoardServiceImpl implements BoardService{
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
+    private final BoardUserRepository boardUserRepository;
 
     @Override
     public List<BoardResponseDto> getBoards(){
@@ -68,8 +72,13 @@ public class BoardServiceImpl implements BoardService{
             throw new IllegalArgumentException("로그인 후 시도해주세요.");
         }
 
-        Board board = new Board(boardRequestDto, user);
+        Board board = new Board(boardRequestDto, user); // 보드 생성
+        BoardUser boardUser = new BoardUser(user, board, BoardUserRoleEnum.ADMIN); // 생성자는 관리자 권한으로 설정
+
+        board.addBoardUsers(boardUser); // 보드사용자 목록에 유저추가
+
         boardRepository.save(board);
+        boardUserRepository.save(boardUser);
 
         return new BoardResponseDto(board);
     }
@@ -121,10 +130,11 @@ public class BoardServiceImpl implements BoardService{
                 () -> new IllegalArgumentException("초대받을 유저가 존재하지 않습니다.")
         );
 
-        if(board.getUsers().contains(invitedUser)){
+        if(board.getBoardUsers().stream().anyMatch(boardUser -> boardUser.getUser().equals(invitedUser))){
             throw new IllegalArgumentException("이미 보드에 포함된 유저입니다.");
         } else {
-            board.getUsers().add(invitedUser);
+            BoardUser boardUser = new BoardUser(invitedUser, board, BoardUserRoleEnum.USER);
+            board.addBoardUsers(boardUser);
             boardRepository.save(board);
         }
 

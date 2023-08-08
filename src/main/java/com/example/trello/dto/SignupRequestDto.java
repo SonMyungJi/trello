@@ -1,6 +1,6 @@
 package com.example.trello.dto;
 
-import com.example.trello.entity.UserRoleEnum;
+import com.example.trello.entity.BoardUserRoleEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
@@ -17,5 +17,7 @@ public class SignupRequestDto {
     @Pattern(regexp = "^.{4,}$", message = "비밀번호는 최소 4글자 이상 입력해주세요.")
     private String password;
 
-    private UserRoleEnum role;
+    @NotBlank
+    private String nickname;
+
 }

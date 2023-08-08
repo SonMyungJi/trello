@@ -1,5 +1,6 @@
 package com.example.trello.jwt;
 
+import com.example.trello.entity.BoardUserRoleEnum;
 import com.example.trello.entity.UserRoleEnum;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;

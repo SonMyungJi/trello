@@ -1,12 +1,11 @@
 package com.example.trello.entity;
 
-
-public enum UserRoleEnum {
+public enum BoardUserRoleEnum {
     USER(Authority.USER), ADMIN(Authority.ADMIN);
 
     private final String authority;
 
-    UserRoleEnum(String authority){
+    BoardUserRoleEnum(String authority){
         this.authority = authority;
     }
 
@@ -19,4 +18,3 @@ public enum UserRoleEnum {
         public static final String ADMIN = "ROLE_ADMIN";
     }
 }
-
