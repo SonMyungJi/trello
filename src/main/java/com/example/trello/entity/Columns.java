@@ -6,6 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 @Entity
 @Getter
 @Setter
@@ -20,6 +24,13 @@ public class Columns {
 
     @Column(name = "columns_name", nullable = false, unique = true)
     private String columnsName;
+
+    @ManyToOne
+    @JoinColumn(name = "boardId")
+    private Board board;
+
+    @OneToMany(mappedBy = "columns", cascade = CascadeType.REMOVE)
+    private Set<Card> cards = new HashSet<>();
 
     public Columns(ColumnRequestDto requestDto) {
         this.columnsName = requestDto.getColumnsName();

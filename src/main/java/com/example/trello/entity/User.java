@@ -1,13 +1,13 @@
 package com.example.trello.entity;
 
-import com.example.trello.dto.CommentResponseDto;
+import com.example.trello.dto.SignupRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -23,6 +23,12 @@ public class User {
     private String nickname;
     private String password;
 
-    @OneToMany(mappedBy = "user")
-    private List<UserGroup> userGroups = new ArrayList<>();
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private Set<UserGroup> userGroups = new HashSet<>();
+
+    public User(String username, String nickname, String password) {
+        this.username = username;
+        this.nickname = nickname;
+        this.password = password;
+    }
 }

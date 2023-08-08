@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -28,24 +30,24 @@ public class Card {
     private String cardColor;
 
     @Column
+    private Long workerId;
+
+    @Column
     private Date dueDate;
 
     @ManyToOne
-    @JoinColumn(name = "userId")
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "columnId")
-    private ColumnEntity column;
+    @JoinColumn(name = "columns_id")
+    private Columns columns;
 
     @OneToMany(mappedBy = "card", cascade = CascadeType.REMOVE)
-    private List<Comment> comments;
+    private Set<Comment> comments = new HashSet<>();
 
-    public Card(ColumnEntity column, CardRequestDto requestDto) {
-        this.column = column;
+    public Card(Columns columns, CardRequestDto requestDto) {
+        this.columns = columns;
         this.cardName = requestDto.getCardName();
         this.cardDesc = requestDto.getCardDesc();
         this.cardColor = requestDto.getCardColor();
+        this.workerId = requestDto.getUserId();
         this.dueDate = requestDto.getDueDate();
     }
 }
