@@ -95,7 +95,14 @@
     <textarea id="cardDescription" placeholder="Enter card description"></textarea>
     <br></br>
     <label for="card-admin">Members </label>
-    <input type="text" id="card-admin" placeholder="Add Member">
+    <input type="text" id="card-admin" placeholder="Add Member" oninput="showSuggestions()">
+    <div id="suggestions" style="display: none;">
+      <div class="user-item" onclick="selectUser('#User1')">User1</div>
+      <div class="user-item" onclick="selectUser('#User2')">User2</div>
+      <div class="user-item" onclick="selectUser('#User3')">User3</div>
+      <!-- 다른 사용자 목록 항목 추가 -->
+    </div>
+
     <br></br>
     <label for="cardDue" style="display: inline-block; margin-right: 10px;">Due Date</label>
     <input type="text" id="cardDue" placeholder="Open Calender">
@@ -124,6 +131,25 @@
   showModalBtn.addEventListener('click', () => {
     cardModal.style.display = 'block';
   });
+
+
+  // 담당자
+  function showSuggestions() {
+    const input = document.getElementById('card-admin');
+    const suggestions = document.getElementById('suggestions');
+
+    if (input.value.startsWith('#')) {
+      suggestions.style.display = 'block';
+    } else {
+      suggestions.style.display = 'none';
+    }
+  }
+
+  function selectUser(username) {
+    const input = document.getElementById('card-admin');
+    input.value = username;
+    suggestions.style.display = 'none';
+  }
 
 
   // 달력
