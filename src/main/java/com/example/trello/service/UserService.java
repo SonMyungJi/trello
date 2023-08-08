@@ -5,6 +5,7 @@ import com.example.trello.dto.SignupRequestDto;
 import com.example.trello.entity.Board;
 import com.example.trello.entity.GroupEntity;
 import com.example.trello.entity.User;
+import com.example.trello.entity.UserRoleEnum;
 import com.example.trello.jwt.JwtUtil;
 import com.example.trello.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,12 +23,13 @@ public class UserService {
         String username = requestDto.getUsername();
         String password = requestDto.getPassword();
         String nickname = requestDto.getNickname();
+        UserRoleEnum role = UserRoleEnum.USER;
 
         if (userRepository.findByUsername(username).isPresent()) {
             throw new IllegalArgumentException("이미 존재하는 회원입니다.");
         }
 
-        User user = new User(username, password, nickname);
+        User user = new User(username, nickname, password, role);
         userRepository.save(user);
     }
 
