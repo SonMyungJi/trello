@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  <title>보드 생성 팝업</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f0f0f0;
+    }
+
+    .container {
+      text-align: center;
+    }
+    /* 입력 필드 스타일 */
+    input[type="text"] {
+      padding: 8px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      width: 200px;
+    }
+
+    .board-form {
+      width: 300px;
+      height: 400px;
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      display: inline-block;
+      text-align: center; /* 내용 텍스트를 왼쪽으로 정렬 */
+    }
+    /* 버튼 스타일 */
+    button[type="submit"] {
+      background-color: black;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #333;
+    }
+
+  </style>
+</head>
+<body>
+<div class="board-form">
+  <h2>보 드 생 성</h2>
+  <form id="boardForm">
+    <label for="boardName">보드 이름</label><br>
+    <input type="text" id="boardName" name="boardName" required><br>
+
+    <label for="boardDescription">보드 설명</label><br>
+    <input type="text" id="boardDescription" name="boardDescription" required><br><br>
+
+    <label for="boardBackgroundColor">보드 배경색</label><br>
+    <select id="boardBackgroundColor" name="boardBackgroundColor">
+      <option value="white">White</option>
+      <option value="blue">Blue</option>
+      <option value="green">Green</option>
+      <!-- 다른 색상 옵션들... -->
+    </select><br><br>
+
+    <label>보드 공개여부</label><br>
+    <select id="boardpublic" name="boardpublic">
+      <option value="public">공   개</option>
+      <option value="private">비공개</option>
+    </select><br><br>
+
+    <button type="submit">보드 생성하기</button>
+
+  </form>
+</div>
+</body>
+</html>
