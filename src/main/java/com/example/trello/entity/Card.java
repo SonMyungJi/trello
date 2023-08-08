@@ -28,24 +28,24 @@ public class Card {
     private String cardColor;
 
     @Column
+    private Long workerId;
+
+    @Column
     private Date dueDate;
 
     @ManyToOne
-    @JoinColumn(name = "userId")
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "columnId")
-    private ColumnEntity column;
+    @JoinColumn(name = "boardId")
+    private Board board;
 
     @OneToMany(mappedBy = "card", cascade = CascadeType.REMOVE)
     private List<Comment> comments;
 
-    public Card(ColumnEntity column, CardRequestDto requestDto) {
-        this.column = column;
+    public Card(Board board, CardRequestDto requestDto) {
+        this.board = board;
         this.cardName = requestDto.getCardName();
         this.cardDesc = requestDto.getCardDesc();
         this.cardColor = requestDto.getCardColor();
+        this.workerId = requestDto.getUserId();
         this.dueDate = requestDto.getDueDate();
     }
 }
