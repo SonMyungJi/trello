@@ -23,37 +23,39 @@ public class BoardController {
 
     // 보드 전체조회
     @GetMapping("/boards")
-    public ResponseEntity<List<BoardResponseDto>> getBoards(){
-        List<BoardResponseDto> boardResponseDtos = boardService.getBoards();
+    public ResponseEntity<List<BoardResponseDto>> getBoards(@RequestParam Long groupid){
+        List<BoardResponseDto> boardResponseDtos = boardService.getBoards(groupid);
         return ResponseEntity.ok().body(boardResponseDtos);
     }
 
     // 보드 개별조회
     @GetMapping("/boards/{id}")
-    public ResponseEntity<BoardResponseDto> getBoard(@PathVariable Long id){
-        BoardResponseDto boardResponseDto = boardService.getBoard(id);
+    public ResponseEntity<BoardResponseDto> getBoard(@PathVariable Long id,
+                                                     @RequestParam Long groupid){
+        BoardResponseDto boardResponseDto = boardService.getBoard(id, groupid);
         return ResponseEntity.ok().body(boardResponseDto);
     }
 
-    // 보드 유저 조회 (전체보드)
-    @GetMapping("/boards/user")
-    public ResponseEntity<List<BoardUserResponseDto>> getBoardsUser(){
-        List<BoardUserResponseDto> boardUserResponseDtos = boardService.getBoardsUser();
-        return ResponseEntity.ok().body(boardUserResponseDtos);
-    }
-
-    // 보드 유저 조회 (선택보드)
-    @GetMapping("/boards/user/{id}")
-    public ResponseEntity<BoardUserResponseDto> getBoardUser(@PathVariable Long id){
-        BoardUserResponseDto boardUserResponseDto = boardService.getBoardUser(id);
-        return ResponseEntity.ok().body(boardUserResponseDto);
-    }
+//    // 보드 유저 조회 (전체보드)
+//    @GetMapping("/boards/user")
+//    public ResponseEntity<List<BoardUserResponseDto>> getBoardsUser(){
+//        List<BoardUserResponseDto> boardUserResponseDtos = boardService.getBoardsUser();
+//        return ResponseEntity.ok().body(boardUserResponseDtos);
+//    }
+//
+//    // 보드 유저 조회 (선택보드)
+//    @GetMapping("/boards/user/{id}")
+//    public ResponseEntity<BoardUserResponseDto> getBoardUser(@PathVariable Long id){
+//        BoardUserResponseDto boardUserResponseDto = boardService.getBoardUser(id);
+//        return ResponseEntity.ok().body(boardUserResponseDto);
+//    }
 
     // 보드 생성
     @PostMapping("/boards")
     public ResponseEntity<BoardResponseDto> createBoard(@RequestBody BoardRequestDto boardRequestDto,
-                                                        @AuthenticationPrincipal UserDetailsImpl userDetails){
-        BoardResponseDto boardResponseDto = boardService.createBoard(boardRequestDto, userDetails.getUser());
+                                                        @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                        @RequestParam Long groupid){
+        BoardResponseDto boardResponseDto = boardService.createBoard(boardRequestDto, userDetails.getUser(), groupid);
 
         return ResponseEntity.ok().body(boardResponseDto);
     }
@@ -62,9 +64,10 @@ public class BoardController {
     @PutMapping("/boards/{id}")
     public ResponseEntity<BoardResponseDto> updateBoard(@PathVariable Long id,
                                                         @RequestBody BoardRequestDto boardRequestDto,
-                                                        @AuthenticationPrincipal UserDetailsImpl userDetails){
+                                                        @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                        @RequestParam Long groupid){
 
-        BoardResponseDto boardResponseDto = boardService.updateBoard(id, boardRequestDto, userDetails.getUser());
+        BoardResponseDto boardResponseDto = boardService.updateBoard(id, boardRequestDto, userDetails.getUser(), groupid);
 
         return ResponseEntity.ok().body(boardResponseDto);
     }

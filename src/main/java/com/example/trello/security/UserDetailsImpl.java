@@ -6,16 +6,24 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Set;
 
 public class UserDetailsImpl implements UserDetails {
     private final User user;
+    private final Set<GrantedAuthority> authorities;
 
-    public UserDetailsImpl(User user){
+    public UserDetailsImpl(User user, Set<GrantedAuthority> authorities){
         this.user = user;
+        this.authorities = authorities;
     }
 
     public User getUser(){
         return this.user;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities(){
+        return authorities;
     }
 
     @Override
@@ -26,11 +34,6 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public String getUsername(){
         return user.getUsername();
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities(){
-        return new ArrayList<>();
     }
 
     @Override
