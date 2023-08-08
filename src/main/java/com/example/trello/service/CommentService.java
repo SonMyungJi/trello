@@ -21,7 +21,7 @@ public class CommentService {
     @Transactional
     public CommentResponseDto createComment(Long cardId, CommentRequestDto requestDto, User user) {
         Card card = cardService.findCard(cardId);
-        Comment comment= commentRepository.save(new Comment(requestDto, user));
+        Comment comment= commentRepository.save(new Comment(card, requestDto, user));
         return new CommentResponseDto(comment);
     }
 

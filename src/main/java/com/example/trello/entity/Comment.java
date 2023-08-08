@@ -28,7 +28,8 @@ public class Comment {
     @JoinColumn(name = "cardId")
     private Card card;
 
-    public Comment(CommentRequestDto requestDto, User user) {
+    public Comment(Card card, CommentRequestDto requestDto, User user) {
+        this.card = card;
         this.body = requestDto.getBody();
         this.user = user;
     }
