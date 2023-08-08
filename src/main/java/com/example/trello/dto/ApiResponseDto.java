@@ -1,18 +1,27 @@
 package com.example.trello.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponseDto {
-    private String msg;
-    private Integer code;
 
-    public ApiResponseDto(String msg, Integer code){
-        this.msg = msg;
-        this.code = code;
+    private int status;
+    private String message;
+    private Object data;
+
+    public ApiResponseDto(int status, String message) {
+        this.status = status;
+        this.message = message;
+        this.data = null;
+    }
+
+    public ApiResponseDto(int status, String message, Object data) {
+        this.status = status;
+        this.message = message;
+        this.data = data;
     }
 }

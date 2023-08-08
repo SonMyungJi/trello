@@ -1,35 +1,40 @@
 package com.example.trello.entity;
 
+import com.example.trello.dto.UpdateRequestDto;
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@NoArgsConstructor
 @Getter
+@Setter
+@NoArgsConstructor
+@EqualsAndHashCode
 @Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long userId;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
 
-    @Column(nullable = false, unique = true)
-    private String nickname;
-
-    @Column(nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private UserRoleEnum role;
+    @Column(name = "nickname", nullable = false)
+    private String nickname;
 
-    public User(String username, String nickname, String password, UserRoleEnum role){
+    public User(String username, String password, String nickname) {
         this.username = username;
-        this.nickname = nickname;
         this.password = password;
-        this.role = role;
+        this.nickname = nickname;
+    }
+
+    public void update(UpdateRequestDto updateRequestDto, String password) {
+        this.nickname = updateRequestDto.getNickname();
+        this.password = password;
     }
 }

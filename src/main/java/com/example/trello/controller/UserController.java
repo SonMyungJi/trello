@@ -1,42 +1,47 @@
 package com.example.trello.controller;
 
-import com.example.trello.auth.UserDetailsImpl;
 import com.example.trello.dto.*;
-import com.example.trello.service.GroupService;
+import com.example.trello.security.UserDetailsImpl;
 import com.example.trello.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/user")
-@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
-    private final GroupService groupService;
 
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponseDto> signup(@Valid @RequestBody SignupRequestDto requestDto) {
-        userService.signup(requestDto);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ApiResponseDto("회원가입 성공", HttpStatus.CREATED.value()));
+    public ResponseEntity<String> signup(@RequestBody SignupRequestDto requestDto) {
+        return userService.signup(requestDto);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponseDto> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
-        userService.login(requestDto, response);
-        return ResponseEntity.ok().body(new ApiResponseDto("로그인 성공", HttpStatus.CREATED.value()));
+    public ResponseEntity<String> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
+        return userService.login(requestDto,response);
     }
 
-
-    @PostMapping("/group")
-    ResponseEntity<ApiResponseDto> createGroup(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        groupService.createGroup(userDetails.getUser());
-        return ResponseEntity.ok().body(new ApiResponseDto("그룹 생성", HttpStatus.OK.value()));
+    @GetMapping("/profile")
+    @ResponseBody
+    public UserResponseDto lookupUser(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return userService.lookupUser(userDetails.getUser().getUserId());
     }
+
+    @PutMapping("/profile/{user_id}")
+    @ResponseBody
+    public ResponseEntity<ApiResponseDto> updateUser(@PathVariable Long user_id, @RequestBody UpdateRequestDto updateRequestDto) {
+        return userService.updateUser(user_id, updateRequestDto);
+    }
+
+    @DeleteMapping("/profile/{user_id}")
+    @ResponseBody
+    public ResponseEntity<ApiResponseDto> deletePost(@PathVariable Long user_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return userService.deletePost(user_id, userDetails.getUser());
+    }
+
 }
