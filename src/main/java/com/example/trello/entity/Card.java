@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -34,14 +36,14 @@ public class Card {
     private Date dueDate;
 
     @ManyToOne
-    @JoinColumn(name = "boardId")
-    private Board board;
+    @JoinColumn(name = "columns_id")
+    private Columns columns;
 
     @OneToMany(mappedBy = "card", cascade = CascadeType.REMOVE)
-    private List<Comment> comments;
+    private Set<Comment> comments = new HashSet<>();
 
-    public Card(Board board, CardRequestDto requestDto) {
-        this.board = board;
+    public Card(Columns columns, CardRequestDto requestDto) {
+        this.columns = columns;
         this.cardName = requestDto.getCardName();
         this.cardDesc = requestDto.getCardDesc();
         this.cardColor = requestDto.getCardColor();

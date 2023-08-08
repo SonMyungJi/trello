@@ -4,6 +4,7 @@ import com.example.trello.dto.CardRequestDto;
 import com.example.trello.dto.CardResponseDto;
 import com.example.trello.entity.Board;
 import com.example.trello.entity.Card;
+import com.example.trello.entity.Columns;
 import com.example.trello.entity.User;
 import com.example.trello.repository.CardRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,14 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CardService {
     private final CardRepository cardRepository;
-    private final BoardService boardService;
+    private final ColumnService columnService;
     private final GroupService groupService;
 
     public CardResponseDto getCard(Long cardId, User user) {
         Card card = findCard(cardId);
 
         // 유저가 그룹의 멤버인지 확인
-        if (!groupService.userBelongsToGroup(user, card.getBoard().getGroup())) {
+        if (!groupService.userBelongsToGroup(user, card.getColumns().getBoard().getGroup())) {
             throw new RuntimeException("User is not a member of the group.");
         }
 
@@ -29,15 +30,15 @@ public class CardService {
     }
 
     @Transactional
-    public CardResponseDto createCard(Long boardId, CardRequestDto requestDto, User user) {
-        Board board = boardService.findBoard(boardId);
+    public CardResponseDto createCard(Long columnsId, CardRequestDto requestDto, User user) {
+        Columns columns = columnService.findColumn(columnsId);
 
         // 유저가 그룹의 멤버인지 확인
-        if (!groupService.userBelongsToGroup(user, board.getGroup())) {
+        if (!groupService.userBelongsToGroup(user, columns.getBoard().getGroup())) {
             throw new RuntimeException("User is not a member of the group.");
         }
 
-        Card card = cardRepository.save(new Card(board, requestDto));
+        Card card = cardRepository.save(new Card(columns, requestDto));
         return new CardResponseDto(card);
     }
 
@@ -46,7 +47,7 @@ public class CardService {
         Card card = findCard(cardId);
 
         // 유저가 그룹의 멤버인지 확인
-        if (!groupService.userBelongsToGroup(user, card.getBoard().getGroup())) {
+        if (!groupService.userBelongsToGroup(user, card.getColumns().getBoard().getGroup())) {
             throw new RuntimeException("User is not a member of the group.");
         }
 
@@ -62,7 +63,7 @@ public class CardService {
         Card card = findCard(cardId);
 
         // 유저가 그룹의 멤버인지 확인
-        if (!groupService.userBelongsToGroup(user, card.getBoard().getGroup())) {
+        if (!groupService.userBelongsToGroup(user, card.getColumns().getBoard().getGroup())) {
             throw new RuntimeException("User is not a member of the group.");
         }
 

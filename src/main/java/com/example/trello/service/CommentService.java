@@ -3,6 +3,7 @@ package com.example.trello.service;
 import com.example.trello.dto.CommentRequestDto;
 import com.example.trello.dto.CommentResponseDto;
 import com.example.trello.entity.Board;
+import com.example.trello.entity.Card;
 import com.example.trello.entity.Comment;
 import com.example.trello.entity.User;
 import com.example.trello.repository.CommentRepository;
@@ -15,19 +16,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-    private final BoardService boardService;
+    private final CardService cardService;
     private final GroupService groupService;
 
     @Transactional
-    public CommentResponseDto createComment(Long boardId, CommentRequestDto requestDto, User user) {
-        Board board = boardService.findBoard(boardId);
+    public CommentResponseDto createComment(Long cardId, CommentRequestDto requestDto, User user) {
+        Card card = cardService.findCard(cardId);
 
         // 유저가 그룹의 멤버인지 확인
-        if (!groupService.userBelongsToGroup(user, board.getGroup())) {
+        if (!groupService.userBelongsToGroup(user, card.getColumns().getBoard().getGroup())) {
             throw new RuntimeException("User is not a member of the group.");
         }
 
-        Comment comment= commentRepository.save(new Comment(board, requestDto, user));
+        Comment comment= commentRepository.save(new Comment(card, requestDto, user));
         return new CommentResponseDto(comment);
     }
 
@@ -36,7 +37,7 @@ public class CommentService {
         Comment comment = findComment(commentId);
 
         // 유저가 그룹의 멤버인지 확인
-        if (!groupService.userBelongsToGroup(user, comment.getBoard().getGroup())) {
+        if (!groupService.userBelongsToGroup(user, comment.getCard().getColumns().getBoard().getGroup())) {
             throw new RuntimeException("User is not a member of the group.");
         }
 
@@ -53,7 +54,7 @@ public class CommentService {
         Comment comment = findComment(commentId);
 
         // 유저가 그룹의 멤버인지 확인
-        if (!groupService.userBelongsToGroup(user, comment.getBoard().getGroup())) {
+        if (!groupService.userBelongsToGroup(user, comment.getCard().getColumns().getBoard().getGroup())) {
             throw new RuntimeException("User is not a member of the group.");
         }
 

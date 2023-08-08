@@ -27,12 +27,8 @@ public class Comment {
     @JoinColumn(name = "cardId")
     private Card card;
 
-    @ManyToOne
-    @JoinColumn(name = "boardId")
-    private Board board;
-
-    public Comment(Board board, CommentRequestDto requestDto, User user) {
-        this.board = board;
+    public Comment(Card card, CommentRequestDto requestDto, User user) {
+        this.card = card;
         this.body = requestDto.getBody();
         this.user = user;
     }
