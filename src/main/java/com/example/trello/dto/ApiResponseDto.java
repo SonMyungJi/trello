@@ -1,11 +1,18 @@
 package com.example.trello.dto;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
 public class ApiResponseDto {
     private String msg;
-    private Integer statusCode;
+    private Integer code;
 
-    public ApiResponseDto (String msg, int statusCode) {
+    public ApiResponseDto(String msg, Integer code){
         this.msg = msg;
-        this.statusCode = statusCode;
+        this.code = code;
     }
 }
