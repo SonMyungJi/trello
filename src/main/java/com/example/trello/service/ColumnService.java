@@ -54,4 +54,8 @@ public class ColumnService {
 
 
 
+    public Columns findColumn(Long columnId) {
+        return columnRepository.findById(columnId).orElseThrow(() ->
+                new IllegalArgumentException("해당 칼럼는 존재하지 않습니다."));
+    }
 }
