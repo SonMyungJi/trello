@@ -42,7 +42,7 @@ public class ColumnContoller {
             return ResponseEntity.badRequest().build();
         }
     }
-    // 컬럼 이동
+
 
     //컬럼 삭제
     @DeleteMapping("/column/{id}")

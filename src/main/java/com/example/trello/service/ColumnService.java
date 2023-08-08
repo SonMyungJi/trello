@@ -44,22 +44,7 @@ public class ColumnService {
         return null;
     }
 
-    //컬럼 이동
-    //    public ColumnResponseDto moveColumn(Long columnId, int newPosition) {
-//        Column column = columnRepository.findById(columnId).orElse(null);
-//        if (column != null) {
-//            List<Column> allColumns = columnRepository.findAll();
-//            int maxPosition = allColumns.size() - 1;
-//            newPosition = Math.min(Math.max(newPosition, 0), maxPosition);
-//            allColumns.remove(column);
-//            allColumns.add(newPosition, column);
-//            for (int i = 0; i < allColumns.size(); i++) {
-//                allColumns.get(i).setPosition(i); // Update the positions of all columns
-//            }
-//            return ColumnRepository.save(allColumns).get(newPosition);
-//        }
-//        return null;
-//    }
+
 
     //컬럼 삭제
     public String columnDelete(Long id) {
