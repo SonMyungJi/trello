@@ -1,6 +1,5 @@
 package com.example.trello.service;
 
-import com.example.trello.dto.ApiResponseDto;
 import com.example.trello.dto.LoginRequestDto;
 import com.example.trello.dto.SignupRequestDto;
 import com.example.trello.entity.User;
@@ -9,7 +8,6 @@ import com.example.trello.jwt.JwtUtil;
 import com.example.trello.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -25,14 +23,15 @@ public class UserService {
 
     public void signup(SignupRequestDto signupRequestDto){
         String username = signupRequestDto.getUsername();
+        String nickname = signupRequestDto.getNickname();
         String password = passwordEncoder.encode(signupRequestDto.getPassword());
-        UserRoleEnum role = signupRequestDto.getRole();
+        UserRoleEnum role = UserRoleEnum.USER;
 
         if(userRepository.findByUsername(username).isPresent()){
             throw new IllegalArgumentException("중복된 닉네임 입니다.");
         }
 
-        User user = new User(username, password, role);
+        User user = new User(username, nickname, password, role);
         userRepository.save(user);
     }
 

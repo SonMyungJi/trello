@@ -13,15 +13,15 @@ public class BoardUserResponseDto {
     private String boardName; // 보드 이름
     private String boardContents; // 보드 설명
     private LocalDateTime created; // 생성시간
-//    private Set<UserResponseDto> users; // 유저정보
+    private Set<UserResponseDto> users; // 유저정보
 
     public BoardUserResponseDto(Board board){
         this.boardid = board.getId();
         this.boardName = board.getBoardName();
         this.boardContents = board.getBoardContents();
         this.created = board.getCreatedAt();
-//        this.users = board.getUsers().stream()
-//                .map(user -> new UserResponseDto(user.getId(), user.getUsername()))
-//                .collect(Collectors.toSet());
+        this.users = board.getBoardUsers().stream()
+                .map(user -> new UserResponseDto(user.getId(), user.getUser().getUsername()))
+                .collect(Collectors.toSet());
     }
 }

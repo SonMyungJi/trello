@@ -6,6 +6,11 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -25,36 +30,25 @@ public class Board extends TimeStamped{
     @Column(nullable = false)
     private String boardColor; // 보드 배경 색상
 
-    @ManyToOne
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    private List<BoardUser> boardUsers = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User creator; // 보드 생성자
 
-    @ManyToOne
-    @JoinColumn(name = "group_id")
-    private GroupEntity group;
 
-
-
-//    그룹
-//    보드1 보드2 보드3
-
-
-
-//    @ManyToMany(fetch = FetchType.EAGER)
-//    @JoinTable(
-//            name = "board_users",
-//            joinColumns = @JoinColumn(name = "board_id"),
-//            inverseJoinColumns = @JoinColumn(name = "user_id")
-//    )
-//    private Set<User> users = new HashSet<>(); // 보드에 포함된 유저목록
-
-    public Board(BoardRequestDto boardRequestDto, User user, GroupEntity group){
+    public Board(BoardRequestDto boardRequestDto, User user){
         this.boardName = boardRequestDto.getBoardName();
         this.boardContents = boardRequestDto.getBoardContents();
         this.boardColor = boardRequestDto.getBoardColor();
         this.creator = user;
-        this.group = group;
     }
+
+    public void addBoardUsers(BoardUser boardUser){
+        this.boardUsers.add(boardUser);
+    }
+
 
     public void update(BoardRequestDto boardRequestDto){
         this.boardName = boardRequestDto.getBoardName();

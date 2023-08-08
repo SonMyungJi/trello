@@ -4,10 +4,11 @@ import com.example.trello.dto.BoardRequestDto;
 import com.example.trello.dto.BoardResponseDto;
 import com.example.trello.dto.BoardUserResponseDto;
 import com.example.trello.entity.Board;
-import com.example.trello.entity.GroupEntity;
+import com.example.trello.entity.BoardUser;
+import com.example.trello.entity.BoardUserRoleEnum;
 import com.example.trello.entity.User;
 import com.example.trello.repository.BoardRepository;
-import com.example.trello.repository.GroupRepository;
+import com.example.trello.repository.BoardUserRepository;
 import com.example.trello.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,70 +22,71 @@ import java.util.List;
 public class BoardServiceImpl implements BoardService{
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
-    private final GroupRepository groupRepository;
+    private final BoardUserRepository boardUserRepository;
 
     @Override
-    public List<BoardResponseDto> getBoards(Long groupid){
+    public List<BoardResponseDto> getBoards(){
         List<Board> boards = boardRepository.findAll();
         List<BoardResponseDto> boardResponseDtos = new ArrayList<>();
 
         for (Board board : boards){
-            boardResponseDtos.add(new BoardResponseDto(board, groupid));
+            boardResponseDtos.add(new BoardResponseDto(board));
         }
 
         return boardResponseDtos;
     }
 
     @Override
-    public BoardResponseDto getBoard(Long id, Long groupid){
+    public BoardResponseDto getBoard(Long id){
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("조회할 보드가 존재하지 않습니다.")
         );
 
-        return new BoardResponseDto(board, groupid);
+        return new BoardResponseDto(board);
     }
 
-//    @Override
-//    public List<BoardUserResponseDto> getBoardsUser(){
-//        List<Board> boards = boardRepository.findAll();
-//        List<BoardUserResponseDto> boardUserResponseDtos = new ArrayList<>();
-//
-//        for (Board board : boards){
-//            boardUserResponseDtos.add(new BoardUserResponseDto(board));
-//        }
-//
-//        return boardUserResponseDtos;
-//    }
-//
-//    @Override
-//    public BoardUserResponseDto getBoardUser(Long id){
-//        Board board = boardRepository.findById(id).orElseThrow(
-//                () -> new IllegalArgumentException("조회할 보드가 존재하지 않습니다.")
-//        );
-//
-//        return new BoardUserResponseDto(board);
-//    }
+    @Override
+    public List<BoardUserResponseDto> getBoardsUser(){
+        List<Board> boards = boardRepository.findAll();
+        List<BoardUserResponseDto> boardUserResponseDtos = new ArrayList<>();
+
+        for (Board board : boards){
+            boardUserResponseDtos.add(new BoardUserResponseDto(board));
+        }
+
+        return boardUserResponseDtos;
+    }
 
     @Override
-    public BoardResponseDto createBoard(BoardRequestDto boardRequestDto, User user, Long groupid){
+    public BoardUserResponseDto getBoardUser(Long id){
+        Board board = boardRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("조회할 보드가 존재하지 않습니다.")
+        );
+
+        return new BoardUserResponseDto(board);
+    }
+
+    @Override
+    public BoardResponseDto createBoard(BoardRequestDto boardRequestDto, User user){
         if(user == null){
             throw new IllegalArgumentException("로그인 후 시도해주세요.");
         }
 
-        GroupEntity group = groupRepository.findById(groupid).orElseThrow(
-                () -> new IllegalArgumentException("그룹이 존재하지 않습니다.")
-        );
+        Board board = new Board(boardRequestDto, user); // 보드 생성
+        BoardUser boardUser = new BoardUser(user, board, BoardUserRoleEnum.ADMIN); // 생성자는 관리자 권한으로 설정
 
-        Board board = new Board(boardRequestDto, user, group);
+        board.addBoardUsers(boardUser); // 보드사용자 목록에 유저추가
+
         boardRepository.save(board);
+        boardUserRepository.save(boardUser);
 
-        return new BoardResponseDto(board, groupid);
+        return new BoardResponseDto(board);
     }
 
 
     @Override
     @Transactional
-    public BoardResponseDto updateBoard(Long id, BoardRequestDto boardRequestDto,  User user, Long groupid){
+    public BoardResponseDto updateBoard(Long id, BoardRequestDto boardRequestDto,  User user){
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("수정할 보드가 존재하지 않습니다.")
         );
@@ -95,7 +97,7 @@ public class BoardServiceImpl implements BoardService{
             throw new IllegalArgumentException("보드 생성자만 수정이 가능합니다.");
         }
 
-        return new BoardResponseDto(board, groupid);
+        return new BoardResponseDto(board);
     }
 
 
@@ -128,12 +130,13 @@ public class BoardServiceImpl implements BoardService{
                 () -> new IllegalArgumentException("초대받을 유저가 존재하지 않습니다.")
         );
 
-//        if(board.getUsers().contains(invitedUser)){
-//            throw new IllegalArgumentException("이미 보드에 포함된 유저입니다.");
-//        } else {
-//            board.getUsers().add(invitedUser);
-//            boardRepository.save(board);
-//        }
+        if(board.getBoardUsers().stream().anyMatch(boardUser -> boardUser.getUser().equals(invitedUser))){
+            throw new IllegalArgumentException("이미 보드에 포함된 유저입니다.");
+        } else {
+            BoardUser boardUser = new BoardUser(invitedUser, board, BoardUserRoleEnum.USER);
+            board.addBoardUsers(boardUser);
+            boardRepository.save(board);
+        }
 
     }
 }
