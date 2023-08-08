@@ -1,18 +1,21 @@
 package com.example.trello.service;
 
 import com.example.trello.dto.ColumnListResponseDto;
+import com.example.trello.dto.ColumnRequestDto;
 import com.example.trello.dto.ColumnResponseDto;
 import com.example.trello.entity.Columns;
 import com.example.trello.repository.ColumnRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ColumnService {
 
-    private ColumnRepository columnRepository;
+    private final ColumnRepository columnRepository;
 
     //컬럼 조회
     public ColumnListResponseDto findByColumnWithCard() {
@@ -24,18 +27,19 @@ public class ColumnService {
     }
 
     //컬럼 생성
-    public ColumnResponseDto createColumn(String columnsName) {
-        Columns column = new Columns();
-        column.setColumnsName(columnsName);
-        return new ColumnResponseDto(columnRepository.save(column));
+    public ColumnResponseDto createColumn(ColumnRequestDto requestDto) {
+        Columns columns = new Columns(requestDto);
+//        columns.setColumnsName(requestDto);
+        return new ColumnResponseDto(columnRepository.save(columns));
     }
 
     //컬럼 이름 수정
-    public ColumnResponseDto updateColumnName(Long id, String newName) {
-        Columns column = columnRepository.findById(id).orElse(null);
-        if (column != null) {
-            column.setColumnsName(newName);
-            return new ColumnResponseDto(column);
+    public ColumnResponseDto updateColumnName(Long id, ColumnRequestDto requestDto) {
+        Columns columns = columnRepository.findById(id).orElse(null);
+        if (columns != null) {
+            columns.setColumnsName(requestDto);
+            columnRepository.save(columns);
+            return new ColumnResponseDto(columns);
         }
         return null;
     }

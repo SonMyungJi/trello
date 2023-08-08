@@ -9,7 +9,4 @@ import lombok.Setter;
 public class ColumnRequestDto {
     private String columnsName;
 
-    public ColumnRequestDto(String columnsName) {
-        this.columnsName = columnsName;
-    }
 }

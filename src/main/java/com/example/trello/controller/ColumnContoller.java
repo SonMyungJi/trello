@@ -1,6 +1,7 @@
 package com.example.trello.controller;
 
 import com.example.trello.dto.ColumnListResponseDto;
+import com.example.trello.dto.ColumnRequestDto;
 import com.example.trello.dto.ColumnResponseDto;
 import com.example.trello.repository.ColumnRepository;
 import com.example.trello.service.ColumnService;
@@ -16,7 +17,6 @@ import java.util.concurrent.RejectedExecutionException;
 public class ColumnContoller {
 
     private final ColumnService columnService;
-    private final ColumnRepository columnRepository;
 
     //컬럼 조회
     @GetMapping("/column")
@@ -27,16 +27,16 @@ public class ColumnContoller {
 
     //컬럼 생성
     @PostMapping("/column")
-    public ResponseEntity<ColumnResponseDto> createColumn(@RequestBody String columnsName) {
-        ColumnResponseDto createColumn = columnService.createColumn(columnsName);
+    public ResponseEntity<ColumnResponseDto> createColumn(@RequestBody ColumnRequestDto columnRequestDto) {
+        ColumnResponseDto createColumn = columnService.createColumn(columnRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createColumn);
     }
 
     //컬럼 이름 수정
     @PutMapping("/column/{id}")
-    public ResponseEntity<ColumnResponseDto> updateColumnName(@PathVariable Long id, @RequestBody String newName) {
+    public ResponseEntity<ColumnResponseDto> updateColumnName(@PathVariable Long id, @RequestBody ColumnRequestDto requestDto) {
         try {
-            ColumnResponseDto result = columnService.updateColumnName(id, newName);
+            ColumnResponseDto result = columnService.updateColumnName(id, requestDto);
             return ResponseEntity.ok().body(result);
         } catch (RejectedExecutionException e) {
             return ResponseEntity.badRequest().build();

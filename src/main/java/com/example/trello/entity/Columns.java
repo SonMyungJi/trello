@@ -1,5 +1,6 @@
 package com.example.trello.entity;
 
+import com.example.trello.dto.ColumnRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,14 @@ public class Columns {
 
     @Column(name = "columns_name", nullable = false, unique = true)
     private String columnsName;
+
+    public Columns(ColumnRequestDto requestDto) {
+        this.columnsName = requestDto.getColumnsName();
+    }
+
+    public void setColumnsName(ColumnRequestDto columnRequestDto) {
+        this.columnsName = columnRequestDto.getColumnsName();
+    }
 
 //    @OneToMany(mappedBy = "cards")
 //    private List<cards> cardsList = new ArrayList<>();
