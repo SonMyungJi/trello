@@ -2,7 +2,6 @@ package com.example.trello.entity;
 
 import com.example.trello.dto.CommentRequestDto;
 import jakarta.persistence.*;
-import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,6 +22,10 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "userId")
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "cardId")
+    private Card card;
 
     @ManyToOne
     @JoinColumn(name = "boardId")
