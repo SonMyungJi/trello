@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -20,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 public class WebSecurityConfig {
 
   private final JwtUtil jwtUtil;
@@ -52,13 +54,13 @@ public class WebSecurityConfig {
         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
     );
 
-    
-        http.authorizeHttpRequests((authorizeHttpRequests) ->
-                authorizeHttpRequests
-                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
-                        .requestMatchers(HttpMethod.POST,"/api/user/**").permitAll() // 로그인, 회원가입 누구나 가능.
-                        .requestMatchers("/api/view/user/**").permitAll()
-                                   
+    http.authorizeHttpRequests((authorizeHttpRequests) ->
+        authorizeHttpRequests
+            .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+            .permitAll() // resources 접근 허용 설정
+            .requestMatchers(HttpMethod.POST, "/api/user/**").permitAll() // 로그인, 회원가입 누구나 가능.
+            .requestMatchers("/api/view/user/**").permitAll()
+
             .anyRequest().authenticated() // 그 외 모든 요청 인증처리
     );
 
