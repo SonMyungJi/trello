@@ -136,4 +136,9 @@ public class BoardServiceImpl implements BoardService{
         }
 
     }
+
+    public Board findBoard(Long boardId) {
+        return boardRepository.findById(boardId).orElseThrow(() ->
+                new IllegalArgumentException("해당 카드는 존재하지 않습니다."));
+    }
 }
