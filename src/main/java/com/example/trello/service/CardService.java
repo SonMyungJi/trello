@@ -12,42 +12,42 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class CardService {
-    private final CardRepository cardRepository;
-    private final SectionService sectionService;
 
-    public CardResponseDto getCard(Long cardId) {
-        Card card = findCard(cardId);
+  private final CardRepository cardRepository;
+  private final SectionService sectionService;
 
-        return new CardResponseDto(card);
-    }
+  public CardResponseDto getCard(Long cardId) {
+    Card card = findCard(cardId);
+    return new CardResponseDto(card);
+  }
 
-    @Transactional
-    public CardResponseDto createCard(Long sectionId, CardRequestDto requestDto) {
-        Section section = sectionService.findSection(sectionId);
+  @Transactional
+  public CardResponseDto createCard(Long sectionId, CardRequestDto requestDto) {
+    Section section = sectionService.findSection(sectionId);
 
-        Card card = cardRepository.save(new Card(section, requestDto));
-        return new CardResponseDto(card);
-    }
+    Card card = cardRepository.save(new Card(section, requestDto));
+    return new CardResponseDto(card);
+  }
 
-    @Transactional
-    public CardResponseDto updateCard(Long cardId, CardRequestDto requestDto) {
-        Card card = findCard(cardId);
+  @Transactional
+  public CardResponseDto updateCard(Long cardId, CardRequestDto requestDto) {
+    Card card = findCard(cardId);
 
-        card.setCardName(requestDto.getCardName());
-        card.setCardDesc(requestDto.getCardDesc());
-        card.setCardColor(requestDto.getCardColor());
-        card.setWorkerId(requestDto.getUserId());
+    card.setCardName(requestDto.getCardName());
+    card.setCardDesc(requestDto.getCardDesc());
+    card.setCardColor(requestDto.getCardColor());
+    card.setWorkerId(requestDto.getUserId());
 
-        return new CardResponseDto(card);
-    }
+    return new CardResponseDto(card);
+  }
 
-    public void deleteCard(Long cardId) {
-        Card card = findCard(cardId);
-        cardRepository.delete(card);
-    }
+  public void deleteCard(Long cardId) {
+    Card card = findCard(cardId);
+    cardRepository.delete(card);
+  }
 
-    public Card findCard(Long cardId) {
-        return cardRepository.findById(cardId).orElseThrow(() ->
-                new IllegalArgumentException("해당 카드는 존재하지 않습니다."));
-    }
+  public Card findCard(Long cardId) {
+    return cardRepository.findById(cardId).orElseThrow(() ->
+        new IllegalArgumentException("해당 카드는 존재하지 않습니다."));
+  }
 }

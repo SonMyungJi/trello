@@ -2,7 +2,6 @@ package com.example.trello.service;
 
 import com.example.trello.dto.CommentRequestDto;
 import com.example.trello.dto.CommentResponseDto;
-import com.example.trello.entity.Board;
 import com.example.trello.entity.Card;
 import com.example.trello.entity.Comment;
 import com.example.trello.entity.User;
@@ -15,41 +14,41 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CommentService {
 
-    private final CommentRepository commentRepository;
-    private final CardService cardService;
+  private final CommentRepository commentRepository;
+  private final CardService cardService;
 
-    @Transactional
-    public CommentResponseDto createComment(Long cardId, CommentRequestDto requestDto, User user) {
-        Card card = cardService.findCard(cardId);
+  @Transactional
+  public CommentResponseDto createComment(Long cardId, CommentRequestDto requestDto, User user) {
+    Card card = cardService.findCard(cardId);
 
-        Comment comment= commentRepository.save(new Comment(card, requestDto, user));
-        return new CommentResponseDto(comment);
+    Comment comment = commentRepository.save(new Comment(card, requestDto, user));
+    return new CommentResponseDto(comment);
+  }
+
+  @Transactional
+  public CommentResponseDto updateComment(Long commentId, CommentRequestDto requestDto, User user) {
+    Comment comment = findComment(commentId);
+
+    if (!(comment.getUser().equals(user))) {
+      throw new IllegalArgumentException("권한이 없습니다");
     }
 
-    @Transactional
-    public CommentResponseDto updateComment(Long commentId, CommentRequestDto requestDto, User user) {
-        Comment comment = findComment(commentId);
+    comment.setBody(requestDto.getBody());
 
-        if(!(comment.getUser().equals(user))) {
-            throw new IllegalArgumentException("권한이 없습니다");
-        }
+    return new CommentResponseDto(comment);
+  }
 
-        comment.setBody(requestDto.getBody());
+  public void deleteComment(Long commentId, User user) {
+    Comment comment = findComment(commentId);
 
-        return new CommentResponseDto(comment);
+    if (!comment.getUser().equals(user)) {
+      throw new IllegalArgumentException("권한이 없습니다");
     }
+    commentRepository.delete(comment);
+  }
 
-    public void deleteComment(Long commentId, User user) {
-        Comment comment = findComment(commentId);
-
-        if (!comment.getUser().equals(user)) {
-            throw new IllegalArgumentException("권한이 없습니다");
-        }
-        commentRepository.delete(comment);
-    }
-
-    public Comment findComment(Long commentId) {
-        return commentRepository.findById(commentId).orElseThrow(() ->
-                new IllegalArgumentException("해당 카드는 존재하지 않습니다."));
-    }
+  public Comment findComment(Long commentId) {
+    return commentRepository.findById(commentId).orElseThrow(() ->
+        new IllegalArgumentException("해당 카드는 존재하지 않습니다."));
+  }
 }
