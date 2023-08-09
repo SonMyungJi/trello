@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class SectionService {
 
     private final SectionRepository sectionRepository;
-    private final BoardServiceImpl boardService;
+    private final BoardService boardService;
 
     //컬럼 조회
     public SectionListResponseDto findBySectionWithCard() {
