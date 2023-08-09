@@ -37,7 +37,7 @@ public class Board extends TimeStamped{
     @JoinColumn(name = "user_id", nullable = false)
     private User creator; // 보드 생성자
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     private Set<Section> sections = new HashSet<>();
 
     public Board(BoardRequestDto boardRequestDto, User user){

@@ -35,7 +35,7 @@ public class Card {
     @Column
     private Date dueDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sectionId")
     private Section section;
 
