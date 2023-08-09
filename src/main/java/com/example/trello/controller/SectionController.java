@@ -25,9 +25,9 @@ public class SectionController {
         }
 
     //section 생성
-    @PostMapping("/section")
-    public ResponseEntity<SectionResponseDto> createSection(@RequestBody SectionRequestDto sectionRequestDto) {
-        SectionResponseDto createSection = sectionService.createSection(sectionRequestDto);
+    @PostMapping("/board/{boardId}/section")
+    public ResponseEntity<SectionResponseDto> createSection(@PathVariable Long boardId, @RequestBody SectionRequestDto sectionRequestDto) {
+        SectionResponseDto createSection = sectionService.createSection(boardId, sectionRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createSection);
     }
 
