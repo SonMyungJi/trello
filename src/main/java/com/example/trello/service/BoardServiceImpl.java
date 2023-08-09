@@ -8,7 +8,6 @@ import com.example.trello.entity.BoardUser;
 import com.example.trello.entity.BoardUserRoleEnum;
 import com.example.trello.entity.User;
 import com.example.trello.repository.BoardRepository;
-import com.example.trello.repository.BoardUserRepository;
 import com.example.trello.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,6 @@ import java.util.List;
 public class BoardServiceImpl implements BoardService{
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
-    private final BoardUserRepository boardUserRepository;
 
     @Override
     public List<BoardResponseDto> getBoards(){
@@ -78,7 +76,6 @@ public class BoardServiceImpl implements BoardService{
         board.addBoardUsers(boardUser); // 보드사용자 목록에 유저추가
 
         boardRepository.save(board);
-        boardUserRepository.save(boardUser);
 
         return new BoardResponseDto(board);
     }
@@ -117,12 +114,12 @@ public class BoardServiceImpl implements BoardService{
 
     @Override
     @Transactional
-    public void inviteBoard(Long boardid, Long userid, User user) {
+    public void inviteBoard(Long boardid, Long userid, User user){
         Board board = boardRepository.findById(boardid).orElseThrow(
                 () -> new IllegalArgumentException("초대할 보드가 존재하지 않습니다.")
         );
 
-        if (!board.getCreator().getUserId().equals(user.getUserId())) {
+        if(!board.getCreator().getUserId().equals(user.getUserId())){
             throw new IllegalArgumentException("보드 생성자만 초대할 수 있습니다.");
         }
 
@@ -130,18 +127,18 @@ public class BoardServiceImpl implements BoardService{
                 () -> new IllegalArgumentException("초대받을 유저가 존재하지 않습니다.")
         );
 
-        if (board.getBoardUsers().stream().anyMatch(boardUser -> boardUser.getUser().equals(invitedUser))) {
+        if(board.getBoardUsers().stream().anyMatch(boardUser -> boardUser.getUser().equals(invitedUser))){
             throw new IllegalArgumentException("이미 보드에 포함된 유저입니다.");
         } else {
             BoardUser boardUser = new BoardUser(invitedUser, board, BoardUserRoleEnum.USER);
             board.addBoardUsers(boardUser);
             boardRepository.save(board);
         }
+
     }
 
     public Board findBoard(Long boardId) {
         return boardRepository.findById(boardId).orElseThrow(() ->
                 new IllegalArgumentException("해당 카드는 존재하지 않습니다."));
     }
-
-    }
+}

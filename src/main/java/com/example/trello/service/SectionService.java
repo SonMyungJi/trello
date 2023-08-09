@@ -1,9 +1,11 @@
 package com.example.trello.service;
 
+import com.example.trello.dto.CardResponseDto;
 import com.example.trello.dto.SectionListResponseDto;
 import com.example.trello.dto.SectionRequestDto;
 import com.example.trello.dto.SectionResponseDto;
 import com.example.trello.entity.Board;
+import com.example.trello.entity.Card;
 import com.example.trello.entity.Section;
 import com.example.trello.repository.SectionRepository;
 import lombok.RequiredArgsConstructor;
