@@ -7,8 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Setter
@@ -17,7 +15,6 @@ import java.util.List;
 @EqualsAndHashCode
 @Table(name = "users")
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
@@ -31,8 +28,9 @@ public class User {
     @Column(name = "nickname", nullable = false)
     private String nickname;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BoardUser> boardUsers = new ArrayList<>();
+    @Column(nullable = false, unique = true)
+    private String email;
+    private Long kakaoId;
 
     public User(String username, String password, String nickname) {
         this.username = username;
@@ -45,11 +43,15 @@ public class User {
         this.password = password;
     }
 
-//    public User getUser(Long userId) {
-//        if (this.userId != null && this.userId.equals(userId)) {
-//            return this;
-//        } else {
-//            return null; // 예시로 userId가 일치하지 않을 경우 null을 반환합니다.
-//        }
-//    }
+    public User(String username, String password, String email, Long kakaoId) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.kakaoId =kakaoId;
+    }
+
+    public User kakaoIdUpdate(Long kakaoId) {
+        this.kakaoId = kakaoId;
+        return this;
+    }
 }
