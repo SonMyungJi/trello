@@ -1,7 +1,6 @@
 package com.example.trello.dto;
 
 import com.example.trello.entity.Card;
-import com.example.trello.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,10 +9,10 @@ import lombok.Setter;
 public class CardTitleResponseDto {
 
   private String cardName;
-//  private User user;
+  private String nickName;
 
   public CardTitleResponseDto(Card card) {
     this.cardName = card.getCardName();
-//    this.user = user.getUser(card.getWorkerId());
+    this.nickName = card.getNickname();
   }
 }

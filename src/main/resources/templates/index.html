@@ -275,6 +275,12 @@
   }
 
   // 담당자
+
+  function clearInput() {
+    const input = document.getElementById('card-admin');
+    input.value = ''; // 이전 정보 지우기
+  }
+
   function showSuggestions() {
     const input = document.getElementById('card-admin');
     const suggestions = document.getElementById('suggestions');
