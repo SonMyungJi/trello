@@ -3,6 +3,7 @@ package com.example.trello.config;
 import com.example.trello.jwt.JwtAuthorizationFilter;
 import com.example.trello.jwt.JwtUtil;
 import com.example.trello.security.UserDetailsServiceImpl;
+import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 public class WebSecurityConfig {
 
   private final JwtUtil jwtUtil;
