@@ -27,6 +27,10 @@ public class User {
     @Column(name = "nickname", nullable = false)
     private String nickname;
 
+    @Column(nullable = false, unique = true)
+    private String email;
+    private Long kakaoId;
+
     public User(String username, String password, String nickname) {
         this.username = username;
         this.password = password;
@@ -36,5 +40,17 @@ public class User {
     public void update(UpdateRequestDto updateRequestDto, String password) {
         this.nickname = updateRequestDto.getNickname();
         this.password = password;
+    }
+
+    public User(String username, String password, String email, Long kakaoId) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.kakaoId =kakaoId;
+    }
+
+    public User kakaoIdUpdate(Long kakaoId) {
+        this.kakaoId = kakaoId;
+        return this;
     }
 }
