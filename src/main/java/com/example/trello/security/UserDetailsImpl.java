@@ -1,27 +1,26 @@
-package com.example.trello.auth;
+package com.example.trello.security;
 
 import com.example.trello.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class UserDetailsImpl implements UserDetails {
+
     private final User user;
-    private final Set<GrantedAuthority> authorities;
-    public UserDetailsImpl(User user, Set<GrantedAuthority> authorities) {
+
+    public UserDetailsImpl(User user) {
         this.user = user;
-        this.authorities = authorities;
     }
+
     public User getUser() {
-        return this.user;
-    } // this.user -> 인스턴스 변수임을 명시
+        return user;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+        return null;
     }
 
     @Override
@@ -31,26 +30,27 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getNickname();
+        return user.getUsername();
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return false;
     }
 }
+

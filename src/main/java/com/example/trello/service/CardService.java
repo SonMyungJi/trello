@@ -2,10 +2,8 @@ package com.example.trello.service;
 
 import com.example.trello.dto.CardRequestDto;
 import com.example.trello.dto.CardResponseDto;
-import com.example.trello.entity.Board;
 import com.example.trello.entity.Card;
-import com.example.trello.entity.Columns;
-import com.example.trello.entity.User;
+import com.example.trello.entity.Section;
 import com.example.trello.repository.CardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,41 +13,25 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CardService {
     private final CardRepository cardRepository;
-    private final ColumnService columnService;
-    private final GroupService groupService;
+    private final SectionService sectionService;
 
-    public CardResponseDto getCard(Long cardId, User user) {
+    public CardResponseDto getCard(Long cardId) {
         Card card = findCard(cardId);
-
-        // 유저가 그룹의 멤버인지 확인
-        if (!groupService.userBelongsToGroup(user, card.getColumns().getBoard().getGroup())) {
-            throw new RuntimeException("User is not a member of the group.");
-        }
 
         return new CardResponseDto(card);
     }
 
     @Transactional
-    public CardResponseDto createCard(Long columnsId, CardRequestDto requestDto, User user) {
-        Columns columns = columnService.findColumn(columnsId);
+    public CardResponseDto createCard(Long sectionId, CardRequestDto requestDto) {
+        Section section = sectionService.findSection(sectionId);
 
-        // 유저가 그룹의 멤버인지 확인
-        if (!groupService.userBelongsToGroup(user, columns.getBoard().getGroup())) {
-            throw new RuntimeException("User is not a member of the group.");
-        }
-
-        Card card = cardRepository.save(new Card(columns, requestDto));
+        Card card = cardRepository.save(new Card(section, requestDto));
         return new CardResponseDto(card);
     }
 
     @Transactional
-    public CardResponseDto updateCard(Long cardId, CardRequestDto requestDto, User user) {
+    public CardResponseDto updateCard(Long cardId, CardRequestDto requestDto) {
         Card card = findCard(cardId);
-
-        // 유저가 그룹의 멤버인지 확인
-        if (!groupService.userBelongsToGroup(user, card.getColumns().getBoard().getGroup())) {
-            throw new RuntimeException("User is not a member of the group.");
-        }
 
         card.setCardName(requestDto.getCardName());
         card.setCardDesc(requestDto.getCardDesc());
@@ -59,14 +41,8 @@ public class CardService {
         return new CardResponseDto(card);
     }
 
-    public void deleteCard(Long cardId, User user) {
+    public void deleteCard(Long cardId) {
         Card card = findCard(cardId);
-
-        // 유저가 그룹의 멤버인지 확인
-        if (!groupService.userBelongsToGroup(user, card.getColumns().getBoard().getGroup())) {
-            throw new RuntimeException("User is not a member of the group.");
-        }
-
         cardRepository.delete(card);
     }
 

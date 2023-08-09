@@ -1,34 +1,40 @@
 package com.example.trello.entity;
 
-import com.example.trello.dto.SignupRequestDto;
+import com.example.trello.dto.UpdateRequestDto;
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode
+@Table(name = "users")
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long userId;
 
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
-    private String nickname;
+
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private Set<UserGroup> userGroups = new HashSet<>();
+    @Column(name = "nickname", nullable = false)
+    private String nickname;
 
-    public User(String username, String nickname, String password) {
+    public User(String username, String password, String nickname) {
         this.username = username;
+        this.password = password;
         this.nickname = nickname;
+    }
+
+    public void update(UpdateRequestDto updateRequestDto, String password) {
+        this.nickname = updateRequestDto.getNickname();
         this.password = password;
     }
 }
