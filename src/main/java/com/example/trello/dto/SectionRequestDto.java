@@ -2,11 +2,10 @@ package com.example.trello.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @NoArgsConstructor
-public class ColumnRequestDto {
-    private String columnsName;
+public class SectionRequestDto {
+    private String sectionName;
 
 }

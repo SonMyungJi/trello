@@ -29,9 +29,9 @@ public class BoardController {
     }
 
     // 보드 개별조회
-    @GetMapping("/boards/{id}")
-    public ResponseEntity<BoardResponseDto> getBoard(@PathVariable Long id){
-        BoardResponseDto boardResponseDto = boardService.getBoard(id);
+    @GetMapping("/boards/{boardId}")
+    public ResponseEntity<BoardResponseDto> getBoard(@PathVariable Long boardId){
+        BoardResponseDto boardResponseDto = boardService.getBoard(boardId);
         return ResponseEntity.ok().body(boardResponseDto);
     }
 
@@ -43,9 +43,9 @@ public class BoardController {
     }
 
     // 보드 유저 조회 (선택보드)
-    @GetMapping("/boards/user/{id}")
-    public ResponseEntity<BoardUserResponseDto> getBoardUser(@PathVariable Long id){
-        BoardUserResponseDto boardUserResponseDto = boardService.getBoardUser(id);
+    @GetMapping("/boards/user/{userId}")
+    public ResponseEntity<BoardUserResponseDto> getBoardUser(@PathVariable Long userId){
+        BoardUserResponseDto boardUserResponseDto = boardService.getBoardUser(userId);
         return ResponseEntity.ok().body(boardUserResponseDto);
     }
 
@@ -59,22 +59,22 @@ public class BoardController {
     }
 
     // 보드 수정
-    @PutMapping("/boards/{id}")
-    public ResponseEntity<BoardResponseDto> updateBoard(@PathVariable Long id,
+    @PutMapping("/boards/{boardId}")
+    public ResponseEntity<BoardResponseDto> updateBoard(@PathVariable Long boardId,
                                                         @RequestBody BoardRequestDto boardRequestDto,
                                                         @AuthenticationPrincipal UserDetailsImpl userDetails){
 
-        BoardResponseDto boardResponseDto = boardService.updateBoard(id, boardRequestDto, userDetails.getUser());
+        BoardResponseDto boardResponseDto = boardService.updateBoard(boardId, boardRequestDto, userDetails.getUser());
 
         return ResponseEntity.ok().body(boardResponseDto);
     }
 
     // 보드 삭제
-    @DeleteMapping("/boards/{id}")
-    public ResponseEntity<ApiResponseDto> deleteBoard(@PathVariable Long id,
+    @DeleteMapping("/boards/{boardId}")
+    public ResponseEntity<ApiResponseDto> deleteBoard(@PathVariable Long boardId,
                                                       @AuthenticationPrincipal UserDetailsImpl userDetails){
         try{
-            boardService.deleteBoard(id, userDetails.getUser());
+            boardService.deleteBoard(boardId, userDetails.getUser());
         } catch (IllegalArgumentException e){
             return ResponseEntity.badRequest().body(new ApiResponseDto(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
         }
@@ -83,12 +83,12 @@ public class BoardController {
     }
 
     // 보드 초대
-    @PostMapping("/boards/{boardid}/invite/{userid}")
-    public ResponseEntity<ApiResponseDto> inviteBoard(@PathVariable Long boardid,
-                                                      @PathVariable Long userid,
+    @PostMapping("/boards/{boardId}/invite/{userId}")
+    public ResponseEntity<ApiResponseDto> inviteBoard(@PathVariable Long boardId,
+                                                      @PathVariable Long userId,
                                                       @AuthenticationPrincipal UserDetailsImpl userDetails){
         try{
-            boardService.inviteBoard(boardid, userid, userDetails.getUser());
+            boardService.inviteBoard(boardId, userId, userDetails.getUser());
         } catch (IllegalArgumentException e){
             return ResponseEntity.badRequest().body(new ApiResponseDto(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
         }

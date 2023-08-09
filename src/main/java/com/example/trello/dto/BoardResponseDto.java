@@ -11,7 +11,7 @@ public class BoardResponseDto {
     private String boardName; // 보드 이름
     private String boardContents; // 보드 설명
     private String boardColor; // 보드 배경 색상
-    private LocalDateTime created; // 생성시간
+    private LocalDateTime createdAt; // 생성시간
     private LocalDateTime modifiedAt; // 수정시간
 
     public BoardResponseDto(Board board){
@@ -19,7 +19,7 @@ public class BoardResponseDto {
         this.boardName = board.getBoardName();
         this.boardContents = board.getBoardContents();
         this.boardColor = board.getBoardColor();
-        this.created = board.getCreatedAt();
+        this.createdAt = board.getCreatedAt();
         this.modifiedAt = board.getModifiedAt();
     }
 }
