@@ -23,7 +23,7 @@ public class WebController {
 
   @GetMapping("")
   public String home() {
-    return "card";
+    return "index";
   }
 
   @GetMapping("signup")
