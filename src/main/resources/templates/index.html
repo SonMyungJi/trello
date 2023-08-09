@@ -27,12 +27,53 @@
         .btn1 {
             float: right;
             border: 1px solid black;
+            width: 24px;
         }
 
         .btn2 {
             float: left;
             margin-right: 20px;
             border: 1px solid black;
+            width: 24px;
+        }
+
+        *{padding:0;margin:0}
+        ul,ol{list-style:none}
+        a{text-decoration:none;color:#fff;font-size:15px}
+        nav{width:80%;overflow:hidden;height:80px;background-color:#1b2035;margin:50px auto}
+
+        #nav3 {
+            width: 100%;
+            position: relative;
+            text-align: right;
+        }
+        #nav3>a {
+            line-height: 80px;
+            display: block;
+            font-size: 30px;
+            font-weight: 900;
+            position: absolute;
+            left: 30px;
+        }
+        #nav3>select {
+            padding: 0 20px;
+            height: 30px;
+            background-color: #1b2035;
+            color: #fff;
+            position: absolute;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-15px);
+            border: 2px solid #fff;
+            border-radius: 30px;
+        }
+        #nav3>ul {
+            display: inline-block;
+        }
+        #nav3>ul li {
+            float: left;
+            line-height: 80px;
+            padding: 0 30px;
         }
     </style>
 
@@ -56,13 +97,24 @@
     </script>
 </head>
 <body>
-<div class="card-container">
-    <div class="card" style="max-width: 18rem;">
-        <div class="card-header">Backlog<button onclick="addBoard()" class="btn1" name="button">+</button></div>
-        <div class="card-body text-dark">
-            <div class="card-title"><button class="btn2" name="button" onclick="addCard(this)">+</button>카드이름</div>
+
+<nav id="nav3">
+    <a href="index.html">1보후퇴-2보전진</a>
+    <ul>
+        <li><a href="login.html">로그인</a></li>
+        <li><a href="signup.html">회원가입</a></li>
+        <li><a href="profile.html">프로필 수정</a></li>
+        <li><a href="index.html">로그아웃</a></li>
+    </ul>
+</nav>
+
+    <div class="card-container">
+        <div class="card" style="max-width: 18rem;">
+            <div class="card-header">Backlog<button onclick="addBoard()" class="btn1" name="button">+</button></div>
+            <div class="card-body text-dark">
+                <div class="card-title"><button class="btn2" name="button" onclick="addCard(this)">+</button>카드이름</div>
+            </div>
         </div>
     </div>
-</div>
 </body>
 </html>
