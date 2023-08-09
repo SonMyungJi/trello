@@ -32,16 +32,16 @@ public class UserController {
         return userService.lookupUser(userDetails.getUser().getUserId());
     }
 
-    @PutMapping("/profile/{user_id}")
+    @PutMapping("/profile/{userId}")
     @ResponseBody
-    public ResponseEntity<ApiResponseDto> updateUser(@PathVariable Long user_id, @RequestBody UpdateRequestDto updateRequestDto) {
-        return userService.updateUser(user_id, updateRequestDto);
+    public ResponseEntity<ApiResponseDto> updateUser(@PathVariable Long userId, @RequestBody UpdateRequestDto updateRequestDto) {
+        return userService.updateUser(userId, updateRequestDto);
     }
 
-    @DeleteMapping("/profile/{user_id}")
+    @DeleteMapping("/profile/{userId}")
     @ResponseBody
-    public ResponseEntity<ApiResponseDto> deletePost(@PathVariable Long user_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return userService.deletePost(user_id, userDetails.getUser());
+    public ResponseEntity<ApiResponseDto> deletePost(@PathVariable Long userId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return userService.deletePost(userId, userDetails.getUser());
     }
 
 }
