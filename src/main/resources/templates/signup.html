@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+            integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <title>회원가입 페이지</title>
+    <script src="signup.js"></script>
+    <style>
+        /* 전체 페이지를 가운데 정렬 */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        /* 컨테이너 스타일 */
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: auto;
+            width: 300px;
+            position: relative; /* 포지션 추가 */
+        }
+
+        /* 타이틀 스타일 */
+        h1 {
+            margin-bottom: 20px; /* 간격 추가 */
+        }
+
+        /* 회원가입 폼 스타일 */
+        #signupForm {
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* 입력 필드 스타일 */
+        input[type="email"],
+        input[type="password"],
+        input[type="text"] {
+            padding: 8px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        /* 버튼 스타일 */
+        button[type="submit"] {
+            background-color: black;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #333;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>1보후퇴 2보전진</h1>
+    <form id="signupForm">
+
+    <input type="email" id="email" name="email" placeholder="이메일" required><br><br>
+
+    <input type="password" id="password" name="password" placeholder="패스워드"required><br><br>
+
+    <input type="text" id="nickname" name="nickname" placeholder="닉네임" required><br><br>
+
+    <button type="submit">가입하기</button>
+</form>
+</body>
+</html>

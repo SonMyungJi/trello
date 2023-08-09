@@ -1,5 +1,6 @@
 package com.example.trello.config;
 
+import com.example.trello.auth.UserDetailsServiceImpl;
 import com.example.trello.jwt.JwtAuthorizationFilter;
 import com.example.trello.jwt.JwtUtil;
 import com.example.trello.security.UserDetailsServiceImpl;
@@ -9,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -26,7 +28,13 @@ public class WebSecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
+    private final AuthenticationConfiguration authenticationConfiguration;
 
+    public WebSecurityConfig(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService, AuthenticationConfiguration authenticationConfiguration) {
+        this.jwtUtil = jwtUtil;
+        this.userDetailsService = userDetailsService;
+        this.authenticationConfiguration = authenticationConfiguration;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
