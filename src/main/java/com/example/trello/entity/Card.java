@@ -1,53 +1,61 @@
 package com.example.trello.entity;
 
 import com.example.trello.dto.CardRequestDto;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 public class Card {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long cardId;
 
-    @Column
-    private String cardName;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(nullable = false)
+  private Long cardId;
 
-    @Column
-    private String cardDesc;
+  @Column(nullable = false)
+  private String cardName;
 
-    @Column
-    private String cardColor;
+  @Column(nullable = true)
+  private String cardDesc;
 
-    @Column
-    private Long workerId;
+  @Column(nullable = true)
+  private String cardColor;
 
-    @Column
-    private Date dueDate;
+  @Column(nullable = true)
+  private String nickname;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sectionId")
-    private Section section;
+  @Column(nullable = true)
+  private String dueDate;
 
-    @OneToMany(mappedBy = "card", cascade = CascadeType.REMOVE)
-    private Set<Comment> comments = new HashSet<>();
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "sectionId")
+  private Section section;
 
-    public Card(Section section, CardRequestDto requestDto) {
-        this.section = section;
-        this.cardName = requestDto.getCardName();
-        this.cardDesc = requestDto.getCardDesc();
-        this.cardColor = requestDto.getCardColor();
-        this.workerId = requestDto.getUserId();
-        this.dueDate = requestDto.getDueDate();
-    }
+  @OneToMany(mappedBy = "card", cascade = CascadeType.REMOVE)
+  private Set<Comment> comments = new HashSet<>();
+
+  public Card(Section section, CardRequestDto requestDto) {
+    this.section = section;
+    this.cardName = requestDto.getCardName();
+    this.cardDesc = requestDto.getCardDesc();
+    this.cardColor = requestDto.getCardColor();
+    this.nickname = requestDto.getNickname();
+    this.dueDate = requestDto.getDueDate();
+  }
 }
