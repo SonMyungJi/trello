@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -27,6 +30,9 @@ public class User {
     @Column(name = "nickname", nullable = false)
     private String nickname;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BoardUser> boardUsers = new ArrayList<>();
+
     public User(String username, String password, String nickname) {
         this.username = username;
         this.password = password;
@@ -36,5 +42,13 @@ public class User {
     public void update(UpdateRequestDto updateRequestDto, String password) {
         this.nickname = updateRequestDto.getNickname();
         this.password = password;
+    }
+
+    public User getUser(Long userId) {
+        if (this.userId.equals(userId)) {
+            return this;
+        } else {
+            return null; // 예시로 userId가 일치하지 않을 경우 null을 반환합니다.
+        }
     }
 }
