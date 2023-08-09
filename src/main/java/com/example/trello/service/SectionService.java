@@ -9,6 +9,7 @@ import com.example.trello.entity.Card;
 import com.example.trello.entity.Section;
 import com.example.trello.repository.SectionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,20 +41,22 @@ public class SectionService {
     //컬럼 이름 수정
     public SectionResponseDto updateSectionName(Long sectionId, SectionRequestDto requestDto) {
         Section section = sectionRepository.findById(sectionId).orElse(null);
+        findSection(sectionId);
         if (section != null) {
             section.setSectionName(requestDto);
             sectionRepository.save(section);
             return new SectionResponseDto(section);
         }
-        return null;
+        return new SectionResponseDto(section);
     }
 
 
 
     //컬럼 삭제
     public String sectionDelete(Long sectionId) {
+        findSection(sectionId);
         sectionRepository.deleteById(sectionId);
-        return null;
+        return "삭제가 완료되었습니다.";
     }
 
 

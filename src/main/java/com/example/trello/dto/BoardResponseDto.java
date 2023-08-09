@@ -4,6 +4,8 @@ import com.example.trello.entity.Board;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public class BoardResponseDto {
@@ -13,6 +15,7 @@ public class BoardResponseDto {
     private String boardColor; // 보드 배경 색상
     private LocalDateTime createdAt; // 생성시간
     private LocalDateTime modifiedAt; // 수정시간
+    private List<SectionResponseDto> sectionResponseDtos; // 보드에 연결된 컬럼리스트
 
     public BoardResponseDto(Board board){
         this.id = board.getId();
@@ -21,5 +24,8 @@ public class BoardResponseDto {
         this.boardColor = board.getBoardColor();
         this.createdAt = board.getCreatedAt();
         this.modifiedAt = board.getModifiedAt();
+        this.sectionResponseDtos = board.getSections().stream()
+                .map(SectionResponseDto::new)
+                .collect(Collectors.toList());
     }
 }
