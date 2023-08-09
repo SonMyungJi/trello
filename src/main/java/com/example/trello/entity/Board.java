@@ -30,13 +30,15 @@ public class Board extends TimeStamped{
     @Column(nullable = false)
     private String boardColor; // 보드 배경 색상
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BoardUser> boardUsers = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User creator; // 보드 생성자
 
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    private Set<Section> sections = new HashSet<>();
 
     public Board(BoardRequestDto boardRequestDto, User user){
         this.boardName = boardRequestDto.getBoardName();

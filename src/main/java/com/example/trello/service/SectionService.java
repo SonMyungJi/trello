@@ -1,8 +1,11 @@
 package com.example.trello.service;
 
+import com.example.trello.dto.CardResponseDto;
 import com.example.trello.dto.SectionListResponseDto;
 import com.example.trello.dto.SectionRequestDto;
 import com.example.trello.dto.SectionResponseDto;
+import com.example.trello.entity.Board;
+import com.example.trello.entity.Card;
 import com.example.trello.entity.Section;
 import com.example.trello.repository.SectionRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +19,7 @@ import java.util.stream.Collectors;
 public class SectionService {
 
     private final SectionRepository sectionRepository;
+    private final BoardServiceImpl boardService;
 
     //컬럼 조회
     public SectionListResponseDto findBySectionWithCard() {
@@ -27,10 +31,10 @@ public class SectionService {
     }
 
     //컬럼 생성
-    public SectionResponseDto createSection(SectionRequestDto requestDto) {
-        Section section = new Section(requestDto);
-//        columns.setColumnsName(requestDto);
-        return new SectionResponseDto(sectionRepository.save(section));
+    public SectionResponseDto createSection(Long boardId, SectionRequestDto requestDto) {
+        Board board = boardService.findBoard(boardId);
+        Section section = sectionRepository.save(new Section(board, requestDto));
+        return new SectionResponseDto(section);
     }
 
     //컬럼 이름 수정

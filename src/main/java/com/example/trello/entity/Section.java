@@ -30,7 +30,8 @@ public class Section {
     @OneToMany(mappedBy = "section", cascade = CascadeType.REMOVE)
     private Set<Card> cards = new HashSet<>();
 
-    public Section(SectionRequestDto requestDto) {
+    public Section(Board board, SectionRequestDto requestDto) {
+        this.board = board;
         this.sectionName = requestDto.getSectionName();
     }
 
