@@ -12,6 +12,6 @@ public class CardRequestDto {
     private String cardDesc;
     private String cardColor;
     private Long userId; // 작업자 할당
-    private Long columnId; // 카드 이동
+    private Long sectionId; // 카드 이동
     private Date dueDate; // 마감일
 }
