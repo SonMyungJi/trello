@@ -10,10 +10,10 @@ import lombok.Setter;
 public class CardTitleResponseDto {
 
   private String cardName;
-  private User user;
+//  private User user;
 
   public CardTitleResponseDto(Card card) {
     this.cardName = card.getCardName();
-    this.user = user.getUser(card.getWorkerId());
+//    this.user = user.getUser(card.getWorkerId());
   }
 }
