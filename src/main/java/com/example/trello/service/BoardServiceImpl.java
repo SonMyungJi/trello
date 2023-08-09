@@ -8,7 +8,6 @@ import com.example.trello.entity.BoardUser;
 import com.example.trello.entity.BoardUserRoleEnum;
 import com.example.trello.entity.User;
 import com.example.trello.repository.BoardRepository;
-import com.example.trello.repository.BoardUserRepository;
 import com.example.trello.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,6 @@ import java.util.List;
 public class BoardServiceImpl implements BoardService{
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
-    private final BoardUserRepository boardUserRepository;
 
     @Override
     public List<BoardResponseDto> getBoards(){
@@ -78,7 +76,6 @@ public class BoardServiceImpl implements BoardService{
         board.addBoardUsers(boardUser); // 보드사용자 목록에 유저추가
 
         boardRepository.save(board);
-        boardUserRepository.save(boardUser);
 
         return new BoardResponseDto(board);
     }
