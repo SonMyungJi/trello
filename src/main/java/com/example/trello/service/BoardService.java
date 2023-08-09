@@ -10,6 +10,7 @@ import com.example.trello.entity.User;
 import com.example.trello.repository.BoardRepository;
 import com.example.trello.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BoardService{
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
@@ -122,9 +124,10 @@ public class BoardService{
                 () -> new IllegalArgumentException("초대할 보드가 존재하지 않습니다.")
         );
 
-        if(!board.getCreator().getUserId().equals(user.getUserId())){
-            throw new IllegalArgumentException("보드 생성자만 초대할 수 있습니다.");
-        }
+//        if(!board.getCreator().getUserId().equals(user.getUserId())){
+//            throw new IllegalArgumentException("보드 생성자만 초대할 수 있습니다.");
+//        }
+        validateBoardAdminRole(board, user);
 
         User invitedUser = userRepository.findById(userid).orElseThrow(
                 () -> new IllegalArgumentException("초대받을 유저가 존재하지 않습니다.")
@@ -143,5 +146,20 @@ public class BoardService{
     public Board findBoard(Long boardId) {
         return boardRepository.findById(boardId).orElseThrow(() ->
                 new IllegalArgumentException("해당 카드는 존재하지 않습니다."));
+    }
+
+    // 관리자 체크
+    public boolean validateBoardAdminRole(Board board, User user) {
+        log.info("validateUserRole()");
+        boolean isAdmin = board.getBoardUsers().stream()
+                .anyMatch(boardUser -> boardUser.getUser().getUserId().equals(user.getUserId()) && boardUser.getRole() == BoardUserRoleEnum.ADMIN);
+
+         log.info(String.valueOf(isAdmin));
+
+        if(!isAdmin){
+            throw new IllegalArgumentException("관리자 권한입니다.");
+        } else {
+            return true;
+        }
     }
 }
