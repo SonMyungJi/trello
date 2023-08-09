@@ -27,11 +27,11 @@ public class CardResponseDto {
         this.cardName = card.getCardName();
         this.cardDesc = card.getCardDesc();
         this.cardColor = card.getCardColor();
-        for (Comment comment : card.getComments()) {
-            commentList.add(new CommentResponseDto(comment));
-        }
         this.user = user.getUser(card.getWorkerId());
         this.section = card.getSection();
         this.dueDate = card.getDueDate();
+        for (Comment comment : card.getComments()) {
+            commentList.add(new CommentResponseDto(comment));
+        }
     }
 }
