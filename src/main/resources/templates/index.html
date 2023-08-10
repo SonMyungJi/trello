@@ -238,22 +238,38 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
   $(document).ready(function () {
+    let sectionCounter = 1;
+    let cardCounter = 1; // 추가된 카드의 수를 추적하는 변수
+
     $(".btn1").click(function () {
       var clonedBoard = $(".card:first").clone();
       clonedBoard.find(".card-title").text("");
       clonedBoard.find(".card-body").empty();
       clonedBoard.find(".card-body").append(
-          '<div class="card-title"><button class="btn2" name="button">+</button>카드이름</div>');
+          '<button class="btn2" name="button">+</button><button id="showModalBtn" data-card-id="'
+          + cardCounter + '">카드이름</button>');
       $(".card-container").append(clonedBoard);
+      sectionCounter++;
     });
 
     $(document).on("click", ".btn2", function () {
       var cardTitle = $(this).closest(".card").find(".card-title").text();
       var newCardTitle = cardTitle.replace("+ ", ""); // + 카드이름에서 + 제거
       $(this).closest(".card-body").append(
-          '<div class="card-title"><button class="btn2" name="button">+</button>' + `카드이름`
+          '<div class="card-title"><button class="btn2" name="button">+</button>'
+          + `<button id="showModalBtn" data-card-id="${cardCounter}">카드이름</button>`
           + '</div>');
+      cardCounter++;
     });
+  });
+
+  // $(document).on("click", ".showModalBtn", function () {
+  //   const cardId = $(this).data('card-id');
+  //   showModal(cardId);
+  // });
+
+  $(document).on("click", "#showModalBtn", function () {
+    showModal();
   });
 
   const showModalBtn = document.getElementById('showModalBtn');
@@ -270,12 +286,16 @@
     }
   });
 
+  function showModal() {
+    const cardModal = $("#cardModal");
+    cardModal.css("display", "block");
+  }
+
   function closeModal() {
     cardModal.style.display = 'none';
   }
 
   // 담당자
-
   function clearInput() {
     const input = document.getElementById('card-admin');
     input.value = ''; // 이전 정보 지우기
@@ -337,25 +357,6 @@
       commentInput.value = '';
     }
   });
-
-  function deleteCard(element) {
-    let jwtCookie = getCookieValueByName("jwt");
-    let cardId = element.getAttribute('value');
-
-    fetch(`/api/card/${cardId}`, {
-      method: 'DELETE',
-      headers: {
-        "Authorization": "Bearer " + jwtCookie,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(formData)
-    })
-    .then(response => response.json())
-    .then(data => {
-      alert(data.message);
-      window.location.reload()
-    })
-  }
 
   // 카드 정보 업데이트
   createCardBtn.addEventListener('click', () => {

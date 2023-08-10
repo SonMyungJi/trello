@@ -154,7 +154,7 @@
     <div class="card-body text-dark">
       <div class="card-title">
         <button class="btn2" name="button" onclick="addCard(this)">+</button>
-        <button id="showModalBtn">카드이름</button>
+        <button id="showModalBtn" data-card-id="1">카드이름</button>
         <div class="card-modal" id="cardModal" style="display: none;">
           <div class="card-content">
             <div class="left-column">
@@ -206,22 +206,39 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
   $(document).ready(function () {
+    let sectionCounter = 1;
+    let cardCounter = 1; // 추가된 카드의 수를 추적하는 변수
+
     $(".btn1").click(function () {
       var clonedBoard = $(".card:first").clone();
       clonedBoard.find(".card-title").text("");
       clonedBoard.find(".card-body").empty();
       clonedBoard.find(".card-body").append(
-          '<div class="card-title"><button class="btn2" name="button">+</button>카드이름</div>');
+          '<button class="btn2" name="button">+</button><button id="showModalBtn" data-card-id="'
+          + cardCounter + '">카드이름</button>');
       $(".card-container").append(clonedBoard);
+      sectionCounter++;
     });
 
     $(document).on("click", ".btn2", function () {
       var cardTitle = $(this).closest(".card").find(".card-title").text();
       var newCardTitle = cardTitle.replace("+ ", ""); // + 카드이름에서 + 제거
       $(this).closest(".card-body").append(
-          '<div class="card-title"><button class="btn2" name="button">+</button>' + `카드이름`
+          '<div class="card-title"><button class="btn2" name="button">+</button>'
+          + `<button id="showModalBtn" data-card-id="${cardCounter}">카드이름</button>`
           + '</div>');
+      cardCounter++;
     });
+  });
+
+  // $(document).on("click", ".showModalBtn", function () {
+  //   const cardId = $(this).data('card-id');
+  //   showModal(cardId);
+  // });
+
+  $(document).on("click", "#showModalBtn", function () {
+    const cardId = $(this).data('card-id');
+    showModal(cardId);
   });
 
   const showModalBtn = document.getElementById('showModalBtn');
@@ -230,7 +247,6 @@
 
   showModalBtn.addEventListener('click', () => {
     cardModal.style.display = 'block';
-    getCard();
   });
 
   cardModal.addEventListener('click', (event) => {
@@ -239,13 +255,8 @@
     }
   });
 
-  function closeModal() {
-    cardModal.style.display = 'none';
-  }
-
-  function getCard() {
-    const container = document.getElementById("card-content");
-
+  function showModal(cardId) {
+    const container = document.querySelector('.card-content');
     fetch(`/api/card/${cardId}`)
     .then(response => response.json())
     .then(async data => {
@@ -257,14 +268,13 @@
       const dueDate = data.dueDate;
       const commentList = data.commentList;
 
-      let html = `
-    <div class="card-content">
-      <div class="left-column">
+      container.innerHTML = `
+    <div class="left-column">
               <span class="fw-bold">${cardName}</span>
               <br>
               <div class="col-md-8"><span>${cardDesc}</span></div>
               <br>
-              <span class="fw-bold">#${nickname}</span>
+              <span class="fw-bold">${nickname}</span>
               <br>
               <span class="fw-bold">만기일</span>
               <span>${dueDate}</span>
@@ -280,20 +290,15 @@
             <div class="right-column">
               <label>Comment</label>
               <div class="comment-list">
-              `;
-
-      commentList.forEach(comment => {
-        html += `
-      <div class="comment-item">
-                  <strong>${comment.user}:</strong> ${comment.text}
+                <div class="comment-item">
+                  <strong>User1:</strong> This is a comment.
                 </div>
-                `;
-      });
-
-      html += `
-</div>
-<br>
-      <div class="comment-input">
+                <div class="comment-item">
+                  <strong>User2:</strong> Another comment here.
+                </div>
+              </div>
+              <br>
+              <div class="comment-input">
                 <input type="text" placeholder="Write a comment">
                 <div class="submitButtonContainer">
                   <button>Submit</button>
@@ -301,13 +306,25 @@
                 <!-- 댓글 리스트 항목 추가 -->
               </div>
             </div>
-            </div>
-      `;
-      container.innerHTML = html;
+`;
+      cardModal.style.display = 'block';
+
     })
-    .catch(error => {
-      console.error("Error fetching card data: ", error);
+
+    function closeModal() {
+      cardModal.style.display = 'none';
+    }
+
+    // 이하의 코드는 모달을 닫는 부분을 유지해야 합니다.
+    cardModal.addEventListener('click', (event) => {
+      if (event.target === cardModal) {
+        closeModal();
+      }
     });
+
+    function closeModal() {
+      cardModal.style.display = 'none';
+    }
   }
 
 </script>
