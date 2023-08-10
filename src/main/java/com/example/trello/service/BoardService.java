@@ -154,7 +154,7 @@ public class BoardService{
         boolean isAdmin = board.getBoardUsers().stream()
                 .anyMatch(boardUser -> boardUser.getUser().getUserId().equals(user.getUserId()) && boardUser.getRole() == BoardUserRoleEnum.ADMIN);
 
-         log.info(String.valueOf(isAdmin));
+        log.info(String.valueOf(isAdmin));
 
         if(!isAdmin){
             throw new IllegalArgumentException("관리자 권한입니다.");

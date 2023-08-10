@@ -21,8 +21,8 @@ public class SectionService {
   //컬럼 조회
   public SectionListResponseDto findBySectionWithCard() {
     List<SectionResponseDto> sectionList = sectionRepository.findAll().stream()
-        .map(SectionResponseDto::new)
-        .collect(Collectors.toList());
+            .map(SectionResponseDto::new)
+            .collect(Collectors.toList());
 
     return new SectionListResponseDto(sectionList);
   }
@@ -57,6 +57,6 @@ public class SectionService {
 
   public Section findSection(Long sectionId) {
     return sectionRepository.findById(sectionId).orElseThrow(() ->
-        new IllegalArgumentException("해당 칼럼는 존재하지 않습니다."));
+            new IllegalArgumentException("해당 칼럼는 존재하지 않습니다."));
   }
 }
