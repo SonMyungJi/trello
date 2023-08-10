@@ -3,15 +3,16 @@ package com.example.trello.config;
 import com.example.trello.jwt.JwtAuthorizationFilter;
 import com.example.trello.jwt.JwtUtil;
 import com.example.trello.security.UserDetailsServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,6 +27,7 @@ public class WebSecurityConfig {
 
   private final JwtUtil jwtUtil;
   private final UserDetailsServiceImpl userDetailsService;
+  private final ObjectMapper objectMapper;
   private final AuthenticationConfiguration authenticationConfiguration;
 
   @Bean
@@ -41,7 +43,7 @@ public class WebSecurityConfig {
 
   @Bean
   public JwtAuthorizationFilter jwtAuthorizationFilter() {
-    return new JwtAuthorizationFilter(jwtUtil, userDetailsService);
+    return new JwtAuthorizationFilter(jwtUtil, userDetailsService, objectMapper);
   }
 
   @Bean

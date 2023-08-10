@@ -1,11 +1,14 @@
 package com.example.trello.jwt;
 
+import com.example.trello.entity.TokenBlacklist;
+import com.example.trello.repository.TokenBlacklistRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -29,7 +32,8 @@ public class JwtUtil {
     public static final String BEARER_PREFIX = "Bearer ";
     private final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
 
-
+    @Autowired
+    private TokenBlacklistRepository tokenBlacklistRepository;
     // application.properties 에서 전역변수를 가져와서 사용
     @Value("${jwt.secret.key}")
     private String secretKey;
@@ -109,5 +113,9 @@ public class JwtUtil {
             return tokenValue.substring(7);
         }
         throw new NullPointerException("Not Found Token");
+    }
+    public boolean isTokenBlacklisted(String tokenValue) {
+        TokenBlacklist tokenBlacklist = tokenBlacklistRepository.findByToken(tokenValue).orElse(null);
+        return tokenBlacklist != null;
     }
 }
