@@ -37,10 +37,6 @@ public class User {
   @Column(name = "nickname", nullable = false)
   private String nickname;
 
-  @Column(nullable = true, unique = true)
-  private String email;
-
-  @Column(nullable = true, unique = true)
   private Long kakaoId;
 
   @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
@@ -52,20 +48,20 @@ public class User {
     this.nickname = nickname;
   }
 
-  public void update(UpdateRequestDto updateRequestDto, String password) {
-    this.nickname = updateRequestDto.getNickname();
-    this.password = password;
-  }
-
-  public User(String username, String password, String email, Long kakaoId) {
+  public User(String username, String password, String nickname, Long kakaoId) {
     this.username = username;
     this.password = password;
-    this.email = email;
+    this.nickname = nickname;
     this.kakaoId = kakaoId;
   }
 
   public User kakaoIdUpdate(Long kakaoId) {
     this.kakaoId = kakaoId;
     return this;
+  }
+
+  public void update(UpdateRequestDto updateRequestDto, String password) {
+    this.nickname = updateRequestDto.getNickname();
+    this.password = password;
   }
 }

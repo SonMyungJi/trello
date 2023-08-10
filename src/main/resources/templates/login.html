@@ -94,7 +94,7 @@
         <button type="submit" onclick="onLogin()">Login</button>
     </form>
     <div class="social-login">
-        <button class="social-btn kakao-btn">카카오로 로그인</button>
+        <button class="social-btn kakao-btn" id="login-kakao-btn" onclick="location.href='https://kauth.kakao.com/oauth/authorize?client_id=fb03738e1b9fc1c6411d877846d5a6b0&redirect_uri=http://localhost:8080/api/user/kakao/callback&response_type=code'">카카오로 로그인</button>
         <button class="social-btn google-btn">구글로 로그인</button>
     </div>
 </div>
@@ -112,7 +112,7 @@
         let password = $('#password').val();
         $.ajax({
             type: "POST",
-            url: `/tdl/user/login`,
+            url: `/api/user/login`,
             contentType: "application/json",
             data: JSON.stringify({username: username, password: password}),
         })
@@ -120,11 +120,12 @@
                 const token = xhr.getResponseHeader('Authorization');
                 // 쿠키 저장
                 Cookies.set('Authorization', token, {path: '/', expires: expirationDate});
+
                 $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
                     jqXHR.setRequestHeader('Authorization', token);
                 });
                 alert("로그인 성공 !")
-                window.location.href = host + '/api/post';
+                window.location.href = host;
             })
             .fail(function (xhr, textStatus, errorThrown) {
                 alert("로그인 실패 !")

@@ -54,14 +54,13 @@ public class WebSecurityConfig {
         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
     );
 
-    http.authorizeHttpRequests((authorizeHttpRequests) ->
-        authorizeHttpRequests
-            .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-            .permitAll() // resources 접근 허용 설정
-            .requestMatchers(HttpMethod.POST, "/api/user/**").permitAll() // 로그인, 회원가입 누구나 가능.
-            .requestMatchers("/api/view/user/**").permitAll()
-            .requestMatchers("/signup", "/login").permitAll()
-            .requestMatchers("/").permitAll()
+
+        http.authorizeHttpRequests((authorizeHttpRequests) ->
+                authorizeHttpRequests
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
+                        .requestMatchers("/api/user/**").permitAll() // 로그인, 회원가입 누구나 가능.
+                        .requestMatchers("/api/view/user/**").permitAll()
+                        .requestMatchers("/").permitAll()
 
             .anyRequest().authenticated() // 그 외 모든 요청 인증처리
     );
