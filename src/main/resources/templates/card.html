@@ -158,48 +158,16 @@
         <div class="card-modal" id="cardModal" style="display: none;">
           <div class="card-content">
             <div class="left-column">
-              <label for="cardTitle">카드 이름</label>
-              <input type="text" id="cardTitle" placeholder="수정해주세요">
+              <span class="fw-bold">CardName</span>
               <br>
-              <label for="cardDescription">개요</label>
-              <textarea id="cardDescription" placeholder="수정해주세요"></textarea>
+              <div class="col-md-8"><span>내용샘플 내용샘플 내용샘플 내용샘플 </span></div>
               <br>
-              <label for="card-admin">작업자</label>
-              <input type="text" id="card-admin" placeholder="#유저이름" oninput="showSuggestions()">
-              <div id="suggestions" style="display: none;">
-                <div class="user-item" onclick="selectUser('User1')">User1</div>
-                <div class="user-item" onclick="selectUser('User2')">User2</div>
-                <div class="user-item" onclick="selectUser('User3')">User3</div>
-                <!-- 다른 사용자 목록 항목 추가 -->
-              </div>
+              <span class="fw-bold">#담당자</span>
               <br>
-              <label for="cardDue" style="display: inline-block; margin-right: 10px;">만기일 설정</label>
-              <input type="text" id="cardDue" placeholder="달력 열기">
-              <br>
-              <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                <label style="margin-right: 10px;">카드색 바꾸기</label>
-                <div class="color-picker">
-                  <div class="color-option" style="background-color: #ff5555"
-                       data-color="#ff5555"></div>
-                  <div class="color-option" style="background-color: #55ff55"
-                       data-color="#55ff55"></div>
-                  <div class="color-option" style="background-color: #5555ff"
-                       data-color="#5555ff"></div>
-                  <div class="color-option" style="background-color: #ff55ff"
-                       data-color="#ff55ff"></div>
-                  <div class="color-option" style="background-color: #55ffff"
-                       data-color="#55ffff"></div>
-                  <div class="color-option" style="background-color: #ffff55"
-                       data-color="#ffff55"></div>
-                </div>
-              </div>
+              <span class="fw-bold">만기일</span>
+              <span> 2023-08-10 </span>
               <div class="add-file">
-                <label style="margin-right: 10px;">파일첨부</label>
                 <form action="/upload" method="post" enctype="multipart/form-data">
-                  <input type="file" name="file"/>
-                  <input type="submit" value="Upload"/>
-                  <br>
-                  <br>
                   <a href="/download/sample.txt">파일 다운로드</a>
                 </form>
               </div>
@@ -262,6 +230,7 @@
 
   showModalBtn.addEventListener('click', () => {
     cardModal.style.display = 'block';
+    getCard();
   });
 
   cardModal.addEventListener('click', (event) => {
@@ -274,123 +243,72 @@
     cardModal.style.display = 'none';
   }
 
-  // 담당자
+  function getCard() {
+    const container = document.getElementById("card-content");
 
-  function clearInput() {
-    const input = document.getElementById('card-admin');
-    input.value = ''; // 이전 정보 지우기
-  }
-
-  function showSuggestions() {
-    const input = document.getElementById('card-admin');
-    const suggestions = document.getElementById('suggestions');
-
-    if (input.value.startsWith('#')) {
-      suggestions.style.display = 'block';
-    } else {
-      suggestions.style.display = 'none';
-    }
-  }
-
-  function selectUser(username) {
-    const input = document.getElementById('card-admin');
-    input.value = username;
-    suggestions.style.display = 'none';
-  }
-
-  // 달력
-  const cardDueInput = document.getElementById('cardDue');
-  const openDatePickerBtn = document.getElementById('openDatePicker');
-
-  const datePicker = flatpickr(cardDueInput, {
-    dateFormat: 'Y-m-d',
-    defaultDate: '',
-    minDate: 'today',
-    disableMobile: true,
-  });
-
-  openDatePickerBtn.addEventListener('click', () => {
-    datePicker.open();
-  });
-
-  // 색상 설정
-  const cardColorInput = document.getElementById('cardColor');
-  const colorOptions = document.querySelectorAll('.color-option');
-
-  colorOptions.forEach(option => {
-    option.addEventListener('click', () => {
-      const selectedColor = option.getAttribute('data-color');
-      cardColorInput.value = selectedColor;
-    });
-  });
-
-  // 댓글 추가 버튼 클릭 시 댓글 추가
-  const commentSection = document.querySelector('.comment-section');
-
-  document.getElementById('createCardBtn').addEventListener('click', () => {
-    const commentInput = document.getElementById('commentInput');
-    if (commentInput.value) {
-      const comment = document.createElement('div');
-      comment.className = 'comment';
-      comment.textContent = commentInput.value;
-      commentSection.appendChild(comment);
-      commentInput.value = '';
-    }
-  });
-
-  function deleteCard(element) {
-    let jwtCookie = getCookieValueByName("jwt");
-    let cardId = element.getAttribute('value');
-
-    fetch(`/api/card/${cardId}`, {
-      method: 'DELETE',
-      headers: {
-        "Authorization": "Bearer " + jwtCookie,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(formData)
-    })
+    fetch(`/api/card/${cardId}`)
     .then(response => response.json())
-    .then(data => {
-      alert(data.message);
-      window.location.reload()
-    })
-  }
+    .then(async data => {
+      const cardId = data.cardId;
+      const cardName = data.cardName;
+      const cardDesc = data.cardDesc;
+      const cardColor = data.cardColor;
+      const nickname = data.nickname;
+      const dueDate = data.dueDate;
+      const commentList = data.commentList;
 
-  // 카드 정보 업데이트
-  createCardBtn.addEventListener('click', () => {
-    const cardTitle = document.getElementById('cardTitle').value;
-    const cardDescription = document.getElementById('cardDescription').value;
-    const cardMember = document.getElementById('card-admin').value;
-    const cardDue = cardDueInput.value; // 달력에서 선택한 날짜 가져오기
-    const cardColor = document.getElementById('cardColor').value;
+      let html = `
+    <div class="card-content">
+      <div class="left-column">
+              <span class="fw-bold">${cardName}</span>
+              <br>
+              <div class="col-md-8"><span>${cardDesc}</span></div>
+              <br>
+              <span class="fw-bold">#${nickname}</span>
+              <br>
+              <span class="fw-bold">만기일</span>
+              <span>${dueDate}</span>
+              <div class="add-file">
+                <form action="/upload" method="post" enctype="multipart/form-data">
+                  <a href="/download/sample.txt">파일 다운로드</a>
+                </form>
+              </div>
+              <div class="createButtonContainer">
+                <button id="createCardBtn">업데이트</button>
+              </div>
+            </div>
+            <div class="right-column">
+              <label>Comment</label>
+              <div class="comment-list">
+              `;
 
-    cardModal.style.display = 'none';
+      commentList.forEach(comment => {
+        html += `
+      <div class="comment-item">
+                  <strong>${comment.user}:</strong> ${comment.text}
+                </div>
+                `;
+      });
 
-    const formData = {
-      title: cardTitle,
-      description: cardDescription,
-      member: cardMember,
-      due: cardDue,
-      color: cardColor
-    };
-
-    fetch(`"/api/card/${cardId}"`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(formData)
-    })
-    .then(response => response.json())
-    .then(data => {
-      alert(data.message);
+      html += `
+</div>
+<br>
+      <div class="comment-input">
+                <input type="text" placeholder="Write a comment">
+                <div class="submitButtonContainer">
+                  <button>Submit</button>
+                </div>
+                <!-- 댓글 리스트 항목 추가 -->
+              </div>
+            </div>
+            </div>
+      `;
+      container.innerHTML = html;
     })
     .catch(error => {
-      // 에러 처리
-      console.error('에러:', error);
+      console.error("Error fetching card data: ", error);
     });
-  });
+  }
 
 </script>
 </body>
