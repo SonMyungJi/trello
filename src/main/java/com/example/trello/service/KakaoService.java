@@ -62,7 +62,7 @@ public class KakaoService {
         // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "5350636bd29cb95d69ce8c1da3ba4102");
+        body.add("client_id", "fb03738e1b9fc1c6411d877846d5a6b0");
         body.add("redirect_uri", "http://localhost:8080/api/user/kakao/callback");
         body.add("code", code);
 
@@ -111,11 +111,11 @@ public class KakaoService {
         Long id = jsonNode.get("id").asLong();
         String nickname = jsonNode.get("properties")
                 .get("nickname").asText();
-        String email = jsonNode.get("kakao_account")
+        String username = jsonNode.get("kakao_account")
                 .get("email").asText();
 
-        log.info("카카오 사용자 정보: " + id + ", " + nickname + ", " + email);
-        return new KakaoUserInfoDto(id, nickname, email);
+        log.info("카카오 사용자 정보: " + id + ", " + nickname + ", " + username);
+        return new KakaoUserInfoDto(id, nickname, username);
     }
 
     private User registerKakaoUserIfNeeded(KakaoUserInfoDto kakaoUserInfo) {
@@ -125,10 +125,10 @@ public class KakaoService {
 
         if (kakaoUser == null) {
             // 카카오 사용자 email 동일한 email 가진 회원이 있는지 확인
-            String kakaoEmail = kakaoUserInfo.getEmail();
-            User sameEmailUser = userRepository.findByEmail(kakaoEmail).orElse(null);
-            if (sameEmailUser != null) {
-                kakaoUser = sameEmailUser;
+            String kakaoUsername = kakaoUserInfo.getUsername();
+            User sameUsername = userRepository.findByUsername(kakaoUsername).orElse(null);
+            if (sameUsername != null) {
+                kakaoUser = sameUsername;
                 // 기존 회원정보에 카카오 Id 추가
                 kakaoUser = kakaoUser.kakaoIdUpdate(kakaoId);
             } else {
@@ -138,9 +138,9 @@ public class KakaoService {
                 String encodedPassword = passwordEncoder.encode(password);
 
                 // email: kakao email
-                String email = kakaoUserInfo.getEmail();
+                String username = kakaoUserInfo.getUsername();
 
-                kakaoUser = new User(kakaoUserInfo.getNickname(), encodedPassword, email, kakaoId);
+                kakaoUser = new User(username, encodedPassword, kakaoUserInfo.getNickname(), kakaoId);
             }
 
             userRepository.save(kakaoUser);

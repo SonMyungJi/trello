@@ -25,6 +25,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // request header 에서 토큰을 가져옵니다.
@@ -46,6 +47,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 setAuthentication(info.getSubject());
             }catch (Exception e) {
                 log.error(e.getMessage());
+                return;
             }
         }
 
@@ -53,9 +55,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     }
 
     // 인증 처리 메서드
-    private void setAuthentication(String name) {
+    private void setAuthentication(String username) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
-        Authentication authentication = createAuthentication(name);
+        Authentication authentication = createAuthentication(username);
         context.setAuthentication(authentication);
 
         SecurityContextHolder.setContext(context);
@@ -63,8 +65,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
 
     // 인증 객세 생성 메서드
-    private Authentication createAuthentication(String name) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(name);
+    private Authentication createAuthentication(String username) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         return new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
     }
 
