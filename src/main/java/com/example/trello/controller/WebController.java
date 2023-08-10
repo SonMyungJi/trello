@@ -21,21 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/")
 public class WebController {
 
-  @GetMapping("")
-  public String home() {
-    return "card";
-  }
-
-  @GetMapping("signup")
-  public String signup() {
-    return "signup";
-  }
-
-  @GetMapping("login")
-  public String login() {
-    return "login";
-  }
-
   @PostMapping("upload")
   public String uploadFile(@RequestParam("file") MultipartFile file, Model model) {
     if (file.isEmpty()) {

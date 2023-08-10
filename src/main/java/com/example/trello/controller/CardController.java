@@ -29,7 +29,7 @@ public class CardController {
     return ResponseEntity.ok().body(new ApiResponseDto("카드 조회", HttpStatus.OK.value()));
   }
 
-  @PostMapping("/section/{sectionId}/card")
+  @PostMapping("/column/{sectionId}/card")
   ResponseEntity<CardResponseDto> createCard(@PathVariable Long sectionId,
       @RequestBody CardRequestDto requestDto) {
     CardResponseDto result = cardService.createCard(sectionId, requestDto);
