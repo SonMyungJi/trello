@@ -5,13 +5,16 @@ import com.example.trello.dto.LoginRequestDto;
 import com.example.trello.dto.SignupRequestDto;
 import com.example.trello.dto.UpdateRequestDto;
 import com.example.trello.dto.UserResponseDto;
+import com.example.trello.entity.TokenBlacklist;
 import com.example.trello.entity.User;
 import com.example.trello.jwt.JwtUtil;
+import com.example.trello.repository.TokenBlacklistRepository;
 import com.example.trello.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,11 +23,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final JwtUtil jwtUtil;
+  private final TokenBlacklistRepository tokenBlacklistRepository;
 
   public ResponseEntity<String> signup(SignupRequestDto requestDto) {
     String username = requestDto.getUsername();
@@ -62,6 +67,12 @@ public class UserService {
     response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
 
     return ResponseEntity.ok().body("로그인 성공");
+  }
+
+  @Transactional
+  public void logout(String token) {
+    TokenBlacklist tokenBlacklist = new TokenBlacklist(token);
+    tokenBlacklistRepository.save(tokenBlacklist);
   }
 
   public UserResponseDto lookupUser(Long userId) {
