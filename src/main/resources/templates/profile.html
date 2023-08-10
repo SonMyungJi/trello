@@ -115,7 +115,7 @@
                 data: JSON.stringify(data),
                 success: function (response) {
                     alert("프로필 수정 성공");
-                    window.location.href = 'index.html';
+                    window.location.href = '/api/view/user/login';
                 }, error: function (req, status, error) {
                     alert("프로필 수정 실패");
                 }

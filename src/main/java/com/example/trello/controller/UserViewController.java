@@ -24,8 +24,7 @@ public class UserViewController {
     public String signupPage() { return "signup";}
 
     @GetMapping("/profile")
-    public String updatePage(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails)
-            throws JsonProcessingException {
+    public String updatePage(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) throws JsonProcessingException {
 
         model.addAttribute("info_username",userDetails.getUser().getUsername());
         model.addAttribute("info_user",userDetails.getUser());
