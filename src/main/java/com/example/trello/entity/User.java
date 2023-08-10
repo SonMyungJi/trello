@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 
 @Entity
 @Setter
@@ -29,6 +31,9 @@ public class User {
     private String nickname;
 
     private Long kakaoId;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private List<BoardUser> boardUsers;
 
     public User(String username, String password, String nickname) {
         this.username = username;

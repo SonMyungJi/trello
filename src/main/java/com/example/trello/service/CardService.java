@@ -36,7 +36,7 @@ public class CardService {
     card.setCardName(requestDto.getCardName());
     card.setCardDesc(requestDto.getCardDesc());
     card.setCardColor(requestDto.getCardColor());
-    card.setWorkerId(requestDto.getUserId());
+    card.setNickname(requestDto.getNickname());
 
     return new CardResponseDto(card);
   }
