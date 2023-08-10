@@ -28,5 +28,7 @@ public class UserViewController {
         model.addAttribute("info_user",userDetails.getUser());
         return "profile";
     }
+
+
 }
 
