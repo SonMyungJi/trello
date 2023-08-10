@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,6 +64,12 @@ public class UserController {
         response.addCookie(cookie);
 
         return "redirect:/";
+    }
+    //권한 설정
+    @PreAuthorize("hasRole('USER')")
+    @RequestMapping("/secured")
+    public String securedPage() {
+        return "This is a secured page.";
     }
 
 }

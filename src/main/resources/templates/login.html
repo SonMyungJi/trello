@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <title>Login Page</title>
     <style>
         body {
@@ -108,13 +109,14 @@
     var expirationDate = new Date();
     expirationDate.setTime(expirationDate.getTime() + (maxAgeInSeconds * 1000));
     function onLogin() {
-        let username = $('#username').val();
+        // let username = $('#username').val();
+        let email = $('#email').val();
         let password = $('#password').val();
         $.ajax({
             type: "POST",
             url: `/api/user/login`,
             contentType: "application/json",
-            data: JSON.stringify({username: username, password: password}),
+            data: JSON.stringify({username: email, password: password}),
         })
             .done(function (res, status, xhr) {
                 const token = xhr.getResponseHeader('Authorization');
@@ -125,13 +127,15 @@
                     jqXHR.setRequestHeader('Authorization', token);
                 });
                 alert("로그인 성공 !")
-                window.location.href = host;
+                window.location.href = host + '/';
             })
+
             .fail(function (xhr, textStatus, errorThrown) {
                 alert("로그인 실패 !")
                 console.log('statusCode: ' + xhr.status);
                 window.location.href = host + '/api/view/user/login'
             });
+
     }
 </script>
 </html>
