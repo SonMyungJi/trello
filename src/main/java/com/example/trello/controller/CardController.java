@@ -31,14 +31,14 @@ public class CardController {
 
   @PostMapping("/column/{sectionId}/card")
   ResponseEntity<CardResponseDto> createCard(@PathVariable Long sectionId,
-      @RequestBody CardRequestDto requestDto) {
+                                             @RequestBody CardRequestDto requestDto) {
     CardResponseDto result = cardService.createCard(sectionId, requestDto);
     return ResponseEntity.status(HttpStatus.CREATED).body(result);
   }
 
   @PutMapping("/card/{cardId}")
   ResponseEntity<CardResponseDto> updateCard(@PathVariable Long cardId,
-      @RequestBody CardRequestDto requestDto) {
+                                             @RequestBody CardRequestDto requestDto) {
     CardResponseDto result = cardService.updateCard(cardId, requestDto);
     return ResponseEntity.status(HttpStatus.OK).body(result);
   }
@@ -47,6 +47,6 @@ public class CardController {
   ResponseEntity<ApiResponseDto> deleteCard(@PathVariable Long cardId) {
     cardService.deleteCard(cardId);
     return ResponseEntity.status(HttpStatus.OK)
-        .body(new ApiResponseDto("카드가 삭제되었습니다", HttpStatus.OK.value()));
+            .body(new ApiResponseDto("카드가 삭제되었습니다", HttpStatus.OK.value()));
   }
 }

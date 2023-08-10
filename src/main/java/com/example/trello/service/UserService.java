@@ -37,8 +37,8 @@ public class UserService {
     String nickname = requestDto.getNickname();
 
     if (Pattern.matches("^[a-zA-Z0-9+-\\_.]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$",
-        requestDto.getUsername()) && Pattern.matches("^[a-z0-9]{4,10}$",
-        requestDto.getPassword())) {
+            requestDto.getUsername()) && Pattern.matches("^[a-z0-9]{4,10}$",
+            requestDto.getPassword())) {
       Optional<User> checkUsername = userRepository.findByUsername(username);
       if (checkUsername.isPresent()) {
         throw new IllegalArgumentException("중복된 username 입니다.");
@@ -59,7 +59,7 @@ public class UserService {
     Optional<User> checkUser = userRepository.findByUsername(username);
 
     if (!checkUser.isPresent() || !passwordEncoder.matches(password,
-        checkUser.get().getPassword())) {
+            checkUser.get().getPassword())) {
       throw new IllegalArgumentException("로그인 정보가 일치하지 않습니다.");
     }
 
@@ -87,13 +87,13 @@ public class UserService {
 
     if (!inputUpdateUser.isPresent()) {
       return ResponseEntity.status(400)
-          .body(new ApiResponseDto("해당 유저가 존재하지 않습니다.", HttpStatus.BAD_REQUEST.value()));
+              .body(new ApiResponseDto("해당 유저가 존재하지 않습니다.", HttpStatus.BAD_REQUEST.value()));
     }
 
     // 비밀번호와 확인 비밀번호 일치 여부 판단
     if (!updateRequestDto.getPassword().equals(updateRequestDto.getCheckPassword())) {
       return ResponseEntity.status(400)
-          .body(new ApiResponseDto("비밀번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST.value()));
+              .body(new ApiResponseDto("비밀번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST.value()));
     }
 
     String password = passwordEncoder.encode(updateRequestDto.getPassword());
@@ -113,12 +113,12 @@ public class UserService {
 
     if (!inputDeleteUser.isPresent()) {
       return ResponseEntity.status(400)
-          .body(new ApiResponseDto("해당 유저가 존재하지 않습니다.", HttpStatus.BAD_REQUEST.value()));
+              .body(new ApiResponseDto("해당 유저가 존재하지 않습니다.", HttpStatus.BAD_REQUEST.value()));
     }
     deleteUser(user);
     userRepository.delete(user);
     return ResponseEntity.status(400)
-        .body(new ApiResponseDto("탈퇴가 완료되었습니다.", HttpStatus.BAD_REQUEST.value()));
+            .body(new ApiResponseDto("탈퇴가 완료되었습니다.", HttpStatus.BAD_REQUEST.value()));
   }
 
   private void deleteUser(User user) {
@@ -127,7 +127,7 @@ public class UserService {
 
   private User findUser(Long userId) {
     return userRepository.findById(userId).orElseThrow(() ->
-        new IllegalArgumentException("선택한 유저는 존재하지 않습니다.")
+            new IllegalArgumentException("선택한 유저는 존재하지 않습니다.")
     );
   }
 }

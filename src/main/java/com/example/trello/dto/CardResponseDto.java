@@ -30,4 +30,3 @@ public class CardResponseDto {
     this.section = card.getSection();
   }
 }
-

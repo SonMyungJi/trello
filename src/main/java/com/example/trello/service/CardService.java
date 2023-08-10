@@ -48,6 +48,6 @@ public class CardService {
 
   public Card findCard(Long cardId) {
     return cardRepository.findById(cardId).orElseThrow(() ->
-        new IllegalArgumentException("해당 카드는 존재하지 않습니다."));
+            new IllegalArgumentException("해당 카드는 존재하지 않습니다."));
   }
 }
