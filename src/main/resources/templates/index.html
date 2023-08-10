@@ -94,6 +94,20 @@
                 $(this).closest(".card-body").append('<div class="card-title"><button class="btn2" name="button">+</button>' + `카드이름` + '</div>');
             });
         });
+
+        let host = 'http://' + window.location.host;
+        $(document).ready(function () {
+            showPage();
+        });
+
+        function showPage() {
+            //게시글 출력 페이지
+            setPosts();
+
+            //User 식별 & 포맷 설정
+            setUserType();
+        }
+
     </script>
 </head>
 <body>
