@@ -35,6 +35,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         //  if ( StringUtils.hasText(tokenValue) && !req.getMethod().equals("GET") ) { // 토큰이 있고, GET 메서드가 아닐 경우
         if (StringUtils.hasText(tokenValue)) { // 토큰이 있고, GET 메서드가 아닐 경우
 
+            tokenValue = jwtUtil.substringToken(tokenValue);
+
             if (!jwtUtil.validateToken(tokenValue)) {
                 resultSetResponse(response,400,"유효하지 않은 토큰입니다.");
                 log.error("유효하지 않은 토큰입니다.");
