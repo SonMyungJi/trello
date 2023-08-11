@@ -48,9 +48,9 @@ public class WebController {
       Resource resource = new UrlResource(filePath.toUri());
       if (resource.exists()) {
         return ResponseEntity.ok()
-            .header(HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=\"" + resource.getFilename() + "\"")
-            .body(resource);
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
       }
     } catch (IOException e) {
       e.printStackTrace();

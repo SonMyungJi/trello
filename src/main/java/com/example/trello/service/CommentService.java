@@ -29,7 +29,7 @@ public class CommentService {
   public CommentResponseDto updateComment(Long commentId, CommentRequestDto requestDto, User user) {
     Comment comment = findComment(commentId);
 
-    if (!(comment.getUser().equals(user))) {
+    if (!(comment.getUser().getUserId().equals(user.getUserId()))) {
       throw new IllegalArgumentException("권한이 없습니다");
     }
 
@@ -41,7 +41,7 @@ public class CommentService {
   public void deleteComment(Long commentId, User user) {
     Comment comment = findComment(commentId);
 
-    if (!comment.getUser().equals(user)) {
+    if (!comment.getUser().getUserId().equals(user.getUserId())) {
       throw new IllegalArgumentException("권한이 없습니다");
     }
     commentRepository.delete(comment);
@@ -49,6 +49,6 @@ public class CommentService {
 
   public Comment findComment(Long commentId) {
     return commentRepository.findById(commentId).orElseThrow(() ->
-        new IllegalArgumentException("해당 카드는 존재하지 않습니다."));
+            new IllegalArgumentException("해당 댓글은 존재하지 않습니다."));
   }
 }
