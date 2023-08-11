@@ -137,7 +137,7 @@
   // Function to fetch data from the API
   async function fetchBoardData(boardId) {
     try {
-      const response = await fetch(`/api/view/user/boards/${boardId}`);
+      const response = await fetch(`/api/boards/${boardId}`);
       const data = await response.json();
       return data;
     } catch (error) {
@@ -198,10 +198,9 @@
     boardContainer.appendChild(editButton);
   }
 
-  // Function to get board ID from URL
   function getBoardIdFromUrl() {
     const parts = window.location.pathname.split('/');
-    const boardIdIndex = parts.indexOf('board') + 1;
+    const boardIdIndex = parts.indexOf('boards') + 1;
     return parts[boardIdIndex];
   }
 
