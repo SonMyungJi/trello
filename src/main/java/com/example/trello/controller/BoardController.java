@@ -4,7 +4,6 @@ package com.example.trello.controller;
 import com.example.trello.dto.ApiResponseDto;
 import com.example.trello.dto.BoardRequestDto;
 import com.example.trello.dto.BoardResponseDto;
-import com.example.trello.dto.BoardUserListResponseDto;
 import com.example.trello.dto.BoardUserResponseDto;
 import com.example.trello.security.UserDetailsImpl;
 import com.example.trello.service.BoardService;
@@ -30,41 +29,41 @@ public class BoardController {
   private final BoardService boardService;
 
   // 보드 전체조회
-  @GetMapping("/boards")
+  @GetMapping("/board")
   public ResponseEntity<List<BoardResponseDto>> getBoards() {
     List<BoardResponseDto> boardResponseDtos = boardService.getBoards();
     return ResponseEntity.ok().body(boardResponseDtos);
   }
 
   // 보드 개별조회
-  @GetMapping("/boards/{boardId}")
+  @GetMapping("/board/{boardId}")
   public ResponseEntity<BoardResponseDto> getBoard(@PathVariable Long boardId) {
     BoardResponseDto boardResponseDto = boardService.getBoard(boardId);
     return ResponseEntity.ok().body(boardResponseDto);
   }
 
   // 보드 유저 조회 (전체보드)
-  @GetMapping("/boards/user")
+  @GetMapping("/board/user")
   public ResponseEntity<List<BoardUserResponseDto>> getBoardsUser() {
     List<BoardUserResponseDto> boardUserResponseDtos = boardService.getBoardsUser();
     return ResponseEntity.ok().body(boardUserResponseDtos);
   }
 
   // 보드 유저 조회 (선택보드)
-  @GetMapping("/boards/user/{userId}")
+  @GetMapping("/board/user/{userId}")
   public ResponseEntity<BoardUserResponseDto> getBoardUser(@PathVariable Long userId) {
     BoardUserResponseDto boardUserResponseDto = boardService.getBoardUser(userId);
     return ResponseEntity.ok().body(boardUserResponseDto);
   }
 
-  @GetMapping("/boards/{boardId}/users")
-  public ResponseEntity<BoardUserListResponseDto> getSuggestions(@PathVariable Long boardId) {
-    BoardUserListResponseDto boardUserListResponseDto = boardService.getSuggestions(boardId);
-    return ResponseEntity.ok().body(boardUserListResponseDto);
+  @GetMapping("/board/{boardId}/users")
+  public ResponseEntity<List<String>> getSuggestions(@PathVariable Long boardId) {
+    List<String> boardUsers = boardService.getSuggestions(boardId);
+    return ResponseEntity.ok().body(boardUsers);
   }
 
   // 보드 생성
-  @PostMapping("/boards")
+  @PostMapping("/board")
   public ResponseEntity<BoardResponseDto> createBoard(@RequestBody BoardRequestDto boardRequestDto,
       @AuthenticationPrincipal UserDetailsImpl userDetails) {
     BoardResponseDto boardResponseDto = boardService.createBoard(boardRequestDto,
@@ -74,7 +73,7 @@ public class BoardController {
   }
 
   // 보드 수정
-  @PutMapping("/boards/{boardId}")
+  @PutMapping("/board/{boardId}")
   public ResponseEntity<BoardResponseDto> updateBoard(@PathVariable Long boardId,
       @RequestBody BoardRequestDto boardRequestDto,
       @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -86,7 +85,7 @@ public class BoardController {
   }
 
   // 보드 삭제
-  @DeleteMapping("/boards/{boardId}")
+  @DeleteMapping("/board/{boardId}")
   public ResponseEntity<ApiResponseDto> deleteBoard(@PathVariable Long boardId,
       @AuthenticationPrincipal UserDetailsImpl userDetails) {
     try {
@@ -100,7 +99,7 @@ public class BoardController {
   }
 
   // 보드 초대
-  @PostMapping("/boards/{boardId}/invite/{userId}")
+  @PostMapping("/board/{boardId}/invite/{userId}")
   public ResponseEntity<ApiResponseDto> inviteBoard(@PathVariable Long boardId,
       @PathVariable Long userId,
       @AuthenticationPrincipal UserDetailsImpl userDetails) {

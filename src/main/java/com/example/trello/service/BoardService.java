@@ -2,7 +2,6 @@ package com.example.trello.service;
 
 import com.example.trello.dto.BoardRequestDto;
 import com.example.trello.dto.BoardResponseDto;
-import com.example.trello.dto.BoardUserListResponseDto;
 import com.example.trello.dto.BoardUserResponseDto;
 import com.example.trello.entity.Board;
 import com.example.trello.entity.BoardUser;
@@ -58,17 +57,14 @@ public class BoardService {
     return boardUserResponseDtos;
   }
 
-  public BoardUserListResponseDto getSuggestions(Long boardId) {
+  public List<String> getSuggestions(Long boardId) {
     Board board = findBoard(boardId);
     List<BoardUser> boardUsers = board.getBoardUsers();
     List<String> nicknames = new ArrayList<>();
     for (BoardUser boardUser : boardUsers) {
       nicknames.add(boardUser.getUser().getNickname());
     }
-
-    BoardUserListResponseDto boardUserListResponseDto = new BoardUserListResponseDto(
-        (BoardUser) nicknames);
-    return boardUserListResponseDto;
+    return nicknames;
   }
 
 
