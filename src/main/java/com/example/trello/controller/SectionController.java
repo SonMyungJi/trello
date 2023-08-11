@@ -34,7 +34,7 @@ public class SectionController {
   //section 생성
   @PostMapping("/board/{boardId}/section")
   public ResponseEntity<SectionResponseDto> createSection(@PathVariable Long boardId,
-      @RequestBody SectionRequestDto sectionRequestDto) {
+                                                          @RequestBody SectionRequestDto sectionRequestDto) {
     SectionResponseDto createSection = sectionService.createSection(boardId, sectionRequestDto);
     return ResponseEntity.status(HttpStatus.CREATED).body(createSection);
   }
@@ -42,7 +42,7 @@ public class SectionController {
   //section 이름 수정
   @PutMapping("/section/{sectionId}")
   public ResponseEntity<SectionResponseDto> updateSectionName(@PathVariable Long sectionId,
-      @RequestBody SectionRequestDto requestDto) {
+                                                              @RequestBody SectionRequestDto requestDto) {
     try {
       SectionResponseDto result = sectionService.updateSectionName(sectionId, requestDto);
       return ResponseEntity.ok().body(result);

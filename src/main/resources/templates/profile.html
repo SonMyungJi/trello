@@ -80,9 +80,9 @@
             setHtml(username, user)
         }
 
-            function setHtml(username, user) {
-                // console.log(username + user);
-                let html = `<div class="form-group">
+        function setHtml(username, user) {
+            // console.log(username + user);
+            let html = `<div class="form-group">
             <label for="nickname">nickname</label>
             <input type="text" id="nickname" name="nickname" value="${user['nickname']}" required>
         </div>
@@ -94,8 +94,8 @@
             <label for="checkPassword">CheckPassword</label>
             <input type="password" id="checkPassword" name="checkPassword" required>
         </div>`
-                document.getElementById("detail-form").innerHTML = html
-            }
+            document.getElementById("detail-form").innerHTML = html
+        }
 
         function editUser() {
             const nickname = document.querySelector('#nickname').value;
@@ -115,7 +115,7 @@
                 data: JSON.stringify(data),
                 success: function (response) {
                     alert("프로필 수정 성공");
-                    window.location.href = 'index.html';
+                    window.location.href = '/api/view/user/login';
                 }, error: function (req, status, error) {
                     alert("프로필 수정 실패");
                 }
@@ -140,7 +140,7 @@
             <input type="password" id="checkPassword" name="checkPassword" required>
         </div>
         <button type="button" onclick="editUser()">수정</button>
-        <button type="button" onclick="location.href='index.html'">취소</button>
+        <button type="button" onclick="location.href='/'">취소</button>
     </form>
 </div>
 </body>

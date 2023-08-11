@@ -1,6 +1,8 @@
 package com.example.trello.jwt;
 
+import com.example.trello.dto.ApiResponseDto;
 import com.example.trello.security.UserDetailsServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -8,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -25,6 +28,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
+    private final ObjectMapper objectMapper;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -35,12 +39,21 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         //  if ( StringUtils.hasText(tokenValue) && !req.getMethod().equals("GET") ) { // 토큰이 있고, GET 메서드가 아닐 경우
         if (StringUtils.hasText(tokenValue)) { // 토큰이 있고, GET 메서드가 아닐 경우
 
+            tokenValue = jwtUtil.substringToken(tokenValue);
+
             if (!jwtUtil.validateToken(tokenValue)) {
                 resultSetResponse(response,400,"유효하지 않은 토큰입니다.");
                 log.error("유효하지 않은 토큰입니다.");
                 return;
             }
-
+            // 블랙리스트에 존재하는 토큰일 경우 조건문에 true 입력, 로그아웃된 토큰 메세지와  인증불가 코드 반환
+            if (jwtUtil.isTokenBlacklisted(tokenValue)) {
+                ApiResponseDto responseDto = new ApiResponseDto("로그아웃된 토큰입니다.", HttpStatus.UNAUTHORIZED.value());
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json; charset=UTF-8");
+                response.getWriter().write(objectMapper.writeValueAsString(responseDto));
+                return;
+            }
             Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
 
             try {

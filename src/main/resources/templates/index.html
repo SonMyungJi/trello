@@ -1,398 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
-        crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.6/dist/flatpickr.min.css">
-  <title>Trello-Style Card Modal</title>
-  <style>
-    .card {
-      float: left;
-      margin-top: 100px;
-      margin-left: 70px;
-      width: 400px;
-      height: 400px;
-    }
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2.2.1/src/js.cookie.min.js"></script>
+    <title>Title</title>
 
-    .card-title {
-      text-align: left;
-      width: 240px;
-      height: 40px;
-    }
+    <style>
+        .card {
+            float: left;
+            margin-top: 100px;
+            margin-left: 70px;
+            width: 400px;
+            height: 400px;
+        }
+        .card-title {
+            text-align: left;
+            width: 240px;
+            height: 40px;
+        }
 
-    .card-body {
-      border: 1px solid black;
-      height: 60px;
-    }
+        .card-body {
+            border: 1px solid black;
+            height: 60px;
+        }
 
-    .btn1 {
-      float: right;
-      border: 1px solid black;
-    }
+        .btn1 {
+            float: right;
+            border: 1px solid black;
+            width: 24px;
+        }
 
-    .btn2 {
-      float: left;
-      margin-right: 20px;
-      border: 1px solid black;
-    }
+        .btn2 {
+            float: left;
+            margin-right: 20px;
+            border: 1px solid black;
+            width: 24px;
+        }
 
-    .card-modal {
-      justify-content: center;
-      align-items: center;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      z-index: 9999;
-    }
+        *{padding:0;margin:0}
+        ul,ol{list-style:none}
+        a{text-decoration:none;color:#fff;font-size:15px}
+        nav{width:80%;overflow:hidden;height:80px;background-color:#1b2035;margin:50px auto}
 
-    .card-content {
-      background-color: #fff;
-      border-radius: 5px;
-      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-      display: flex;
-      max-width: 800px;
-      width: 80%;
-      margin: auto;
-      margin-top: 80px;
-    }
+        #nav3 {
+            width: 100%;
+            position: relative;
+            text-align: right;
+        }
+        #nav3>a {
+            line-height: 80px;
+            display: block;
+            font-size: 30px;
+            font-weight: 900;
+            position: absolute;
+            left: 30px;
+        }
+        #nav3>select {
+            padding: 0 20px;
+            height: 30px;
+            background-color: #1b2035;
+            color: #fff;
+            position: absolute;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-15px);
+            border: 2px solid #fff;
+            border-radius: 30px;
+        }
+        #nav3>ul {
+            display: inline-block;
+        }
+        #nav3>ul li {
+            float: left;
+            line-height: 80px;
+            padding: 0 30px;
+        }
+    </style>
 
-    .left-column {
-      flex: 2;
-      padding: 10px;
-      border-right: 1px solid #ccc;
-    }
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $(".btn1").click(function() {
+                var clonedBoard = $(".card:first").clone();
+                clonedBoard.find(".card-title").text("");
+                clonedBoard.find(".card-body").empty();
+                clonedBoard.find(".card-body").append('<div class="card-title"><button class="btn2" name="button">+</button>카드이름</div>');
+                $(".card-container").append(clonedBoard);
+            });
 
-    .color-picker {
-      display: flex;
-      align-items: center;
-      margin-bottom: 10px;
-    }
+            $(document).on("click", ".btn2", function() {
+                var cardTitle = $(this).closest(".card").find(".card-title").text();
+                var newCardTitle = cardTitle.replace("+ ", ""); // + 카드이름에서 + 제거
+                $(this).closest(".card-body").append('<div class="card-title"><button class="btn2" name="button">+</button>' + `카드이름` + '</div>');
+            });
+        });
 
-    .color-option {
-      width: 20px;
-      height: 20px;
-      border: 1px solid #ccc;
-      border-radius: 50%;
-      margin-right: 5px;
-      cursor: pointer;
-    }
+        function getCookie(cookieName) {
+            var name = cookieName + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var cookieArray = decodedCookie.split(';');
+            for (var i = 0; i < cookieArray.length; i++) {
+                var cookie = cookieArray[i];
+                while (cookie.charAt(0) == ' ') {
+                    cookie = cookie.substring(1);
+                }
+                if (cookie.indexOf(name) == 0) {
+                    return cookie.substring(name.length, cookie.length);
+                }
+            }
+            return "";
+        }
 
-    label {
-      display: block;
-      font-size: 14px;
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
+        const host = 'http://' + window.location.host;
 
-    textarea {
-      width: 100%;
-      height: 80px;
-      padding: 5px;
-      border: 1px solid #ccc;
-      border-radius: 3px;
-      resize: vertical;
-    }
+        function logout() {
+            let authCookie = getCookie('Authorization');
+            console.log(authCookie);
+            $.ajax({
+                url: 'http://localhost:8080/api/user/logout',
+                type: 'POST',
+                headers: {
+                    'Authorization': authCookie
+                },
+                processData: false,
+                contentType: false,
+                success: function(response) {
 
-    input[type="text"] {
-      width: 100%;
-      padding: 5px;
-      border: 1px solid #ccc;
-      border-radius: 3px;
-    }
+                    Cookies.remove('Authorization', {path: '/'}); // 쿠키삭제
+                    // Cookies.set('Authorization', token, {path: '/', expires: expirationDate});
+                    // 요청 성공 시 처리할 로직
+                    alert("로그아웃 성공 !");
+                    window.location.href = host + '/api/view/user/login';
 
-    .createButtonContainer,
-    .submitButtonContainer {
-      display: flex;
-      justify-content: flex-end;
-    }
-
-    button {
-      background-color: #000;
-      color: #fff;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 3px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #333;
-    }
-
-    .right-column {
-      flex: 1;
-      padding: 10px;
-    }
-
-    .comment-list {
-      border-top: 1px solid #ccc;
-      margin-top: 20px;
-      padding-top: 10px;
-    }
-
-    .comment-item {
-      margin-bottom: 10px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #ccc;
-    }
-  </style>
+                },
+                error: function(xhr, status, error) {
+                    console.log(xhr);
+                    alert("로그아웃 실패 !");
+                }
+            });
+        }
+    </script>
 </head>
 <body>
+
+<nav id="nav3">
+    <a href="index.html">1보후퇴-2보전진</a>
+    <ul>
+        <li><a href="/api/view/user/login">로그인</a></li>
+        <li><a href="/api/view/user/signup">회원가입</a></li>
+        <li><a href="/api/view/user/profile">프로필 수정</a></li>
+        <li><a href="javascript:logout()">로그아웃</a></li>
+    </ul>
+</nav>
+
 <div class="card-container">
-  <div class="card" style="max-width: 18rem;">
-    <div class="card-header">Backlog
-      <button onclick="addBoard()" class="btn1" name="button">+</button>
-    </div>
-    <div class="card-body text-dark">
-      <div class="card-title">
-        <button class="btn2" name="button" onclick="addCard(this)">+</button>
-        <button id="showModalBtn">카드이름</button>
-        <div class="card-modal" id="cardModal" style="display: none;">
-          <div class="card-content">
-            <div class="left-column">
-              <label for="cardTitle">카드 이름</label>
-              <input type="text" id="cardTitle" placeholder="수정해주세요">
-              <br>
-              <label for="cardDescription">개요</label>
-              <textarea id="cardDescription" placeholder="수정해주세요"></textarea>
-              <br>
-              <label for="card-admin">작업자</label>
-              <input type="text" id="card-admin" placeholder="#유저이름" oninput="showSuggestions()">
-              <div id="suggestions" style="display: none;">
-                <div class="user-item" onclick="selectUser('User1')">User1</div>
-                <div class="user-item" onclick="selectUser('User2')">User2</div>
-                <div class="user-item" onclick="selectUser('User3')">User3</div>
-                <!-- 다른 사용자 목록 항목 추가 -->
-              </div>
-              <br>
-              <label for="cardDue" style="display: inline-block; margin-right: 10px;">만기일 설정</label>
-              <input type="text" id="cardDue" placeholder="달력 열기">
-              <br>
-              <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                <label style="margin-right: 10px;">카드색 바꾸기</label>
-                <div class="color-picker">
-                  <div class="color-option" style="background-color: #ff5555"
-                       data-color="#ff5555"></div>
-                  <div class="color-option" style="background-color: #55ff55"
-                       data-color="#55ff55"></div>
-                  <div class="color-option" style="background-color: #5555ff"
-                       data-color="#5555ff"></div>
-                  <div class="color-option" style="background-color: #ff55ff"
-                       data-color="#ff55ff"></div>
-                  <div class="color-option" style="background-color: #55ffff"
-                       data-color="#55ffff"></div>
-                  <div class="color-option" style="background-color: #ffff55"
-                       data-color="#ffff55"></div>
-                </div>
-              </div>
-              <div class="add-file">
-                <label style="margin-right: 10px;">파일첨부</label>
-                <form action="/upload" method="post" enctype="multipart/form-data">
-                  <input type="file" name="file"/>
-                  <input type="submit" value="Upload"/>
-                  <br>
-                  <br>
-                  <a href="/download/sample.txt">파일 다운로드</a>
-                </form>
-              </div>
-              <div class="createButtonContainer">
-                <button id="createCardBtn">업데이트</button>
-              </div>
-            </div>
-            <div class="right-column">
-              <label>Comment</label>
-              <div class="comment-list">
-                <div class="comment-item">
-                  <strong>User1:</strong> This is a comment.
-                </div>
-                <div class="comment-item">
-                  <strong>User2:</strong> Another comment here.
-                </div>
-              </div>
-              <br>
-              <div class="comment-input">
-                <input type="text" placeholder="Write a comment">
-                <div class="submitButtonContainer">
-                  <button>Submit</button>
-                </div>
-                <!-- 댓글 리스트 항목 추가 -->
-              </div>
-            </div>
-          </div>
+    <div class="card" style="max-width: 18rem;">
+        <div class="card-header">Backlog<button class="btn1" name="button">+</button></div>
+        <div class="card-body text-dark">
+            <div class="card-title"><button class="btn2" name="button" >+</button>카드이름</div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
-
-
-<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.6/dist/flatpickr.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-  $(document).ready(function () {
-    let sectionCounter = 1;
-    let cardCounter = 1; // 추가된 카드의 수를 추적하는 변수
-
-    $(".btn1").click(function () {
-      var clonedBoard = $(".card:first").clone();
-      clonedBoard.find(".card-title").text("");
-      clonedBoard.find(".card-body").empty();
-      clonedBoard.find(".card-body").append(
-          '<button class="btn2" name="button">+</button><button id="showModalBtn" data-card-id="'
-          + cardCounter + '">카드이름</button>');
-      $(".card-container").append(clonedBoard);
-      sectionCounter++;
-    });
-
-    $(document).on("click", ".btn2", function () {
-      var cardTitle = $(this).closest(".card").find(".card-title").text();
-      var newCardTitle = cardTitle.replace("+ ", ""); // + 카드이름에서 + 제거
-      $(this).closest(".card-body").append(
-          '<div class="card-title"><button class="btn2" name="button">+</button>'
-          + `<button id="showModalBtn" data-card-id="${cardCounter}">카드이름</button>`
-          + '</div>');
-      cardCounter++;
-    });
-  });
-
-  // $(document).on("click", ".showModalBtn", function () {
-  //   const cardId = $(this).data('card-id');
-  //   showModal(cardId);
-  // });
-
-  $(document).on("click", "#showModalBtn", function () {
-    showModal();
-  });
-
-  const showModalBtn = document.getElementById('showModalBtn');
-  const cardModal = document.getElementById('cardModal');
-  const createCardBtn = document.getElementById('createCardBtn');
-
-  showModalBtn.addEventListener('click', () => {
-    cardModal.style.display = 'block';
-  });
-
-  cardModal.addEventListener('click', (event) => {
-    if (event.target === cardModal) {
-      closeModal();
-    }
-  });
-
-  function showModal() {
-    const cardModal = $("#cardModal");
-    cardModal.css("display", "block");
-  }
-
-  function closeModal() {
-    cardModal.style.display = 'none';
-  }
-
-  // 담당자
-  function clearInput() {
-    const input = document.getElementById('card-admin');
-    input.value = ''; // 이전 정보 지우기
-  }
-
-  function showSuggestions() {
-    const input = document.getElementById('card-admin');
-    const suggestions = document.getElementById('suggestions');
-
-    if (input.value.startsWith('#')) {
-      suggestions.style.display = 'block';
-    } else {
-      suggestions.style.display = 'none';
-    }
-  }
-
-  function selectUser(username) {
-    const input = document.getElementById('card-admin');
-    input.value = username;
-    suggestions.style.display = 'none';
-  }
-
-  // 달력
-  const cardDueInput = document.getElementById('cardDue');
-  const openDatePickerBtn = document.getElementById('openDatePicker');
-
-  const datePicker = flatpickr(cardDueInput, {
-    dateFormat: 'Y-m-d',
-    defaultDate: '',
-    minDate: 'today',
-    disableMobile: true,
-  });
-
-  openDatePickerBtn.addEventListener('click', () => {
-    datePicker.open();
-  });
-
-  // 색상 설정
-  const cardColorInput = document.getElementById('cardColor');
-  const colorOptions = document.querySelectorAll('.color-option');
-
-  colorOptions.forEach(option => {
-    option.addEventListener('click', () => {
-      const selectedColor = option.getAttribute('data-color');
-      cardColorInput.value = selectedColor;
-    });
-  });
-
-  // 댓글 추가 버튼 클릭 시 댓글 추가
-  const commentSection = document.querySelector('.comment-section');
-
-  document.getElementById('createCardBtn').addEventListener('click', () => {
-    const commentInput = document.getElementById('commentInput');
-    if (commentInput.value) {
-      const comment = document.createElement('div');
-      comment.className = 'comment';
-      comment.textContent = commentInput.value;
-      commentSection.appendChild(comment);
-      commentInput.value = '';
-    }
-  });
-
-  // 카드 정보 업데이트
-  createCardBtn.addEventListener('click', () => {
-    const cardTitle = document.getElementById('cardTitle').value;
-    const cardDescription = document.getElementById('cardDescription').value;
-    const cardMember = document.getElementById('card-admin').value;
-    const cardDue = cardDueInput.value; // 달력에서 선택한 날짜 가져오기
-    const cardColor = document.getElementById('cardColor').value;
-
-    cardModal.style.display = 'none';
-
-    const formData = {
-      title: cardTitle,
-      description: cardDescription,
-      member: cardMember,
-      due: cardDue,
-      color: cardColor
-    };
-
-    fetch(`"/api/card/${cardId}"`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(formData)
-    })
-    .then(response => response.json())
-    .then(data => {
-      alert(data.message);
-    })
-    .catch(error => {
-      // 에러 처리
-      console.error('에러:', error);
-    });
-  });
-
-</script>
 </body>
 </html>

@@ -3,6 +3,7 @@ package com.example.trello.controller;
 import com.example.trello.dto.*;
 import com.example.trello.jwt.JwtUtil;
 import com.example.trello.security.UserDetailsImpl;
+import com.example.trello.service.GoogleService;
 import com.example.trello.service.KakaoService;
 import com.example.trello.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,7 +12,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +28,7 @@ public class UserController {
 
     private final UserService userService;
     private final KakaoService kakaoService;
+    private final GoogleService googleService;
 
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody SignupRequestDto requestDto) {
@@ -56,13 +60,49 @@ public class UserController {
 
     @GetMapping("/kakao/callback")
     public String kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
-        log.info("카카오컨트롤러");
-        String token = kakaoService.kakaoLogin(code);
-        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, token.substring(7));
+        String token = kakaoService.kakaoLogin(code); // 반환 값이 JWT 토큰
+
+        token = token.substring(7);
+        token = "Bearer%20" + token;
+        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER,token);
         cookie.setPath("/");
         response.addCookie(cookie);
 
         return "redirect:/";
     }
 
+    @GetMapping("/google/callback")
+    public String googleLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
+        String token = googleService.googleLogin(code); // 반환 값이 JWT 토큰
+
+        token = token.substring(7);
+        token = "Bearer%20" + token;
+        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER,token);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+
+        return "redirect:/";
+    }
+
+    //권한 설정
+    @PreAuthorize("hasRole('USER')")
+    @RequestMapping("/secured")
+    public String securedPage() {
+        return "This is a secured page.";
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponseDto> logout(@RequestHeader("Authorization") String authorizationHeader) {
+        String token = extractTokenFromHeader(authorizationHeader);
+        userService.logout(token);
+        return ResponseEntity.ok().body(new ApiResponseDto("로그아웃 되었습니다.", HttpStatus.OK.value()));
+    }
+
+
+    private String extractTokenFromHeader(String authorizationHeader) {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            return authorizationHeader.substring(7);
+        }
+        return null;
+    }
 }
