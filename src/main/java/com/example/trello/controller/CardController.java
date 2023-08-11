@@ -24,21 +24,21 @@ public class CardController {
   private final CardService cardService;
 
   @GetMapping("/card/{cardId}")
-  ResponseEntity<ApiResponseDto> getCard(@PathVariable Long cardId) {
-    cardService.getCard(cardId);
-    return ResponseEntity.ok().body(new ApiResponseDto("카드 조회", HttpStatus.OK.value()));
+  ResponseEntity<CardResponseDto> getCard(@PathVariable Long cardId) {
+    CardResponseDto result = cardService.getCard(cardId);
+    return ResponseEntity.ok().body(result);
   }
 
-  @PostMapping("/column/{sectionId}/card")
+  @PostMapping("/section/{sectionId}/card")
   ResponseEntity<CardResponseDto> createCard(@PathVariable Long sectionId,
-                                             @RequestBody CardRequestDto requestDto) {
+      @RequestBody CardRequestDto requestDto) {
     CardResponseDto result = cardService.createCard(sectionId, requestDto);
     return ResponseEntity.status(HttpStatus.CREATED).body(result);
   }
 
   @PutMapping("/card/{cardId}")
   ResponseEntity<CardResponseDto> updateCard(@PathVariable Long cardId,
-                                             @RequestBody CardRequestDto requestDto) {
+      @RequestBody CardRequestDto requestDto) {
     CardResponseDto result = cardService.updateCard(cardId, requestDto);
     return ResponseEntity.status(HttpStatus.OK).body(result);
   }
@@ -47,6 +47,6 @@ public class CardController {
   ResponseEntity<ApiResponseDto> deleteCard(@PathVariable Long cardId) {
     cardService.deleteCard(cardId);
     return ResponseEntity.status(HttpStatus.OK)
-            .body(new ApiResponseDto("카드가 삭제되었습니다", HttpStatus.OK.value()));
+        .body(new ApiResponseDto("카드가 삭제되었습니다", HttpStatus.OK.value()));
   }
 }

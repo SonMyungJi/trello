@@ -43,10 +43,96 @@
     .card:hover {
       background-color: #e0e0e0;
     }
+
+    .modal {
+      justify-content: center;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 9999;
+    }
+
+    .modal-content {
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      display: flex;
+      max-width: 800px;
+      width: 80%;
+      margin: auto;
+      margin-top: 80px;
+    }
+
+    .left-column {
+      flex: 2;
+      padding: 10px;
+      border-right: 1px solid #ccc;
+    }
+
+    .right-column {
+      flex: 1;
+      padding: 10px;
+    }
+
+    .comment-list {
+      border-top: 1px solid #ccc;
+      margin-top: 20px;
+      padding-top: 10px;
+    }
+
+    .comment-item {
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ccc;
+    }
   </style>
 </head>
 <body>
 <div class="board" id="board-container"></div>
+
+<div class="modal" id="cardModal" style="display: none;">
+  <div class="modal-content">
+    <div class="left-column">
+      <span class="fw-bold">CardName</span>
+      <br>
+      <div class="col-md-8">
+        <span id="modalCardName">카드 이름</span>
+      </div>
+      <br>
+      <div class="col-md-8"><span id="modalCardDesc">카드 설명</span></div>
+      <br>
+      <span class="fw-bold">#Nickname</span>
+      <br>
+      <span id="modalCardNickname">닉네임</span>
+      <br>
+      <span class="fw-bold">만기일</span>
+      <span id="modalCardDueDate">만기일</span>
+      <div class="add-file">
+        <form action="/upload" method="post" enctype="multipart/form-data">
+          <a href="/download/sample.txt">파일 다운로드</a>
+        </form>
+      </div>
+    </div>
+    <div class="right-column">
+      <label>Comment</label>
+      <div class="comment-list" id="commentList">
+        <!-- Comment list items... -->
+      </div>
+      <br>
+      <div class="comment-input">
+        <input type="text" id="commentInput" placeholder="Write a comment">
+        <div class="submitButtonContainer">
+          <button id="submitCommentBtn">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
   // Function to fetch data from the API
   async function fetchBoardData(boardId) {
@@ -64,9 +150,7 @@
     const boardContainer = document.getElementById('board-container');
     const boardDiv = document.createElement('div');
 
-    // Set board styles
     boardDiv.style.backgroundColor = data.boardColor;
-    boardDiv.style.padding = '20px';
 
     // Create board header
     const boardHeader = document.createElement('h1');
@@ -74,21 +158,24 @@
     boardDiv.appendChild(boardHeader);
 
     // Create sections and cards
-    data.sectionResponseDtos.forEach(section => {
+    data.sectionResponseDtos.forEach((section, sectionIndex) => {
       const sectionDiv = document.createElement('div');
       sectionDiv.className = 'section';
+      sectionDiv.id = `section-${sectionIndex + 1}`;
 
       const sectionHeader = document.createElement('h2');
       sectionHeader.textContent = section.sectionName;
       sectionDiv.appendChild(sectionHeader);
 
-      section.cardTitleList.forEach(card => {
+      section.cardList.forEach((card, cardIndex) => {
         const cardDiv = document.createElement('div');
         cardDiv.className = 'card';
+        cardDiv.id = `card-${sectionIndex + 1}-${cardIndex + 1}`; // Set card ID
+        cardDiv.setAttribute('data-card-id', card.cardId);
 
-        const cardTitle = document.createElement('h3');
-        cardTitle.textContent = card.cardName;
-        cardDiv.appendChild(cardTitle);
+        const cardName = document.createElement('h3');
+        cardName.textContent = card.cardName;
+        cardDiv.appendChild(cardName);
 
         const cardNickname = document.createElement('p');
         cardNickname.textContent = card.nickName;
@@ -114,7 +201,7 @@
   // Function to get board ID from URL
   function getBoardIdFromUrl() {
     const parts = window.location.pathname.split('/');
-    const boardIdIndex = parts.indexOf('boards') + 1;
+    const boardIdIndex = parts.indexOf('board') + 1;
     return parts[boardIdIndex];
   }
 
@@ -131,6 +218,73 @@
       window.location.href = `/api/view/user/boards/${boardId}/edit`;
     }
   }
+
+  document.addEventListener('click', (event) => {
+    const clickedCard = event.target.closest('.card');
+
+    if (clickedCard) {
+      const cardIdParts = clickedCard.id.split('-');
+      const sectionIndex = cardIdParts[1];
+      const cardIndex = cardIdParts[2];
+      showModal(sectionIndex, cardIndex);
+    }
+  });
+
+  function showModal(sectionIndex, cardIndex) {
+    const cardDiv = document.getElementById(`card-${sectionIndex}-${cardIndex}`);
+
+    if (!cardDiv) {
+      console.error(`Card not found at section ${sectionIndex}, card ${cardIndex}`);
+      return;
+    }
+    const modal = document.getElementById('cardModal');
+    const titleInput = document.getElementById('modalCardName');
+    const descriptionInput = document.getElementById('modalCardDesc');
+    const nicknameInput = document.getElementById('modalCardNickname');
+    const dueDateInput = document.getElementById('modalCardDueDate');
+
+    const cardIdParts = cardDiv.id.split('-');
+    const cardId = cardDiv.getAttribute('data-card-id');  // 수정: cardId 값을 가져오기
+
+    // Show the modal
+    modal.style.display = 'block';  // 수정: display 값 변경
+
+    fetch(`/api/card/${cardId}`)
+    .then(response => response.json())
+    .then(cardData => {
+      titleInput.textContent = cardData.cardName;
+      descriptionInput.textContent = cardData.cardDesc;
+      nicknameInput.textContent = cardData.nickname;
+      dueDateInput.textContent = cardData.dueDate;
+      console.log(cardData);
+    })
+    .catch(error => {
+      console.error('Error fetching card data:', error);
+    });
+  }
+
+  // Close modal function
+  function closeModal() {
+    const modal = document.getElementById('cardModal');
+    modal.style.display = 'none';
+  }
+
+  // Close modal when clicking outside the modal content
+  window.addEventListener('click', (event) => {
+    const modal = document.getElementById('cardModal');
+    if (event.target === modal) {
+      closeModal();
+    }
+  });
+
+  // Close modal when pressing the Escape key
+  window.addEventListener('keydown', (event) => {
+    const modal = document.getElementById('cardModal');
+    if (event.key === 'Escape') {
+      closeModal();
+    }
+  });
+
 
 </script>
 </body>

@@ -12,7 +12,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -37,7 +36,7 @@ public class WebSecurityConfig {
 
   @Bean
   public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
-          throws Exception {
+      throws Exception {
     return configuration.getAuthenticationManager();
   }
 
@@ -53,18 +52,18 @@ public class WebSecurityConfig {
 
     // 기본 설정인 Session 방식은 사용하지 않고 JWT 방식을 사용하기 위한 설정
     http.sessionManagement((sessionManagement) ->
-            sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
     );
 
-
     http.authorizeHttpRequests((authorizeHttpRequests) ->
-            authorizeHttpRequests
-                    .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
-                    .requestMatchers("/api/user/**").permitAll() // 로그인, 회원가입 누구나 가능.
-                    .requestMatchers("/api/view/user/**").permitAll()
-                    .requestMatchers("/").permitAll()
+        authorizeHttpRequests
+            .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+            .permitAll() // resources 접근 허용 설정
+            .requestMatchers("/api/user/**").permitAll() // 로그인, 회원가입 누구나 가능.
+            .requestMatchers("/api/view/user/**").permitAll()
+            .requestMatchers("/").permitAll()
 
-                    .anyRequest().authenticated() // 그 외 모든 요청 인증처리
+            .anyRequest().permitAll() // 그 외 모든 요청 인증처리
 
     );
 
