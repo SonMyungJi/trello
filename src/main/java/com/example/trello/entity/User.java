@@ -27,10 +27,12 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "nickname", nullable = false)
+    @Column(name = "nickname")
     private String nickname;
 
     private Long kakaoId;
+
+    private String googleId;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<BoardUser> boardUsers;
@@ -48,6 +50,13 @@ public class User {
         this.kakaoId =kakaoId;
     }
 
+    public User(String username, String password, String nickname, String googleId) {
+        this.username = username;
+        this.password = password;
+        this.nickname = nickname;
+        this.googleId = googleId;
+    }
+
     public User getUser(Long userId) {
         if (this.userId.equals(userId)) {
             return this;
@@ -58,6 +67,11 @@ public class User {
 
     public User kakaoIdUpdate(Long kakaoId) {
         this.kakaoId = kakaoId;
+        return this;
+    }
+
+    public User googleIdUpdate(String googleId) {
+        this.googleId = googleId;
         return this;
     }
 
