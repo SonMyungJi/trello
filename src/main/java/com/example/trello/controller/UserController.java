@@ -3,6 +3,7 @@ package com.example.trello.controller;
 import com.example.trello.dto.*;
 import com.example.trello.jwt.JwtUtil;
 import com.example.trello.security.UserDetailsImpl;
+import com.example.trello.service.GoogleService;
 import com.example.trello.service.KakaoService;
 import com.example.trello.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -27,6 +28,7 @@ public class UserController {
 
     private final UserService userService;
     private final KakaoService kakaoService;
+    private final GoogleService googleService;
 
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody SignupRequestDto requestDto) {
@@ -68,6 +70,20 @@ public class UserController {
 
         return "redirect:/";
     }
+
+    @GetMapping("/google/callback")
+    public String googleLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
+        String token = googleService.googleLogin(code); // 반환 값이 JWT 토큰
+
+        token = token.substring(7);
+        token = "Bearer%20" + token;
+        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER,token);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+
+        return "redirect:/";
+    }
+
     //권한 설정
     @PreAuthorize("hasRole('USER')")
     @RequestMapping("/secured")
