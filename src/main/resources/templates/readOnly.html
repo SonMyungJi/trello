@@ -137,7 +137,7 @@
   // Function to fetch data from the API
   async function fetchBoardData(boardId) {
     try {
-      const response = await fetch(`/api/boards/${boardId}`);
+      const response = await fetch(`/api/view/user/boards/${boardId}`);
       const data = await response.json();
       return data;
     } catch (error) {
