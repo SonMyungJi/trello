@@ -10,6 +10,7 @@ import lombok.Getter;
 @Getter
 public class CardResponseDto {
 
+  private Long cardId;
   private String cardName;
   private String cardDesc;
   private String cardColor;
@@ -19,6 +20,7 @@ public class CardResponseDto {
   private Section section;
 
   public CardResponseDto(Card card) {
+    this.cardId = card.getCardId();
     this.cardName = card.getCardName();
     this.cardDesc = card.getCardDesc();
     this.cardColor = card.getCardColor();
