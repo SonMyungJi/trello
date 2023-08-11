@@ -22,6 +22,16 @@ public class UserViewController {
     return "signup";
   }
 
+  @GetMapping("/boards/{boardId}/edit")
+  public String editPage() {
+    return "edit";
+  }
+
+  @GetMapping("/boards/{boardId}/readOnly")
+  public String readOnlyPage() {
+    return "readOnly";
+  }
+
   @GetMapping("/profile")
   public String updatePage(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails)
       throws JsonProcessingException {
@@ -29,16 +39,6 @@ public class UserViewController {
     model.addAttribute("info_username", userDetails.getUser().getUsername());
     model.addAttribute("info_user", userDetails.getUser());
     return "profile";
-  }
-
-  @GetMapping("/boards/{boardId}/edit")
-  public String editPage() {
-    return "edit";
-  }
-
-  @GetMapping("/boards/{boardId}")
-  public String readOnlyPage() {
-    return "readOnly";
   }
 
 }

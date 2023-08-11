@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/")
 public class WebController {
 
+
   @PostMapping("upload")
   public String uploadFile(@RequestParam("file") MultipartFile file, Model model) {
     if (file.isEmpty()) {
