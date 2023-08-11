@@ -131,8 +131,8 @@ public class GoogleService {
 
         if (googleUser == null) {
             // 카카오 사용자 email 동일한 email 가진 회원이 있는지 확인
-            String kakaoEmail = googleUserInfoDto.getEmail();
-            User sameEmailUser = userRepository.findByUsername(kakaoEmail).orElse(null);
+            String googleEmail = googleUserInfoDto.getEmail();
+            User sameEmailUser = userRepository.findByUsername(googleEmail).orElse(null);
             if (sameEmailUser != null) {
                 googleUser = sameEmailUser;
                 // 기존 회원정보에 카카오 Id 추가
