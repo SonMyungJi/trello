@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <title>Edit Board</title>
   <style>
     body {
@@ -108,6 +109,44 @@
       background-color: #0056b3;
     }
 
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 80px;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      resize: vertical;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+
+    .color-picker {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .color-option {
+      width: 20px;
+      height: 20px;
+      border: 1px solid #ccc;
+      border-radius: 50%;
+      margin-right: 5px;
+      cursor: pointer;
+    }
+
   </style>
 </head>
 <body>
@@ -169,6 +208,8 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
 <script>
   // Function to fetch data from the API and populate the Edit page
   async function fetchAndRenderEditData(boardId) {
@@ -243,10 +284,9 @@
     cardDiv.className = 'card';
     cardDiv.id = `card-${sectionIndex}-${cardIndex}`;
 
-    const cardTitleInput = document.createElement('input');
-    cardTitleInput.type = 'text';
-    cardTitleInput.value = cardName;
-    cardDiv.appendChild(cardTitleInput);
+    const cardTitle = document.createElement('p');
+    cardTitle.textContent = cardName;
+    cardDiv.appendChild(cardTitle);
 
     // Create a plus button for adding cards
     const plusButton = document.createElement('button');
@@ -357,6 +397,55 @@
     const boardIdIndex = parts.indexOf('boards') + 1;
     return parts[boardIdIndex];
   }
+
+  // 담당자
+  function clearInput() {
+    const input = document.getElementById('card-admin');
+    input.value = ''; // 이전 정보 지우기
+  }
+
+  function showSuggestions() {
+    const input = document.getElementById('card-admin');
+    const suggestions = document.getElementById('suggestions');
+
+    if (input.value.startsWith('#')) {
+      suggestions.style.display = 'block';
+    } else {
+      suggestions.style.display = 'none';
+    }
+  }
+
+  function selectUser(username) {
+    const input = document.getElementById('card-admin');
+    input.value = username;
+    suggestions.style.display = 'none';
+  }
+
+  // 달력
+  function activateDatePicker() {
+    $("#cardDue").datepicker({
+      dateFormat: "yy-mm-dd",  // Change the date format as needed
+      showButtonPanel: true,
+      onSelect: function (dateText) {
+        $(this).val(dateText);
+      }
+    });
+  }
+
+  // Call the function to activate the date picker
+  activateDatePicker();
+
+  // 색상 설정
+  const cardColorInput = document.getElementById('cardColor');
+  const colorOptions = document.querySelectorAll('.color-option');
+
+  colorOptions.forEach(option => {
+    option.addEventListener('click', () => {
+      const selectedColor = option.getAttribute('data-color');
+      cardColorInput.value = selectedColor;
+    });
+  });
+
 
   // Save Changes 버튼 클릭 이벤트 처리
   const saveChangesButton = document.getElementById('save-changes-button');

@@ -33,13 +33,13 @@ public class UserViewController {
   }
 
   @GetMapping("/boards/{boardId}")
-  public String homePage(@PathVariable Long boardId) {
+  public String boardPage(@PathVariable Long boardId) {
     return "readOnly";
   }
 
   @GetMapping("/boards/{boardId}/edit")
   public String editPage(@PathVariable Long boardId) {
-    return "edit"; // edit.html 파일이 위치한 경로로 수정해야 합니다.
+    return "edit";
   }
 }
 
