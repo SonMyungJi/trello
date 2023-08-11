@@ -155,8 +155,8 @@
 
 <div class="modal" id="card-modal" style="display: none;">
   <div class="modal-content">
-    <label for="cardTitle">카드 이름</label>
-    <input type="text" id="cardTitle" placeholder="수정해주세요">
+    <label for="cardName">카드 이름</label>
+    <input type="text" id="cardName" placeholder="수정해주세요">
     <br>
     <label for="cardDescription">개요</label>
     <textarea id="cardDescription" placeholder="수정해주세요"></textarea>
@@ -165,9 +165,6 @@
     <input type="text" id="card-admin" placeholder="#유저이름" oninput="showSuggestions()">
     <div id="suggestions" style="display: none;">
       <div class="user-item" onclick="selectUser('User1')">User1</div>
-      <div class="user-item" onclick="selectUser('User2')">User2</div>
-      <div class="user-item" onclick="selectUser('User3')">User3</div>
-      <!-- 다른 사용자 목록 항목 추가 -->
     </div>
     <br>
     <label for="cardDue" style="display: inline-block; margin-right: 10px;">만기일 설정</label>
@@ -242,7 +239,7 @@
     data.sectionResponseDtos.forEach((section, sectionIndex) => {
       const sectionDiv = createSectionElement(sectionIndex + 1, section.sectionName);
 
-      section.cardTitleList.forEach((card, cardIndex) => {
+      section.cardList.forEach((card, cardIndex) => {
         const cardDiv = createCardElement(sectionIndex + 1, cardIndex + 1, card.cardName);
         sectionDiv.appendChild(cardDiv);
       });
@@ -252,6 +249,7 @@
 
     boardContainer.appendChild(boardDiv);
   }
+
 
   // Function to create a new section element
   function createSectionElement(sectionIndex, sectionName) {
@@ -278,15 +276,15 @@
     return sectionDiv;
   }
 
-  // Function to create a new card element
   function createCardElement(sectionIndex, cardIndex, cardName) {
     const cardDiv = document.createElement('div');
     cardDiv.className = 'card';
     cardDiv.id = `card-${sectionIndex}-${cardIndex}`;
 
-    const cardTitle = document.createElement('p');
-    cardTitle.textContent = cardName;
-    cardDiv.appendChild(cardTitle);
+    // Use the provided cardName parameter here
+    const cardNameParagraph = document.createElement('p');
+    cardNameParagraph.textContent = cardName;
+    cardDiv.appendChild(cardNameParagraph);
 
     // Create a plus button for adding cards
     const plusButton = document.createElement('button');
@@ -299,6 +297,8 @@
 
     return cardDiv;
   }
+
+
 
   // Function to add a new section
   function addSection() {
@@ -334,32 +334,78 @@
   });
 
   function showModal(sectionIndex, cardIndex) {
+    const cardDiv = document.getElementById(`card-${sectionIndex}-${cardIndex}`);
+
+    if (!cardDiv) {
+      console.error(`Card not found at section ${sectionIndex}, card ${cardIndex}`);
+      return;
+    }
     const modal = document.getElementById('card-modal');
-    const titleInput = document.getElementById('card-modal-title');
-    const descriptionInput = document.getElementById('card-modal-description');
-    const saveButton = document.getElementById('card-modal-save-button');
+    const titleInput = document.getElementById('cardName');
+    const descriptionInput = document.getElementById('cardDescription');
+    const adminInput = document.getElementById('card-admin');
+    const dateInput = document.getElementById('cardDue');
+    const createCardBtn = document.getElementById('createCardBtn');
     const closeButton = document.getElementById('card-modal-close-button');
 
     // Set modal content based on the card data
-    const cardDiv = document.getElementById(`card-${sectionIndex}-${cardIndex}`);
-    const cardTitleInput = cardDiv.querySelector('input[type="text"]');
+    const cardNameInput = cardDiv.querySelector('input[type="text"]');
     const cardDescriptionInput = cardDiv.querySelector('textarea');
+    const cardAdminInput = cardDiv.querySelector('input[type="text"]');
+    const cardDueInput = cardDiv.querySelector('input[type="text"]');
+
+    const cardIdParts = cardDiv.id.split('-');
+    const cardId = cardIdParts[2];
 
     // Show the modal
     modal.style.display = 'flex';
 
-    // Initialize modal content from card data
-    titleInput.value = cardTitleInput ? cardTitleInput.value : '';
-    descriptionInput.value = cardDescriptionInput ? cardDescriptionInput.value : '';
+    fetch(`/api/card/${cardId}`)
+    .then(response => response.json())
+    .then(cardData => {
+      titleInput.value = cardData.cardName;
+      descriptionInput.value = cardData.cardDesc;
+      adminInput.value = cardData.nickname;
+      dateInput.value = cardData.dueDate;
+    })
+    .catch(error => {
+      console.error('Error fetching card data:', error);
+    });
 
     // Save button click event
-    saveButton.addEventListener('click', () => {
+    createCardBtn.addEventListener('click', async () => {
       // Update card data based on modal content
-      if (cardTitleInput) {
-        cardTitleInput.value = titleInput.value;
-      }
-      if (cardDescriptionInput) {
-        cardDescriptionInput.value = descriptionInput.value;
+      cardNameInput.value = titleInput.value;
+      cardDescriptionInput.value = descriptionInput.value;
+      cardAdminInput.value = adminInput.value;
+      cardDueInput.value = dateInput.value;
+
+      const requestDto = {
+        cardName: titleInput.value,
+        cardDesc: descriptionInput.value,
+        nickname: adminInput.value,
+        dueDate: dateInput.value,
+        cardColor: selectedCardColor,
+      };
+
+      try {
+        const response = await fetch(`/api/card/${cardId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestDto),
+        });
+
+        if (response.ok) {
+          // Handle success
+          console.log('Card updated successfully');
+        } else {
+          // Handle error
+          console.error('Failed to update card');
+        }
+      } catch (error) {
+        console.error('Error updating card:', error);
       }
 
       // Hide the modal
@@ -373,11 +419,12 @@
     });
   }
 
+
+
   document.addEventListener('click', (event) => {
     const clickedCard = event.target.closest('.card');
     const clickedPlusButton = event.target.closest('.plus-button');
 
-    // Check if the clicked element is outside of the modal content
     if (!event.target.closest('.modal-content')) {
       const modal = document.getElementById('card-modal');
       modal.style.display = 'none';
@@ -394,14 +441,40 @@
   // Function to get board ID from URL
   function getBoardIdFromUrl() {
     const parts = window.location.pathname.split('/');
-    const boardIdIndex = parts.indexOf('boards') + 1;
+    const boardIdIndex = parts.indexOf('board') + 1;
     return parts[boardIdIndex];
   }
 
   // 담당자
-  function clearInput() {
-    const input = document.getElementById('card-admin');
-    input.value = ''; // 이전 정보 지우기
+  const inputElement = document.getElementById('card-admin');
+
+  // Add a focus event listener to clear the input value
+  inputElement.addEventListener('focus', () => {
+    inputElement.value = ''; // Clear the input value
+  });
+
+  async function fetchAndShowSuggestions() {
+    try {
+      const boardId = getBoardIdFromUrl();
+      const response = await fetch(`/api/boards/${boardId}/users`);
+      const data = await response.json();
+
+      const suggestionsContainer = document.getElementById('suggestions');
+      suggestionsContainer.innerHTML = '';
+
+      data.forEach(nickname => {
+        const userItem = document.createElement('div');
+        userItem.className = 'user-item';
+        userItem.textContent = nickname;
+        userItem.addEventListener('click', () => {
+          selectUser(nickname);
+        });
+        suggestionsContainer.appendChild(userItem);
+      });
+      suggestionsContainer.style.display = 'block';
+    } catch (error) {
+      console.error('Error fetching suggestions:', error);
+    }
   }
 
   function showSuggestions() {
@@ -409,7 +482,7 @@
     const suggestions = document.getElementById('suggestions');
 
     if (input.value.startsWith('#')) {
-      suggestions.style.display = 'block';
+      fetchAndShowSuggestions();
     } else {
       suggestions.style.display = 'none';
     }
@@ -436,12 +509,15 @@
   activateDatePicker();
 
   // 색상 설정
+  let selectedCardColor = "#fff";
+
   const cardColorInput = document.getElementById('cardColor');
   const colorOptions = document.querySelectorAll('.color-option');
 
   colorOptions.forEach(option => {
     option.addEventListener('click', () => {
       const selectedColor = option.getAttribute('data-color');
+      selectedCardColor = selectedColor;
       cardColorInput.value = selectedColor;
     });
   });

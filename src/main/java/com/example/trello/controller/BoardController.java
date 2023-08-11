@@ -56,12 +56,18 @@ public class BoardController {
     return ResponseEntity.ok().body(boardUserResponseDto);
   }
 
+  @GetMapping("/boards/{boardId}/users")
+  public ResponseEntity<List<String>> getSuggestions(@PathVariable Long boardId) {
+    List<String> boardUsers = boardService.getSuggestions(boardId);
+    return ResponseEntity.ok().body(boardUsers);
+  }
+
   // 보드 생성
   @PostMapping("/boards")
   public ResponseEntity<BoardResponseDto> createBoard(@RequestBody BoardRequestDto boardRequestDto,
-                                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+      @AuthenticationPrincipal UserDetailsImpl userDetails) {
     BoardResponseDto boardResponseDto = boardService.createBoard(boardRequestDto,
-            userDetails.getUser());
+        userDetails.getUser());
 
     return ResponseEntity.ok().body(boardResponseDto);
   }
@@ -69,11 +75,11 @@ public class BoardController {
   // 보드 수정
   @PutMapping("/boards/{boardId}")
   public ResponseEntity<BoardResponseDto> updateBoard(@PathVariable Long boardId,
-                                                      @RequestBody BoardRequestDto boardRequestDto,
-                                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+      @RequestBody BoardRequestDto boardRequestDto,
+      @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
     BoardResponseDto boardResponseDto = boardService.updateBoard(boardId, boardRequestDto,
-            userDetails.getUser());
+        userDetails.getUser());
 
     return ResponseEntity.ok().body(boardResponseDto);
   }
@@ -81,12 +87,12 @@ public class BoardController {
   // 보드 삭제
   @DeleteMapping("/boards/{boardId}")
   public ResponseEntity<ApiResponseDto> deleteBoard(@PathVariable Long boardId,
-                                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
+      @AuthenticationPrincipal UserDetailsImpl userDetails) {
     try {
       boardService.deleteBoard(boardId, userDetails.getUser());
     } catch (IllegalArgumentException e) {
       return ResponseEntity.badRequest()
-              .body(new ApiResponseDto(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
+          .body(new ApiResponseDto(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
     }
 
     return ResponseEntity.ok().body(new ApiResponseDto("보드를 삭제하였습니다.", HttpStatus.OK.value()));
@@ -95,13 +101,13 @@ public class BoardController {
   // 보드 초대
   @PostMapping("/boards/{boardId}/invite/{userId}")
   public ResponseEntity<ApiResponseDto> inviteBoard(@PathVariable Long boardId,
-                                                    @PathVariable Long userId,
-                                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
+      @PathVariable Long userId,
+      @AuthenticationPrincipal UserDetailsImpl userDetails) {
     try {
       boardService.inviteBoard(boardId, userId, userDetails.getUser());
     } catch (IllegalArgumentException e) {
       return ResponseEntity.badRequest()
-              .body(new ApiResponseDto(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
+          .body(new ApiResponseDto(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
     }
 
     return ResponseEntity.ok().body(new ApiResponseDto("유저를 초대하였습니다.", HttpStatus.OK.value()));
