@@ -1,289 +1,288 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Styled Board</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: #f3f3f3;
-      font-family: Arial, sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Styled Board</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f3f3f3;
+            font-family: Arial, sans-serif;
+        }
 
-    .board {
-      display: flex;
-      overflow-x: auto;
-      height: 100vh;
-      padding: 20px;
-      box-sizing: border-box;
-    }
+        .board {
+            display: flex;
+            overflow-x: auto;
+            height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
 
-    .section {
-      flex: 0 0 auto;
-      width: 300px;
-      background-color: #fff;
-      margin: 10px;
-      border-radius: 10px;
-      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-      display: flex;
-      flex-direction: column;
-    }
+        .section {
+            flex: 0 0 auto;
+            width: 300px;
+            background-color: #fff;
+            margin: 10px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
 
-    .card {
-      padding: 10px;
-      margin: 10px;
-      background-color: #f3f3f3;
-      border-radius: 5px;
-      box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.1);
-      transition: background-color 0.3s ease-in-out;
-    }
+        .card {
+            padding: 10px;
+            margin: 10px;
+            background-color: #f3f3f3;
+            border-radius: 5px;
+            box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease-in-out;
+        }
 
-    .card:hover {
-      background-color: #e0e0e0;
-    }
+        .card:hover {
+            background-color: #e0e0e0;
+        }
 
-    .modal {
-      justify-content: center;
-      align-items: center;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      z-index: 9999;
-    }
+        .modal {
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+        }
 
-    .modal-content {
-      background-color: #fff;
-      border-radius: 5px;
-      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-      display: flex;
-      max-width: 800px;
-      width: 80%;
-      margin: auto;
-      margin-top: 80px;
-    }
+        .modal-content {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: flex;
+            max-width: 800px;
+            width: 80%;
+            margin: auto;
+            margin-top: 80px;
+        }
 
-    .left-column {
-      flex: 2;
-      padding: 10px;
-      border-right: 1px solid #ccc;
-    }
+        .left-column {
+            flex: 2;
+            padding: 10px;
+            border-right: 1px solid #ccc;
+        }
 
-    .right-column {
-      flex: 1;
-      padding: 10px;
-    }
+        .right-column {
+            flex: 1;
+            padding: 10px;
+        }
 
-    .comment-list {
-      border-top: 1px solid #ccc;
-      margin-top: 20px;
-      padding-top: 10px;
-    }
+        .comment-list {
+            border-top: 1px solid #ccc;
+            margin-top: 20px;
+            padding-top: 10px;
+        }
 
-    .comment-item {
-      margin-bottom: 10px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #ccc;
-    }
-  </style>
+        .comment-item {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+    </style>
 </head>
 <body>
 <div class="board" id="board-container"></div>
 
 <div class="modal" id="cardModal" style="display: none;">
-  <div class="modal-content">
-    <div class="left-column">
-      <span class="fw-bold">CardName</span>
-      <br>
-      <div class="col-md-8">
-        <span id="modalCardName">카드 이름</span>
-      </div>
-      <br>
-      <div class="col-md-8"><span id="modalCardDesc">카드 설명</span></div>
-      <br>
-      <span class="fw-bold">#Nickname</span>
-      <br>
-      <span id="modalCardNickname">닉네임</span>
-      <br>
-      <span class="fw-bold">만기일</span>
-      <span id="modalCardDueDate">만기일</span>
-      <div class="add-file">
-        <form action="/upload" method="post" enctype="multipart/form-data">
-          <a href="/download/sample.txt">파일 다운로드</a>
-        </form>
-      </div>
-    </div>
-    <div class="right-column">
-      <label>Comment</label>
-      <div class="comment-list" id="commentList">
-        <!-- Comment list items... -->
-      </div>
-      <br>
-      <div class="comment-input">
-        <input type="text" id="commentInput" placeholder="Write a comment">
-        <div class="submitButtonContainer">
-          <button id="submitCommentBtn">Submit</button>
+    <div class="modal-content">
+        <div class="left-column">
+            <span class="fw-bold">CardName</span>
+            <br>
+            <div class="col-md-8">
+                <span id="modalCardName">카드 이름</span>
+            </div>
+            <br>
+            <div class="col-md-8"><span id="modalCardDesc">카드 설명</span></div>
+            <br>
+            <span class="fw-bold">#Nickname</span>
+            <br>
+            <span id="modalCardNickname">닉네임</span>
+            <br>
+            <span class="fw-bold">만기일</span>
+            <span id="modalCardDueDate">만기일</span>
+            <div class="add-file">
+                <form action="/upload" method="post" enctype="multipart/form-data">
+                    <a href="/download/sample.txt">파일 다운로드</a>
+                </form>
+            </div>
         </div>
-      </div>
+        <div class="right-column">
+            <label>Comment</label>
+            <div class="comment-list" id="commentList">
+                <!-- Comment list items... -->
+            </div>
+            <br>
+            <div class="comment-input">
+                <input type="text" id="commentInput" placeholder="Write a comment">
+                <div class="submitButtonContainer">
+                    <button id="submitCommentBtn">Submit</button>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 <script>
-  // Function to fetch data from the API
-  async function fetchBoardData(boardId) {
-    try {
-      const response = await fetch(`/api/view/user/boards/${boardId}`);
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error('Error fetching data:', error);
+    // Function to fetch data from the API
+    async function fetchBoardData(boardId) {
+        try {
+            const response = await fetch(`/api/boards/${boardId}`);
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
     }
-  }
 
-  // Function to render board data
-  function renderBoard(data) {
-    const boardContainer = document.getElementById('board-container');
-    const boardDiv = document.createElement('div');
+    // Function to render board data
+    function renderBoard(data) {
+        const boardContainer = document.getElementById('board-container');
+        const boardDiv = document.createElement('div');
 
-    boardDiv.style.backgroundColor = data.boardColor;
+        boardDiv.style.backgroundColor = data.boardColor;
 
-    // Create board header
-    const boardHeader = document.createElement('h1');
-    boardHeader.textContent = data.boardName;
-    boardDiv.appendChild(boardHeader);
+        // Create board header
+        const boardHeader = document.createElement('h1');
+        boardHeader.textContent = data.boardName;
+        boardDiv.appendChild(boardHeader);
 
-    // Create sections and cards
-    data.sectionResponseDtos.forEach((section, sectionIndex) => {
-      const sectionDiv = document.createElement('div');
-      sectionDiv.className = 'section';
-      sectionDiv.id = `section-${sectionIndex + 1}`;
+        // Create sections and cards
+        data.sectionResponseDtos.forEach((section, sectionIndex) => {
+            const sectionDiv = document.createElement('div');
+            sectionDiv.className = 'section';
+            sectionDiv.id = `section-${sectionIndex + 1}`;
 
-      const sectionHeader = document.createElement('h2');
-      sectionHeader.textContent = section.sectionName;
-      sectionDiv.appendChild(sectionHeader);
+            const sectionHeader = document.createElement('h2');
+            sectionHeader.textContent = section.sectionName;
+            sectionDiv.appendChild(sectionHeader);
 
-      section.cardList.forEach((card, cardIndex) => {
-        const cardDiv = document.createElement('div');
-        cardDiv.className = 'card';
-        cardDiv.id = `card-${sectionIndex + 1}-${cardIndex + 1}`; // Set card ID
-        cardDiv.setAttribute('data-card-id', card.cardId);
+            section.cardList.forEach((card, cardIndex) => {
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'card';
+                cardDiv.id = `card-${sectionIndex + 1}-${cardIndex + 1}`; // Set card ID
+                cardDiv.setAttribute('data-card-id', card.cardId);
 
-        const cardName = document.createElement('h3');
-        cardName.textContent = card.cardName;
-        cardDiv.appendChild(cardName);
+                const cardName = document.createElement('h3');
+                cardName.textContent = card.cardName;
+                cardDiv.appendChild(cardName);
 
-        const cardNickname = document.createElement('p');
-        cardNickname.textContent = card.nickName;
-        cardDiv.appendChild(cardNickname);
+                const cardNickname = document.createElement('p');
+                cardNickname.textContent = card.nickName;
+                cardDiv.appendChild(cardNickname);
 
-        sectionDiv.appendChild(cardDiv);
-      });
+                sectionDiv.appendChild(cardDiv);
+            });
 
-      boardDiv.appendChild(sectionDiv);
-    });
+            boardDiv.appendChild(sectionDiv);
+        });
 
-    boardContainer.appendChild(boardDiv);
+        boardContainer.appendChild(boardDiv);
 
-    // Add Edit button
-    const editButton = document.createElement('button');
-    editButton.textContent = 'Edit';
-    editButton.addEventListener('click', () => {
-      openEditPage(data.boardId);
-    });
-    boardContainer.appendChild(editButton);
-  }
+        // Add Edit button
+        const editButton = document.createElement('button');
+        editButton.textContent = 'Edit';
+        editButton.addEventListener('click', () => {
+            openEditPage(data.boardId);
+        });
+        boardContainer.appendChild(editButton);
+    }
 
-  // Function to get board ID from URL
-  function getBoardIdFromUrl() {
-    const parts = window.location.pathname.split('/');
-    const boardIdIndex = parts.indexOf('board') + 1;
-    return parts[boardIdIndex];
-  }
+    function getBoardIdFromUrl() {
+        const parts = window.location.pathname.split('/');
+        const boardIdIndex = parts.indexOf('board') + 1;
+        return parts[boardIdIndex];
+    }
 
-  // Open read-only page and fetch board data
-  const boardId = getBoardIdFromUrl();
-  fetchBoardData(boardId)
-  .then(data => renderBoard(data))
-  .catch(error => console.error('Error:', error));
-
-  // Function to open edit page for the board
-  function openEditPage() {
+    // Open read-only page and fetch board data
     const boardId = getBoardIdFromUrl();
-    if (boardId) {
-      window.location.href = `/api/view/user/boards/${boardId}/edit`;
+    fetchBoardData(boardId)
+        .then(data => renderBoard(data))
+        .catch(error => console.error('Error:', error));
+
+    // Function to open edit page for the board
+    function openEditPage() {
+        const boardId = getBoardIdFromUrl();
+        if (boardId) {
+            window.location.href = `/api/view/user/boards/${boardId}/edit`;
+        }
     }
-  }
 
-  document.addEventListener('click', (event) => {
-    const clickedCard = event.target.closest('.card');
+    document.addEventListener('click', (event) => {
+        const clickedCard = event.target.closest('.card');
 
-    if (clickedCard) {
-      const cardIdParts = clickedCard.id.split('-');
-      const sectionIndex = cardIdParts[1];
-      const cardIndex = cardIdParts[2];
-      showModal(sectionIndex, cardIndex);
-    }
-  });
-
-  function showModal(sectionIndex, cardIndex) {
-    const cardDiv = document.getElementById(`card-${sectionIndex}-${cardIndex}`);
-
-    if (!cardDiv) {
-      console.error(`Card not found at section ${sectionIndex}, card ${cardIndex}`);
-      return;
-    }
-    const modal = document.getElementById('cardModal');
-    const titleInput = document.getElementById('modalCardName');
-    const descriptionInput = document.getElementById('modalCardDesc');
-    const nicknameInput = document.getElementById('modalCardNickname');
-    const dueDateInput = document.getElementById('modalCardDueDate');
-
-    const cardIdParts = cardDiv.id.split('-');
-    const cardId = cardDiv.getAttribute('data-card-id');  // 수정: cardId 값을 가져오기
-
-    // Show the modal
-    modal.style.display = 'block';  // 수정: display 값 변경
-
-    fetch(`/api/card/${cardId}`)
-    .then(response => response.json())
-    .then(cardData => {
-      titleInput.textContent = cardData.cardName;
-      descriptionInput.textContent = cardData.cardDesc;
-      nicknameInput.textContent = cardData.nickname;
-      dueDateInput.textContent = cardData.dueDate;
-      console.log(cardData);
-    })
-    .catch(error => {
-      console.error('Error fetching card data:', error);
+        if (clickedCard) {
+            const cardIdParts = clickedCard.id.split('-');
+            const sectionIndex = cardIdParts[1];
+            const cardIndex = cardIdParts[2];
+            showModal(sectionIndex, cardIndex);
+        }
     });
-  }
 
-  // Close modal function
-  function closeModal() {
-    const modal = document.getElementById('cardModal');
-    modal.style.display = 'none';
-  }
+    function showModal(sectionIndex, cardIndex) {
+        const cardDiv = document.getElementById(`card-${sectionIndex}-${cardIndex}`);
 
-  // Close modal when clicking outside the modal content
-  window.addEventListener('click', (event) => {
-    const modal = document.getElementById('cardModal');
-    if (event.target === modal) {
-      closeModal();
+        if (!cardDiv) {
+            console.error(`Card not found at section ${sectionIndex}, card ${cardIndex}`);
+            return;
+        }
+        const modal = document.getElementById('cardModal');
+        const titleInput = document.getElementById('modalCardName');
+        const descriptionInput = document.getElementById('modalCardDesc');
+        const nicknameInput = document.getElementById('modalCardNickname');
+        const dueDateInput = document.getElementById('modalCardDueDate');
+
+        const cardIdParts = cardDiv.id.split('-');
+        const cardId = cardDiv.getAttribute('data-card-id');  // 수정: cardId 값을 가져오기
+
+        // Show the modal
+        modal.style.display = 'block';  // 수정: display 값 변경
+
+        fetch(`/api/card/${cardId}`)
+            .then(response => response.json())
+            .then(cardData => {
+                titleInput.textContent = cardData.cardName;
+                descriptionInput.textContent = cardData.cardDesc;
+                nicknameInput.textContent = cardData.nickname;
+                dueDateInput.textContent = cardData.dueDate;
+                console.log(cardData);
+            })
+            .catch(error => {
+                console.error('Error fetching card data:', error);
+            });
     }
-  });
 
-  // Close modal when pressing the Escape key
-  window.addEventListener('keydown', (event) => {
-    const modal = document.getElementById('cardModal');
-    if (event.key === 'Escape') {
-      closeModal();
+    // Close modal function
+    function closeModal() {
+        const modal = document.getElementById('cardModal');
+        modal.style.display = 'none';
     }
-  });
+
+    // Close modal when clicking outside the modal content
+    window.addEventListener('click', (event) => {
+        const modal = document.getElementById('cardModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    // Close modal when pressing the Escape key
+    window.addEventListener('keydown', (event) => {
+        const modal = document.getElementById('cardModal');
+        if (event.key === 'Escape') {
+            closeModal();
+        }
+    });
 
 
 </script>

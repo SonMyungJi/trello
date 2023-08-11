@@ -211,7 +211,7 @@
   // Function to fetch data from the API and populate the Edit page
   async function fetchAndRenderEditData(boardId) {
     try {
-      const response = await fetch(`/api/boards/${boardId}`);
+      const response = await fetch(`/api/boards/${boardId}/edit`);
       const data = await response.json();
       renderEditPage(data);
     } catch (error) {
