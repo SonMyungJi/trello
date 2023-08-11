@@ -155,8 +155,8 @@
 
 <div class="modal" id="card-modal" style="display: none;">
   <div class="modal-content">
-    <label for="cardTitle">카드 이름</label>
-    <input type="text" id="cardTitle" placeholder="수정해주세요">
+    <label for="cardName">카드 이름</label>
+    <input type="text" id="cardName" placeholder="수정해주세요">
     <br>
     <label for="cardDescription">개요</label>
     <textarea id="cardDescription" placeholder="수정해주세요"></textarea>
@@ -211,7 +211,7 @@
   // Function to fetch data from the API and populate the Edit page
   async function fetchAndRenderEditData(boardId) {
     try {
-      const response = await fetch(`/api/board/${boardId}`);
+      const response = await fetch(`/api/boards/${boardId}`);
       const data = await response.json();
       renderEditPage(data);
     } catch (error) {
@@ -239,7 +239,7 @@
     data.sectionResponseDtos.forEach((section, sectionIndex) => {
       const sectionDiv = createSectionElement(sectionIndex + 1, section.sectionName);
 
-      section.cardTitleList.forEach((card, cardIndex) => {
+      section.cardList.forEach((card, cardIndex) => {
         const cardDiv = createCardElement(sectionIndex + 1, cardIndex + 1, card.cardName);
         sectionDiv.appendChild(cardDiv);
       });
@@ -276,15 +276,15 @@
     return sectionDiv;
   }
 
-  // Function to create a new card element
   function createCardElement(sectionIndex, cardIndex, cardName) {
     const cardDiv = document.createElement('div');
     cardDiv.className = 'card';
     cardDiv.id = `card-${sectionIndex}-${cardIndex}`;
 
-    const cardTitle = document.createElement('p');
-    cardTitle.textContent = cardName;
-    cardDiv.appendChild(cardTitle);
+    // Use the provided cardName parameter here
+    const cardNameParagraph = document.createElement('p');
+    cardNameParagraph.textContent = cardName;
+    cardDiv.appendChild(cardNameParagraph);
 
     // Create a plus button for adding cards
     const plusButton = document.createElement('button');
@@ -297,6 +297,8 @@
 
     return cardDiv;
   }
+
+
 
   // Function to add a new section
   function addSection() {
@@ -339,7 +341,7 @@
       return;
     }
     const modal = document.getElementById('card-modal');
-    const titleInput = document.getElementById('cardTitle');
+    const titleInput = document.getElementById('cardName');
     const descriptionInput = document.getElementById('cardDescription');
     const adminInput = document.getElementById('card-admin');
     const dateInput = document.getElementById('cardDue');
@@ -347,7 +349,7 @@
     const closeButton = document.getElementById('card-modal-close-button');
 
     // Set modal content based on the card data
-    const cardTitleInput = cardDiv.querySelector('input[type="text"]');
+    const cardNameInput = cardDiv.querySelector('input[type="text"]');
     const cardDescriptionInput = cardDiv.querySelector('textarea');
     const cardAdminInput = cardDiv.querySelector('input[type="text"]');
     const cardDueInput = cardDiv.querySelector('input[type="text"]');
@@ -373,7 +375,7 @@
     // Save button click event
     createCardBtn.addEventListener('click', async () => {
       // Update card data based on modal content
-      cardTitleInput.value = titleInput.value;
+      cardNameInput.value = titleInput.value;
       cardDescriptionInput.value = descriptionInput.value;
       cardAdminInput.value = adminInput.value;
       cardDueInput.value = dateInput.value;
@@ -454,7 +456,7 @@
   async function fetchAndShowSuggestions() {
     try {
       const boardId = getBoardIdFromUrl();
-      const response = await fetch(`/api/board/${boardId}/users`);
+      const response = await fetch(`/api/boards/${boardId}/users`);
       const data = await response.json();
 
       const suggestionsContainer = document.getElementById('suggestions');

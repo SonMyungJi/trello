@@ -24,9 +24,9 @@ public class CardController {
   private final CardService cardService;
 
   @GetMapping("/card/{cardId}")
-  ResponseEntity<ApiResponseDto> getCard(@PathVariable Long cardId) {
-    cardService.getCard(cardId);
-    return ResponseEntity.ok().body(new ApiResponseDto("카드 조회", HttpStatus.OK.value()));
+  ResponseEntity<CardResponseDto> getCard(@PathVariable Long cardId) {
+    CardResponseDto result = cardService.getCard(cardId);
+    return ResponseEntity.ok().body(result);
   }
 
   @PostMapping("/section/{sectionId}/card")

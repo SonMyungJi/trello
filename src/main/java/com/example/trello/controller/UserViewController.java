@@ -31,10 +31,4 @@ public class UserViewController {
     return "profile";
   }
 
-  @GetMapping("/board/{boardId}/edit")
-  public String editPage() {
-    return "edit";
-  }
-
-
 }

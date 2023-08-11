@@ -29,41 +29,41 @@ public class BoardController {
   private final BoardService boardService;
 
   // 보드 전체조회
-  @GetMapping("/board")
+  @GetMapping("/boards")
   public ResponseEntity<List<BoardResponseDto>> getBoards() {
     List<BoardResponseDto> boardResponseDtos = boardService.getBoards();
     return ResponseEntity.ok().body(boardResponseDtos);
   }
 
   // 보드 개별조회
-  @GetMapping("/board/{boardId}")
+  @GetMapping("/boards/{boardId}")
   public ResponseEntity<BoardResponseDto> getBoard(@PathVariable Long boardId) {
     BoardResponseDto boardResponseDto = boardService.getBoard(boardId);
     return ResponseEntity.ok().body(boardResponseDto);
   }
 
   // 보드 유저 조회 (전체보드)
-  @GetMapping("/board/user")
+  @GetMapping("/boards/user")
   public ResponseEntity<List<BoardUserResponseDto>> getBoardsUser() {
     List<BoardUserResponseDto> boardUserResponseDtos = boardService.getBoardsUser();
     return ResponseEntity.ok().body(boardUserResponseDtos);
   }
 
   // 보드 유저 조회 (선택보드)
-  @GetMapping("/board/user/{userId}")
+  @GetMapping("/boards/user/{userId}")
   public ResponseEntity<BoardUserResponseDto> getBoardUser(@PathVariable Long userId) {
     BoardUserResponseDto boardUserResponseDto = boardService.getBoardUser(userId);
     return ResponseEntity.ok().body(boardUserResponseDto);
   }
 
-  @GetMapping("/board/{boardId}/users")
+  @GetMapping("/boards/{boardId}/users")
   public ResponseEntity<List<String>> getSuggestions(@PathVariable Long boardId) {
     List<String> boardUsers = boardService.getSuggestions(boardId);
     return ResponseEntity.ok().body(boardUsers);
   }
 
   // 보드 생성
-  @PostMapping("/board")
+  @PostMapping("/boards")
   public ResponseEntity<BoardResponseDto> createBoard(@RequestBody BoardRequestDto boardRequestDto,
       @AuthenticationPrincipal UserDetailsImpl userDetails) {
     BoardResponseDto boardResponseDto = boardService.createBoard(boardRequestDto,
@@ -73,7 +73,7 @@ public class BoardController {
   }
 
   // 보드 수정
-  @PutMapping("/board/{boardId}")
+  @PutMapping("/boards/{boardId}")
   public ResponseEntity<BoardResponseDto> updateBoard(@PathVariable Long boardId,
       @RequestBody BoardRequestDto boardRequestDto,
       @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -85,7 +85,7 @@ public class BoardController {
   }
 
   // 보드 삭제
-  @DeleteMapping("/board/{boardId}")
+  @DeleteMapping("/boards/{boardId}")
   public ResponseEntity<ApiResponseDto> deleteBoard(@PathVariable Long boardId,
       @AuthenticationPrincipal UserDetailsImpl userDetails) {
     try {
@@ -99,7 +99,7 @@ public class BoardController {
   }
 
   // 보드 초대
-  @PostMapping("/board/{boardId}/invite/{userId}")
+  @PostMapping("/boards/{boardId}/invite/{userId}")
   public ResponseEntity<ApiResponseDto> inviteBoard(@PathVariable Long boardId,
       @PathVariable Long userId,
       @AuthenticationPrincipal UserDetailsImpl userDetails) {
