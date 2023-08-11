@@ -31,4 +31,14 @@ public class UserViewController {
     return "profile";
   }
 
+  @GetMapping("/boards/{boardId}/edit")
+  public String editPage() {
+    return "edit";
+  }
+
+  @GetMapping("/boards/{boardId}")
+  public String readOnlyPage() {
+    return "readOnly";
+  }
+
 }
