@@ -12,21 +12,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/api/view/user")
 public class UserViewController {
 
-    @GetMapping("/login")
-    public String loginPage() {
-        return "login";
-    }
+  @GetMapping("/login")
+  public String loginPage() {
+    return "login";
+  }
 
-    @GetMapping("/signup")
-    public String signupPage() { return "signup";}
+  @GetMapping("/signup")
+  public String signupPage() {
+    return "signup";
+  }
 
-    @GetMapping("/profile")
-    public String updatePage(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) throws JsonProcessingException {
+  @GetMapping("/profile")
+  public String updatePage(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails)
+      throws JsonProcessingException {
 
-        model.addAttribute("info_username",userDetails.getUser().getUsername());
-        model.addAttribute("info_user",userDetails.getUser());
-        return "profile";
-    }
+    model.addAttribute("info_username", userDetails.getUser().getUsername());
+    model.addAttribute("info_user", userDetails.getUser());
+    return "profile";
+  }
 
   @GetMapping("/boards/{boardId}/edit")
   public String editPage() {

@@ -13,11 +13,13 @@ public class SectionResponseDto {
 
   private Long sectionId;
   private String sectionName;
+  private String sectionIndex;
   private List<CardResponseDto> cardList = new ArrayList<>();
 
   public SectionResponseDto(Section section) {
     this.sectionId = section.getSectionId();
     this.sectionName = section.getSectionName();
+    this.sectionIndex = section.getSectionIndex();
     for (Card card : section.getCards()) {
       cardList.add(new CardResponseDto(card));
     }

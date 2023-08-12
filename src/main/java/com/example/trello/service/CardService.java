@@ -35,8 +35,9 @@ public class CardService {
 
     card.setCardName(requestDto.getCardName());
     card.setCardDesc(requestDto.getCardDesc());
-    card.setCardColor(requestDto.getCardColor());
     card.setNickname(requestDto.getNickname());
+    card.setDueDate(requestDto.getDueDate());
+//    card.setCardColor(requestDto.getCardColor());
 
     return new CardResponseDto(card);
   }
@@ -48,6 +49,6 @@ public class CardService {
 
   public Card findCard(Long cardId) {
     return cardRepository.findById(cardId).orElseThrow(() ->
-            new IllegalArgumentException("해당 카드는 존재하지 않습니다."));
+        new IllegalArgumentException("해당 카드는 존재하지 않습니다."));
   }
 }
