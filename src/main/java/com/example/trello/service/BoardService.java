@@ -134,9 +134,9 @@ public class BoardService {
         () -> new IllegalArgumentException("초대할 보드가 존재하지 않습니다.")
     );
 
-//        if(!board.getCreator().getUserId().equals(user.getUserId())){
-//            throw new IllegalArgumentException("보드 생성자만 초대할 수 있습니다.");
-//        }
+    if (!board.getCreator().getUserId().equals(user.getUserId())) {
+      throw new IllegalArgumentException("보드 생성자만 초대할 수 있습니다.");
+    }
     validateBoardAdminRole(board, user);
 
     User invitedUser = userRepository.findById(userid).orElseThrow(
