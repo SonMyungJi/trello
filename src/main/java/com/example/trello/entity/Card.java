@@ -34,8 +34,8 @@ public class Card {
   @Column(nullable = true)
   private String cardDesc;
 
-//  @Column(nullable = true)
-//  private String cardColor;
+  @Column(nullable = true)
+  private String cardColor;
 
   @Column(nullable = true)
   private String nickname;
@@ -59,7 +59,7 @@ public class Card {
     this.cardDesc = requestDto.getCardDesc();
     this.nickname = requestDto.getNickname();
     this.dueDate = requestDto.getDueDate();
-//    this.cardColor = requestDto.getCardColor();
+    this.cardColor = requestDto.getCardColor();
     this.cardIndex = requestDto.getCardIndex();
   }
 }

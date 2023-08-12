@@ -223,6 +223,7 @@
         cardDiv.className = 'card';
         cardDiv.id = `card-${sectionIndex + 1}-${cardIndex + 1}`;
         cardDiv.setAttribute('data-card-id', card.cardId);
+        cardDiv.style.backgroundColor = card.cardColor;
 
         const cardName = document.createElement('h3');
         cardName.textContent = card.cardName;

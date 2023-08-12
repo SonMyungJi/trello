@@ -14,7 +14,7 @@ public class CardResponseDto {
   private String cardDesc;
   private String nickname;
   private String dueDate;
-  //  private String cardColor;
+  private String cardColor;
   private String cardIndex;
   private List<CommentResponseDto> commentList = new ArrayList<>();
 
@@ -24,7 +24,7 @@ public class CardResponseDto {
     this.cardDesc = card.getCardDesc();
     this.nickname = card.getNickname();
     this.dueDate = card.getDueDate();
-//    this.cardColor = card.getCardColor();
+    this.cardColor = card.getCardColor();
     this.cardIndex = card.getCardIndex();
     for (Comment comment : card.getComments()) {
       commentList.add(new CommentResponseDto(comment));

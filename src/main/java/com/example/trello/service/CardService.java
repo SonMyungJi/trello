@@ -37,7 +37,7 @@ public class CardService {
     card.setCardDesc(requestDto.getCardDesc());
     card.setNickname(requestDto.getNickname());
     card.setDueDate(requestDto.getDueDate());
-//    card.setCardColor(requestDto.getCardColor());
+    card.setCardColor(requestDto.getCardColor());
 
     return new CardResponseDto(card);
   }
