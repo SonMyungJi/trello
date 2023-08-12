@@ -12,18 +12,20 @@ public class CardResponseDto {
   private Long cardId;
   private String cardName;
   private String cardDesc;
-  private String cardColor;
   private String nickname;
   private String dueDate;
+  //  private String cardColor;
+  private String cardIndex;
   private List<CommentResponseDto> commentList = new ArrayList<>();
 
   public CardResponseDto(Card card) {
     this.cardId = card.getCardId();
     this.cardName = card.getCardName();
     this.cardDesc = card.getCardDesc();
-    this.cardColor = card.getCardColor();
     this.nickname = card.getNickname();
     this.dueDate = card.getDueDate();
+//    this.cardColor = card.getCardColor();
+    this.cardIndex = card.getCardIndex();
     for (Comment comment : card.getComments()) {
       commentList.add(new CommentResponseDto(comment));
     }

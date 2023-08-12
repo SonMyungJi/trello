@@ -33,11 +33,11 @@ public class Board extends TimeStamped {
   @Column(nullable = false)
   private String boardName; // 보드 이름
 
-  @Column(nullable = true)
-  private String boardContents; // 보드 설명
-
-  @Column(nullable = true)
-  private String boardColor; // 보드 배경 색상
+//  @Column(nullable = true)
+//  private String boardContents; // 보드 설명
+//
+//  @Column(nullable = true)
+//  private String boardColor; // 보드 배경 색상
 
   @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<BoardUser> boardUsers = new ArrayList<>();
@@ -51,8 +51,8 @@ public class Board extends TimeStamped {
 
   public Board(BoardRequestDto boardRequestDto, User user) {
     this.boardName = boardRequestDto.getBoardName();
-    this.boardContents = boardRequestDto.getBoardContents();
-    this.boardColor = boardRequestDto.getBoardColor();
+//    this.boardContents = boardRequestDto.getBoardContents();
+//    this.boardColor = boardRequestDto.getBoardColor();
     this.creator = user;
   }
 
@@ -63,8 +63,8 @@ public class Board extends TimeStamped {
 
   public void update(BoardRequestDto boardRequestDto) {
     this.boardName = boardRequestDto.getBoardName();
-    this.boardContents = boardRequestDto.getBoardContents();
-    this.boardColor = boardRequestDto.getBoardColor();
+//    this.boardContents = boardRequestDto.getBoardContents();
+//    this.boardColor = boardRequestDto.getBoardColor();
   }
 
 

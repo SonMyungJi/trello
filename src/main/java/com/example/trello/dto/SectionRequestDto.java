@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class SectionRequestDto {
-    private String sectionName;
 
+  private String sectionName;
+  private String sectionIndex;
 }
