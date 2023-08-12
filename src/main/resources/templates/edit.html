@@ -9,55 +9,55 @@
     body {
       margin: 0;
       padding: 0;
-      background-color: #f3f3f3;
+      background-color: #f8f9fa;
       font-family: Arial, sans-serif;
     }
 
     .board {
       display: flex;
+      flex-direction: column;
       overflow-x: auto;
       height: 100vh;
       padding: 20px;
       box-sizing: border-box;
+      justify-content: flex-start;
+    }
+
+    .board-header {
+      margin-bottom: 20px; /* 여백 조정 */
+      font-size: 24px; /* 폰트 크기 조정 */
+      color: #333;
+    }
+
+    .section-container {
+      display: flex;
+      overflow-x: auto;
     }
 
     .section {
-      flex: 0 0 auto;
-      width: 300px;
+      flex: 0 0 300px;
+      height: 100%;
       background-color: #fff;
-      margin: 10px;
+      margin: 0 10px;
       border-radius: 10px;
       box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-      display: flex;
-      flex-direction: column;
+      padding: 15px;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
 
     .card {
-      padding: 10px;
-      margin: 10px;
-      background-color: #f3f3f3;
+      padding: 15px;
+      margin: 10px 0;
+      background-color: #fff;
       border-radius: 5px;
       box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.1);
-      transition: background-color 0.3s ease-in-out;
-    }
-
-    .card:hover {
-      background-color: #e0e0e0;
-    }
-
-    /* 수정 버튼 스타일 */
-    .edit-button {
-      margin-top: 10px;
-      padding: 5px 10px;
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
+      transition: background-color 0.3s ease-in-out, transform 0.2s;
       cursor: pointer;
     }
 
-    .edit-button:hover {
-      background-color: #0056b3;
+    .card:hover {
+      background-color: #f5f5f5;
+      transform: translateY(-3px);
     }
 
     .plus-button {
@@ -147,12 +147,25 @@
       cursor: pointer;
     }
 
+    .save-button-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end; /* Align the button to the right side */
+      position: absolute; /* Position it absolutely */
+      right: 20px; /* Adjust the right distance */
+      top: 0; /* Position it at the top of the board */
+      bottom: 20px; /* Stretch it to the bottom of the board */
+      margin: auto; /* Center it vertically */
+    }
+
+    .save-button {
+      height: 100%; /* Make the button height 100% of its container */
+    }
+
   </style>
 </head>
 <body>
 <div class="board" id="board-container"></div>
-<button class="edit-button" id="save-changes-button">Save Changes</button>
-
 <div class="modal" id="card-modal" style="display: none;">
   <div class="modal-content">
     <label for="cardName">카드 이름</label>
@@ -200,19 +213,88 @@
     <div class="createButtonContainer">
       <button id="createCardBtn">업데이트</button>
     </div>
-    </div>
   </div>
+</div>
+<div class="save-button-container">
+  <button class="save-button" id="saveBtn">Save</button>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 <script>
-  // Function to fetch data from the API and populate the Edit page
+
+  let data;
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    const boardId = getBoardIdFromUrl();
+    await fetchAndRenderEditData(boardId);
+
+    if (data.sectionResponseDtos.length === 0) {
+      await addDefaultSectionAndCard(boardId);
+    }
+  });
+
+  async function addDefaultSectionAndCard(boardId) {
+    try {
+      const defaultSectionResponse = await fetch(`/api/board/${boardId}/section`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          sectionIndex: 1,
+          sectionName: 'Default Section' // 원하는 기본 섹션 이름으로 변경하세요
+        })
+      });
+
+      if (defaultSectionResponse.ok) {
+        const defaultSectionData = await defaultSectionResponse.json();
+        const defaultSectionDiv = createSectionElement(defaultSectionData, 0);
+        const sectionContainer = document.querySelector('.section-container');
+        sectionContainer.appendChild(defaultSectionDiv);
+
+        const defaultCardResponse = await fetch(
+            `/api/section/${defaultSectionData.sectionIndex}/card`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                sectionIndex: defaultSectionData.sectionIndex,
+                cardIndex: 1,
+                cardName: 'Default Card' // 원하는 기본 카드 이름으로 변경하세요
+              }),
+            });
+
+        if (defaultCardResponse.ok) {
+          const defaultCardData = await defaultCardResponse.json();
+          const defaultCardDiv = createCardElement(defaultCardData, 0, 0);
+          defaultSectionDiv.appendChild(defaultCardDiv);
+        } else {
+          console.error('Failed to create default card');
+        }
+      } else {
+        console.error('Failed to create default section');
+      }
+    } catch (error) {
+      console.error('Error creating default section and card:', error);
+    }
+  }
+
+  function getBoardIdFromUrl() {
+    const parts = window.location.pathname.split('/');
+    const boardIdIndex = parts.indexOf('boards') + 1;
+    return parts[boardIdIndex];
+  }
+
+  const boardId = getBoardIdFromUrl();
+  fetchAndRenderEditData(boardId);
+
   async function fetchAndRenderEditData(boardId) {
     try {
       const response = await fetch(`/api/boards/${boardId}`);
-      const data = await response.json();
+      data = await response.json();
       renderEditPage(data);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -222,103 +304,174 @@
   // Function to render Edit page
   function renderEditPage(data) {
     const boardContainer = document.getElementById('board-container');
-    const boardDiv = document.createElement('div');
+    boardContainer.innerHTML = '';
 
-    // Set board styles
-    boardDiv.style.backgroundColor = data.boardColor;
+    const headerContainer = document.createElement('div');
+    boardContainer.appendChild(headerContainer);
 
-    // Create board header
     const boardHeader = document.createElement('h1');
-    const boardNameInput = document.createElement('input');
-    boardNameInput.type = 'text';
-    boardNameInput.value = data.boardName;
-    boardHeader.appendChild(boardNameInput);
-    boardDiv.appendChild(boardHeader);
+    boardHeader.textContent = data.boardName;
+    headerContainer.appendChild(boardHeader);
 
-    // Create sections and cards (Editable elements)
+    const sectionContainer = document.createElement('div');
+    sectionContainer.className = 'section-container';
+
+    data.sectionResponseDtos.sort((a, b) => parseInt(a.sectionIndex) - parseInt(b.sectionIndex));
     data.sectionResponseDtos.forEach((section, sectionIndex) => {
-      const sectionDiv = createSectionElement(sectionIndex + 1, section.sectionName);
+      const sectionDiv = createSectionElement(section, sectionIndex);
 
+      const cardListDiv = document.createElement('div');
+      cardListDiv.className = 'card-list';
+
+      section.cardList.sort((a, b) => parseInt(a.cardIndex) - parseInt(b.cardIndex));
       section.cardList.forEach((card, cardIndex) => {
-        const cardDiv = createCardElement(sectionIndex + 1, cardIndex + 1, card.cardName);
-        sectionDiv.appendChild(cardDiv);
+        const cardDiv = createCardElement(card, sectionIndex, cardIndex); // Pass sectionIndex and cardIndex
+        cardListDiv.appendChild(cardDiv); // Append the cardDiv to cardListDiv
       });
 
-      boardDiv.appendChild(sectionDiv);
+      sectionDiv.appendChild(cardListDiv);
+      sectionContainer.appendChild(sectionDiv, sectionContainer.firstChild);
+
+      const plusButton = sectionDiv.querySelector('.plus-button');
+      plusButton.addEventListener('click', () => {
+        addSection(data.id);
+      });
     });
 
-    boardContainer.appendChild(boardDiv);
+    boardContainer.appendChild(sectionContainer);
   }
 
-
   // Function to create a new section element
-  function createSectionElement(sectionIndex, sectionName) {
+  function createSectionElement(section, sectionIndex) {
     const sectionDiv = document.createElement('div');
     sectionDiv.className = 'section';
-    sectionDiv.id = `section-${sectionIndex}`;
+    sectionDiv.id = `section-${sectionIndex + 1}`;
+    sectionDiv.setAttribute('data-section-id', section.sectionId);
 
-    const sectionHeader = document.createElement('h2');
-    const sectionNameInput = document.createElement('input');
-    sectionNameInput.type = 'text';
-    sectionNameInput.value = sectionName;
+    sectionDiv.style.width = "300px";
+    sectionDiv.style.margin = "0 10px";
+
+    const sectionHeader = document.createElement('input');
+    sectionHeader.type = 'text';
+    sectionHeader.value = section.sectionName;
+    sectionDiv.appendChild(sectionHeader);
 
     const plusButton = document.createElement('button');
     plusButton.textContent = '+';
     plusButton.classList.add('plus-button');
+
     plusButton.addEventListener('click', () => {
-      addSection();
+      addSection(boardId);
     });
 
-    sectionHeader.appendChild(sectionNameInput);
-    sectionHeader.appendChild(plusButton);
-    sectionDiv.appendChild(sectionHeader);
+    sectionDiv.appendChild(plusButton);
 
     return sectionDiv;
   }
 
-  function createCardElement(sectionIndex, cardIndex, cardName) {
+  function createCardElement(card, sectionIndex, cardIndex) {
     const cardDiv = document.createElement('div');
     cardDiv.className = 'card';
-    cardDiv.id = `card-${sectionIndex}-${cardIndex}`;
+    cardDiv.id = `card-${sectionIndex + 1}-${cardIndex + 1}`;
+    cardDiv.setAttribute('data-card-id', card.cardId);
 
-    // Use the provided cardName parameter here
-    const cardNameParagraph = document.createElement('p');
-    cardNameParagraph.textContent = cardName;
-    cardDiv.appendChild(cardNameParagraph);
+    const cardName = document.createElement('h3');
+    cardName.textContent = card.cardName;
+    cardDiv.appendChild(cardName);
 
-    // Create a plus button for adding cards
     const plusButton = document.createElement('button');
     plusButton.textContent = '+';
     plusButton.classList.add('plus-button');
     plusButton.addEventListener('click', () => {
-      addCard(sectionIndex, cardIndex);
+      addCard(sectionIndex);
     });
     cardDiv.appendChild(plusButton);
 
     return cardDiv;
   }
 
-
-
   // Function to add a new section
-  function addSection() {
-    const boardContainer = document.getElementById('board-container');
-    const sectionIndex = boardContainer.querySelectorAll('.section').length + 1;
-    const newSection = createSectionElement(sectionIndex, '');
+  async function addSection(boardId) {
+    const sectionContainer = document.querySelector('.section-container');
+    if (!sectionContainer) {
+      console.error('Section container not found.');
+      return;
+    }
 
-    newSection.style.marginTop = '80px';
+    const sectionIndex = sectionContainer.querySelectorAll('.section').length;
+    const newSection = createSectionElement({sectionName: ''}, sectionIndex);
 
-    // Create a card for the new section
-    const newCard = createCardElement(sectionIndex, 1, ''); // Here, we start with cardIndex 1 for the new card
-    newSection.appendChild(newCard);
+    try {
+      const response = await fetch(`/api/board/${boardId}/section`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          sectionIndex: sectionIndex + 1,
+          sectionName: newSection.querySelector('input').value
+        })
+      })
 
-    boardContainer.appendChild(newSection);
+      if (response.ok) {
+        const sectionData = await response.json();
+        const sectionDiv = createSectionElement(sectionData, sectionIndex);
+        sectionContainer.appendChild(sectionDiv);
+
+        const cardResponse = await fetch(`/api/section/${sectionIndex + 1}/card`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            sectionIndex: sectionIndex + 1,
+            cardIndex: sectionData.cardList.length + 1,
+            cardName: ''
+          }),
+        });
+        if (cardResponse.ok) {
+          const cardData = await cardResponse.json();
+          const cardDiv = createCardElement(cardData, sectionIndex, sectionData.cardList.length);
+          sectionDiv.appendChild(cardDiv);
+        } else {
+          console.error('Failed to create new card');
+        }
+      } else {
+        console.error('Failed to create new section');
+      }
+    } catch (error) {
+      console.error('Error creating new section: ', error);
+    }
   }
 
-  function addCard(sectionIndex, currentCardIndex) {
-    const cardDiv = createCardElement(sectionIndex, currentCardIndex + 1, ''); // Increment the card index
-    const sectionDiv = document.getElementById(`section-${sectionIndex}`);
-    sectionDiv.appendChild(cardDiv);
+  async function addCard(sectionIndex) {
+    const sectionDiv = document.getElementById(`section-${sectionIndex + 1}`);
+    const cardIndex = sectionDiv.querySelectorAll('.card').length;
+    const newCard = createCardElement({cardName: ''}, sectionIndex, cardIndex);
+
+    try {
+      const response = await fetch(`/api/section/${sectionIndex + 1}/card`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sectionId: sectionIndex + 1,
+          cardIndex: cardIndex + 1,
+          cardName: newCard.querySelector('h3').textContent
+        }),
+      });
+
+      if (response.ok) {
+        const cardData = await response.json();
+        const cardDiv = createCardElement(cardData, sectionIndex, cardIndex);
+        sectionDiv.appendChild(cardDiv);
+      } else {
+        console.error('Failed to create new card');
+      }
+    } catch (error) {
+      console.error('Error creating new card:', error);
+    }
   }
 
   document.addEventListener('click', (event) => {
@@ -355,10 +508,10 @@
     const cardDueInput = cardDiv.querySelector('input[type="text"]');
 
     const cardIdParts = cardDiv.id.split('-');
-    const cardId = cardIdParts[2];
+    const cardId = cardDiv.getAttribute('data-card-id');
 
     // Show the modal
-    modal.style.display = 'flex';
+    modal.style.display = 'block';
 
     fetch(`/api/card/${cardId}`)
     .then(response => response.json())
@@ -375,17 +528,11 @@
     // Save button click event
     createCardBtn.addEventListener('click', async () => {
       // Update card data based on modal content
-      cardNameInput.value = titleInput.value;
-      cardDescriptionInput.value = descriptionInput.value;
-      cardAdminInput.value = adminInput.value;
-      cardDueInput.value = dateInput.value;
-
       const requestDto = {
         cardName: titleInput.value,
         cardDesc: descriptionInput.value,
         nickname: adminInput.value,
         dueDate: dateInput.value,
-        cardColor: selectedCardColor,
       };
 
       try {
@@ -400,6 +547,7 @@
         if (response.ok) {
           // Handle success
           console.log('Card updated successfully');
+          window.location.reload();
         } else {
           // Handle error
           console.error('Failed to update card');
@@ -410,6 +558,9 @@
 
       // Hide the modal
       modal.style.display = 'none';
+      // You might want to reload or re-render your data here
+      // to reflect the updated changes after successful PUT request
+      // fetchAndRenderEditData(boardId);
     });
 
     // Close button click event
@@ -418,8 +569,6 @@
       modal.style.display = 'none';
     });
   }
-
-
 
   document.addEventListener('click', (event) => {
     const clickedCard = event.target.closest('.card');
@@ -439,11 +588,6 @@
   });
 
   // Function to get board ID from URL
-  function getBoardIdFromUrl() {
-    const parts = window.location.pathname.split('/');
-    const boardIdIndex = parts.indexOf('boards') + 1;
-    return parts[boardIdIndex];
-  }
 
   // 담당자
   const inputElement = document.getElementById('card-admin');
@@ -522,16 +666,38 @@
     });
   });
 
+  const saveChangesButton = document.getElementById('saveBtn');
+  saveChangesButton.addEventListener('click', async () => {
+    try {
+      // Loop through all sections and update their data
+      for (const section of data.sectionResponseDtos) {
+        const sectionIndex = section.sectionIndex;
+        const newSectionName = document.querySelector(`#section-${sectionIndex} input`).value;
+        const sectionResponse = await fetch(`/api/section/${section.sectionId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            sectionIndex: sectionIndex,
+            sectionName: newSectionName,
+          }),
+        });
 
-  // Save Changes 버튼 클릭 이벤트 처리
-  const saveChangesButton = document.getElementById('save-changes-button');
-  saveChangesButton.addEventListener('click', () => {
-    // TODO: 수정된 데이터를 API로 전송하여 저장하는 로직 추가
+        if (sectionResponse.ok) {
+          console.log(`Section ${section.sectionId} updated successfully`);
+        } else {
+          console.error(`Failed to update section ${section.sectionId}`);
+        }
+      }
+
+      console.log('All sections updated successfully');
+      window.location.href = `/api/view/user/boards/${boardId}`;
+
+    } catch (error) {
+      console.error('Error updating sections:', error);
+    }
   });
-
-  // Open Edit page and fetch edit data
-  const boardId = getBoardIdFromUrl();
-  fetchAndRenderEditData(boardId);
 
 
 </script>

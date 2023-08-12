@@ -8,40 +8,56 @@
     body {
       margin: 0;
       padding: 0;
-      background-color: #f3f3f3;
-      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      font-family: 'Arial', sans-serif;
     }
 
     .board {
       display: flex;
+      flex-direction: column;
       overflow-x: auto;
-      height: 100vh;
+      min-height: 100vh;
       padding: 20px;
       box-sizing: border-box;
+      justify-content: flex-start;
+    }
+
+
+    .board-header {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .section-container {
+      display: flex;
+      overflow-x: auto;
     }
 
     .section {
-      flex: 0 0 auto;
-      width: 300px;
+      flex: 0 0 300px;
+      height: 100%;
       background-color: #fff;
-      margin: 10px;
+      margin: 0 10px;
       border-radius: 10px;
       box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-      display: flex;
-      flex-direction: column;
+      padding: 15px;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
 
     .card {
-      padding: 10px;
-      margin: 10px;
-      background-color: #f3f3f3;
+      padding: 15px;
+      margin: 10px 0;
+      background-color: #fff;
       border-radius: 5px;
       box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.1);
-      transition: background-color 0.3s ease-in-out;
+      transition: background-color 0.3s ease-in-out, transform 0.2s;
+      cursor: pointer;
     }
 
     .card:hover {
-      background-color: #e0e0e0;
+      background-color: #f5f5f5;
+      transform: translateY(-3px);
     }
 
     .modal {
@@ -90,11 +106,30 @@
       padding-bottom: 10px;
       border-bottom: 1px solid #ccc;
     }
+
+    .edit-button-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end; /* Align the button to the right side */
+      position: absolute; /* Position it absolutely */
+      right: 20px; /* Adjust the right distance */
+      top: 0; /* Position it at the top of the board */
+      bottom: 0; /* Stretch it to the bottom of the board */
+      margin: auto; /* Center it vertically */
+    }
+
+    .edit-button {
+      height: 100%; /* Make the button height 100% of its container */
+    }
   </style>
 </head>
 <body>
-<div class="board" id="board-container"></div>
-
+<div class="board" id="board-container">
+  <div class="board-header-container">
+    <h1 class="board-header">Board Header</h1>
+  </div>
+  <div class="section-container"></div>
+</div>
 <div class="modal" id="cardModal" style="display: none;">
   <div class="modal-content">
     <div class="left-column">
@@ -133,6 +168,9 @@
     </div>
   </div>
 </div>
+<div class="edit-button-container">
+  <button class="edit-button" id="editBtn">Edit</button>
+</div>
 <script>
   // Function to fetch data from the API
   async function fetchBoardData(boardId) {
@@ -145,32 +183,45 @@
     }
   }
 
-  // Function to render board data
   function renderBoard(data) {
     const boardContainer = document.getElementById('board-container');
-    const boardDiv = document.createElement('div');
+    boardContainer.innerHTML = ''; // Clear existing contents
 
-    boardDiv.style.backgroundColor = data.boardColor;
+    // Create a container for the board header
+    const headerContainer = document.createElement('div');
+    boardContainer.appendChild(headerContainer);
 
     // Create board header
     const boardHeader = document.createElement('h1');
     boardHeader.textContent = data.boardName;
-    boardDiv.appendChild(boardHeader);
+    headerContainer.appendChild(boardHeader);
 
-    // Create sections and cards
+    // Create section container
+    const sectionContainer = document.createElement('div');
+    sectionContainer.className = 'section-container';
+
+    data.sectionResponseDtos.sort((a, b) => parseInt(a.sectionIndex) - parseInt(b.sectionIndex));
     data.sectionResponseDtos.forEach((section, sectionIndex) => {
       const sectionDiv = document.createElement('div');
       sectionDiv.className = 'section';
       sectionDiv.id = `section-${sectionIndex + 1}`;
 
+      sectionDiv.style.width = "300px";
+      sectionDiv.style.margin = "0 10px";
+
       const sectionHeader = document.createElement('h2');
       sectionHeader.textContent = section.sectionName;
       sectionDiv.appendChild(sectionHeader);
 
+      const cardListDiv = document.createElement('div');
+      cardListDiv.className = 'card-list';
+
+      section.cardList.sort((a, b) => parseInt(a.cardIndex) - parseInt(b.cardIndex));
+
       section.cardList.forEach((card, cardIndex) => {
         const cardDiv = document.createElement('div');
         cardDiv.className = 'card';
-        cardDiv.id = `card-${sectionIndex + 1}-${cardIndex + 1}`; // Set card ID
+        cardDiv.id = `card-${sectionIndex + 1}-${cardIndex + 1}`;
         cardDiv.setAttribute('data-card-id', card.cardId);
 
         const cardName = document.createElement('h3');
@@ -178,24 +229,17 @@
         cardDiv.appendChild(cardName);
 
         const cardNickname = document.createElement('p');
-        cardNickname.textContent = card.nickName;
+        cardNickname.textContent = card.nickname;
         cardDiv.appendChild(cardNickname);
 
-        sectionDiv.appendChild(cardDiv);
+        cardListDiv.appendChild(cardDiv);
       });
-
-      boardDiv.appendChild(sectionDiv);
+      sectionDiv.appendChild(cardListDiv);
+      sectionContainer.appendChild(sectionDiv, sectionContainer.firstChild);
     });
 
-    boardContainer.appendChild(boardDiv);
-
-    // Add Edit button
-    const editButton = document.createElement('button');
-    editButton.textContent = 'Edit';
-    editButton.addEventListener('click', () => {
-      openEditPage(data.boardId);
-    });
-    boardContainer.appendChild(editButton);
+    // Append section container after the header container
+    boardContainer.appendChild(sectionContainer);
   }
 
   function getBoardIdFromUrl() {
@@ -210,7 +254,13 @@
   .then(data => renderBoard(data))
   .catch(error => console.error('Error:', error));
 
-  // Function to open edit page for the board
+  const editButton = document.getElementById('editBtn');
+
+  // Add a click event listener to the edit button
+  editButton.addEventListener('click', () => {
+    openEditPage();
+  });
+
   function openEditPage() {
     const boardId = getBoardIdFromUrl();
     if (boardId) {
@@ -255,7 +305,6 @@
       descriptionInput.textContent = cardData.cardDesc;
       nicknameInput.textContent = cardData.nickname;
       dueDateInput.textContent = cardData.dueDate;
-      console.log(cardData);
     })
     .catch(error => {
       console.error('Error fetching card data:', error);
@@ -283,6 +332,53 @@
       closeModal();
     }
   });
+
+  // Find the submit comment button element
+  const submitCommentButton = document.getElementById('submitCommentBtn');
+
+  // Add a click event listener to the submit comment button
+  submitCommentButton.addEventListener('click', () => {
+    submitComment();
+  });
+
+  // Function to handle comment submission
+  function submitComment() {
+    const commentInput = document.getElementById('commentInput');
+    const commentText = commentInput.value.trim(); // Get the comment text
+
+    if (commentText !== '') {
+      const modalCardId = document.querySelector('.modal-content .card').getAttribute(
+          'data-card-id');
+
+      fetch(`/api/card/${modalCardId}/comment`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({commentText}),
+      })
+      .then(response => response.json())
+      .then(newComment => {
+        // Assuming newComment contains the new comment data returned from the server,
+        // you can update the UI to display the new comment in the comment list.
+
+        // Create a new comment item
+        const newCommentItem = document.createElement('div');
+        newCommentItem.className = 'comment-item';
+        newCommentItem.textContent = newComment.commentText; // Update this line with your actual comment data
+
+        // Append the new comment item to the comment list
+        const commentList = document.getElementById('commentList');
+        commentList.appendChild(newCommentItem);
+
+        // Clear the comment input field
+        commentInput.value = '';
+      })
+      .catch(error => {
+        console.error('Error submitting comment:', error);
+      });
+    }
+  }
 
 
 </script>
