@@ -9,7 +9,7 @@
     body {
       margin: 0;
       padding: 0;
-      background-color: #f3f3f3;
+      background-color: #f8f9fa;
       font-family: Arial, sans-serif;
     }
 
@@ -26,38 +26,38 @@
     .board-header {
       margin-bottom: 20px; /* 여백 조정 */
       font-size: 24px; /* 폰트 크기 조정 */
-      font-weight: bold;
+      color: #333;
     }
 
     .section-container {
       display: flex;
-      flex-direction: row; /* 가로(row) 방향으로 배치 */
-      flex-wrap: nowrap; /* 넘치는 경우 줄 바꿈 방지 */
+      overflow-x: auto;
     }
 
     .section {
-      flex: 0 0 300px; /* 너비는 고정된 값 */
+      flex: 0 0 300px;
       height: 100%;
-      background-color: #f9f9f9; /* 배경색 변경 */
-      border: 1px solid #e0e0e0;
-    / margin: 0 10 px; /* 좌우 마진 설정 */
+      background-color: #fff;
+      margin: 0 10px;
       border-radius: 10px;
       box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 15px;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
 
     .card {
-      padding: 10px;
-      margin: 10px;
+      padding: 15px;
+      margin: 10px 0;
       background-color: #fff;
-      border: 1px solid #e0e0e0;
       border-radius: 5px;
       box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.1);
-      transition: background-color 0.3s ease-in-out;
+      transition: background-color 0.3s ease-in-out, transform 0.2s;
+      cursor: pointer;
     }
 
     .card:hover {
-      background-color: #f5f5f5; /* 호버 시 배경색 변경 */
-      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+      background-color: #f5f5f5;
+      transform: translateY(-3px);
     }
 
     .plus-button {
@@ -159,17 +159,7 @@
     }
 
     .save-button {
-      background-color: #e0d8c8;
-      color: #000000;
-      border: none;
-      border-radius: 5px;
-      padding: 10px 20px; /* 버튼 크기 조정 */
-      cursor: pointer;
       height: 100%; /* Make the button height 100% of its container */
-    }
-
-    .save-button:hover {
-      background-color: #d0c0a0; /* 호버 시 배경색 변경 */
     }
 
   </style>
@@ -236,10 +226,61 @@
 
   let data;
 
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
     const boardId = getBoardIdFromUrl();
-    fetchAndRenderEditData(boardId);
+    await fetchAndRenderEditData(boardId);
+
+    if (data.sectionResponseDtos.length === 0) {
+      await addDefaultSectionAndCard(boardId);
+    }
   });
+
+  async function addDefaultSectionAndCard(boardId) {
+    try {
+      const defaultSectionResponse = await fetch(`/api/board/${boardId}/section`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          sectionIndex: 1,
+          sectionName: 'Default Section' // 원하는 기본 섹션 이름으로 변경하세요
+        })
+      });
+
+      if (defaultSectionResponse.ok) {
+        const defaultSectionData = await defaultSectionResponse.json();
+        const defaultSectionDiv = createSectionElement(defaultSectionData, 0);
+        const sectionContainer = document.querySelector('.section-container');
+        sectionContainer.appendChild(defaultSectionDiv);
+
+        const defaultCardResponse = await fetch(
+            `/api/section/${defaultSectionData.sectionIndex}/card`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                sectionIndex: defaultSectionData.sectionIndex,
+                cardIndex: 1,
+                cardName: 'Default Card' // 원하는 기본 카드 이름으로 변경하세요
+              }),
+            });
+
+        if (defaultCardResponse.ok) {
+          const defaultCardData = await defaultCardResponse.json();
+          const defaultCardDiv = createCardElement(defaultCardData, 0, 0);
+          defaultSectionDiv.appendChild(defaultCardDiv);
+        } else {
+          console.error('Failed to create default card');
+        }
+      } else {
+        console.error('Failed to create default section');
+      }
+    } catch (error) {
+      console.error('Error creating default section and card:', error);
+    }
+  }
 
   function getBoardIdFromUrl() {
     const parts = window.location.pathname.split('/');
