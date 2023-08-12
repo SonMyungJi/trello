@@ -185,6 +185,7 @@
     <br>
     <div style="display: flex; align-items: center; margin-bottom: 10px;">
       <label style="margin-right: 10px;">카드색 바꾸기</label>
+      <input type="color" id="cardColor" class="hidden">
       <div class="color-picker">
         <div class="color-option" style="background-color: #ff5555"
              data-color="#ff5555"></div>
@@ -225,6 +226,7 @@
 <script>
 
   let data;
+  let selectedCardColor = '';
 
   document.addEventListener('DOMContentLoaded', async () => {
     const boardId = getBoardIdFromUrl();
@@ -263,7 +265,8 @@
               body: JSON.stringify({
                 sectionIndex: defaultSectionData.sectionIndex,
                 cardIndex: 1,
-                cardName: 'Default Card' // 원하는 기본 카드 이름으로 변경하세요
+                cardName: 'Default Card',
+                cardColor: '#fff'
               }),
             });
 
@@ -374,6 +377,7 @@
     cardDiv.className = 'card';
     cardDiv.id = `card-${sectionIndex + 1}-${cardIndex + 1}`;
     cardDiv.setAttribute('data-card-id', card.cardId);
+    cardDiv.style.backgroundColor = card.cardColor;
 
     const cardName = document.createElement('h3');
     cardName.textContent = card.cardName;
@@ -426,7 +430,8 @@
           body: JSON.stringify({
             sectionIndex: sectionIndex + 1,
             cardIndex: sectionData.cardList.length + 1,
-            cardName: ''
+            cardName: '',
+            cardColor: '#fff'
           }),
         });
         if (cardResponse.ok) {
@@ -458,7 +463,8 @@
         body: JSON.stringify({
           sectionId: sectionIndex + 1,
           cardIndex: cardIndex + 1,
-          cardName: newCard.querySelector('h3').textContent
+          cardName: newCard.querySelector('h3').textContent,
+          cardColor: '#fff'
         }),
       });
 
@@ -498,6 +504,7 @@
     const descriptionInput = document.getElementById('cardDescription');
     const adminInput = document.getElementById('card-admin');
     const dateInput = document.getElementById('cardDue');
+    const colorOptions = document.querySelectorAll('.color-option');
     const createCardBtn = document.getElementById('createCardBtn');
     const closeButton = document.getElementById('card-modal-close-button');
 
@@ -506,6 +513,7 @@
     const cardDescriptionInput = cardDiv.querySelector('textarea');
     const cardAdminInput = cardDiv.querySelector('input[type="text"]');
     const cardDueInput = cardDiv.querySelector('input[type="text"]');
+    const colorPickerInput = document.getElementById('cardColor');
 
     const cardIdParts = cardDiv.id.split('-');
     const cardId = cardDiv.getAttribute('data-card-id');
@@ -520,6 +528,12 @@
       descriptionInput.value = cardData.cardDesc;
       adminInput.value = cardData.nickname;
       dateInput.value = cardData.dueDate;
+
+      const colorPickerInput = document.getElementById('cardColor');
+      colorPickerInput.value = cardData.cardColor;
+
+      // Save the selected color in your JavaScript variable as well
+      selectedCardColor = cardData.cardColor;
     })
     .catch(error => {
       console.error('Error fetching card data:', error);
@@ -533,6 +547,7 @@
         cardDesc: descriptionInput.value,
         nickname: adminInput.value,
         dueDate: dateInput.value,
+        cardColor: colorPickerInput.value
       };
 
       try {
@@ -545,7 +560,8 @@
         });
 
         if (response.ok) {
-          // Handle success
+          cardDiv.style.backgroundColor = colorPickerInput.value;
+
           console.log('Card updated successfully');
           window.location.reload();
         } else {
@@ -555,7 +571,6 @@
       } catch (error) {
         console.error('Error updating card:', error);
       }
-
       // Hide the modal
       modal.style.display = 'none';
       // You might want to reload or re-render your data here
@@ -652,9 +667,7 @@
   // Call the function to activate the date picker
   activateDatePicker();
 
-  // 색상 설정
-  let selectedCardColor = "#fff";
-
+  // 색상
   const cardColorInput = document.getElementById('cardColor');
   const colorOptions = document.querySelectorAll('.color-option');
 
@@ -663,6 +676,39 @@
       const selectedColor = option.getAttribute('data-color');
       selectedCardColor = selectedColor;
       cardColorInput.value = selectedColor;
+
+      const cardIdParts = cardDiv.id.split('-');
+      const sectionIndex = cardIdParts[1];
+      const cardIndex = cardIdParts[2];
+
+      // Call the function to update card background color
+      updateCardColor(sectionIndex, cardIndex);
+    });
+  });
+
+  function updateCardColor(sectionIndex, cardIndex) {
+    const cardDiv = document.getElementById(`card-${sectionIndex}-${cardIndex}`);
+    const selectedColor = selectedCardColor; // Get the selected color from the color picker
+
+    if (cardDiv) {
+      cardDiv.style.backgroundColor = selectedColor;
+    }
+  }
+
+  // Attach a click event to the color options
+  colorOptions.forEach(option => {
+    option.addEventListener('click', () => {
+      const selectedColor = option.getAttribute('data-color');
+      selectedCardColor = selectedColor; // Update the selected color
+      cardColorInput.value = selectedColor; // Update the hidden input value if needed
+
+      // Get the section and card index of the clicked card
+      const cardIdParts = cardDiv.id.split('-');
+      const sectionIndex = cardIdParts[1];
+      const cardIndex = cardIdParts[2];
+
+      // Call the function to update card background color
+      updateCardColor(sectionIndex, cardIndex);
     });
   });
 
