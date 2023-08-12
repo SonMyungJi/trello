@@ -194,6 +194,8 @@
     const sectionContainer = document.createElement('div');
     sectionContainer.className = 'section-container';
 
+    data.sectionResponseDtos.sort((a, b) => parseInt(a.sectionIndex) - parseInt(b.sectionIndex));
+
     data.sectionResponseDtos.forEach((section, sectionIndex) => {
       const sectionDiv = document.createElement('div');
       sectionDiv.className = 'section';
@@ -208,6 +210,8 @@
 
       const cardListDiv = document.createElement('div');
       cardListDiv.className = 'card-list';
+
+      section.cardList.sort((a, b) => parseInt(a.cardIndex) - parseInt(b.cardIndex));
 
       section.cardList.forEach((card, cardIndex) => {
         const cardDiv = document.createElement('div');
@@ -245,7 +249,13 @@
   .then(data => renderBoard(data))
   .catch(error => console.error('Error:', error));
 
-  // Function to open edit page for the board
+  const editButton = document.getElementById('editBtn');
+
+  // Add a click event listener to the edit button
+  editButton.addEventListener('click', () => {
+    openEditPage();
+  });
+
   function openEditPage() {
     const boardId = getBoardIdFromUrl();
     if (boardId) {
@@ -318,6 +328,53 @@
       closeModal();
     }
   });
+
+  // Find the submit comment button element
+  const submitCommentButton = document.getElementById('submitCommentBtn');
+
+  // Add a click event listener to the submit comment button
+  submitCommentButton.addEventListener('click', () => {
+    submitComment();
+  });
+
+  // Function to handle comment submission
+  function submitComment() {
+    const commentInput = document.getElementById('commentInput');
+    const commentText = commentInput.value.trim(); // Get the comment text
+
+    if (commentText !== '') {
+      const modalCardId = document.querySelector('.modal-content .card').getAttribute(
+          'data-card-id');
+
+      fetch(`/api/card/${modalCardId}/comment`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({commentText}),
+      })
+      .then(response => response.json())
+      .then(newComment => {
+        // Assuming newComment contains the new comment data returned from the server,
+        // you can update the UI to display the new comment in the comment list.
+
+        // Create a new comment item
+        const newCommentItem = document.createElement('div');
+        newCommentItem.className = 'comment-item';
+        newCommentItem.textContent = newComment.commentText; // Update this line with your actual comment data
+
+        // Append the new comment item to the comment list
+        const commentList = document.getElementById('commentList');
+        commentList.appendChild(newCommentItem);
+
+        // Clear the comment input field
+        commentInput.value = '';
+      })
+      .catch(error => {
+        console.error('Error submitting comment:', error);
+      });
+    }
+  }
 
 
 </script>
