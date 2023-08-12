@@ -14,21 +14,31 @@
 
     .board {
       display: flex;
+      flex-direction: column;
       overflow-x: auto;
       height: 100vh;
       padding: 20px;
       box-sizing: border-box;
+      justify-content: flex-start;
+    }
+
+    .board-header {
+      margin-bottom: 10px;
+    }
+
+    .section-container {
+      display: flex;
+      flex-direction: row; /* 가로(row) 방향으로 배치 */
+      flex-wrap: nowrap; /* 넘치는 경우 줄 바꿈 방지 */
     }
 
     .section {
-      flex: 0 0 auto;
-      width: 300px;
+      flex: 0 0 300px; /* 너비는 고정된 값 */
+      height: 100%;
       background-color: #fff;
-      margin: 10px;
+      margin: 0 10px; /* 좌우 마진 설정 */
       border-radius: 10px;
       box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-      display: flex;
-      flex-direction: column;
     }
 
     .card {
@@ -90,11 +100,30 @@
       padding-bottom: 10px;
       border-bottom: 1px solid #ccc;
     }
+
+    .edit-button-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end; /* Align the button to the right side */
+      position: absolute; /* Position it absolutely */
+      right: 20px; /* Adjust the right distance */
+      top: 0; /* Position it at the top of the board */
+      bottom: 0; /* Stretch it to the bottom of the board */
+      margin: auto; /* Center it vertically */
+    }
+
+    .edit-button {
+      height: 100%; /* Make the button height 100% of its container */
+    }
   </style>
 </head>
 <body>
-<div class="board" id="board-container"></div>
-
+<div class="board" id="board-container">
+  <div class="board-header-container">
+    <h1 class="board-header">Board Header</h1>
+  </div>
+  <div class="section-container"></div>
+</div>
 <div class="modal" id="cardModal" style="display: none;">
   <div class="modal-content">
     <div class="left-column">
@@ -133,6 +162,9 @@
     </div>
   </div>
 </div>
+<div class="edit-button-container">
+  <button class="edit-button" id="editBtn">Edit</button>
+</div>
 <script>
   // Function to fetch data from the API
   async function fetchBoardData(boardId) {
@@ -145,32 +177,42 @@
     }
   }
 
-  // Function to render board data
   function renderBoard(data) {
     const boardContainer = document.getElementById('board-container');
-    const boardDiv = document.createElement('div');
+    boardContainer.innerHTML = ''; // Clear existing contents
 
-    boardDiv.style.backgroundColor = data.boardColor;
+    // Create a container for the board header
+    const headerContainer = document.createElement('div');
+    boardContainer.appendChild(headerContainer);
 
     // Create board header
     const boardHeader = document.createElement('h1');
     boardHeader.textContent = data.boardName;
-    boardDiv.appendChild(boardHeader);
+    headerContainer.appendChild(boardHeader);
 
-    // Create sections and cards
+    // Create section container
+    const sectionContainer = document.createElement('div');
+    sectionContainer.className = 'section-container';
+
     data.sectionResponseDtos.forEach((section, sectionIndex) => {
       const sectionDiv = document.createElement('div');
       sectionDiv.className = 'section';
       sectionDiv.id = `section-${sectionIndex + 1}`;
 
+      sectionDiv.style.width = "300px";
+      sectionDiv.style.margin = "0 10px";
+
       const sectionHeader = document.createElement('h2');
       sectionHeader.textContent = section.sectionName;
       sectionDiv.appendChild(sectionHeader);
 
+      const cardListDiv = document.createElement('div');
+      cardListDiv.className = 'card-list';
+
       section.cardList.forEach((card, cardIndex) => {
         const cardDiv = document.createElement('div');
         cardDiv.className = 'card';
-        cardDiv.id = `card-${sectionIndex + 1}-${cardIndex + 1}`; // Set card ID
+        cardDiv.id = `card-${sectionIndex + 1}-${cardIndex + 1}`;
         cardDiv.setAttribute('data-card-id', card.cardId);
 
         const cardName = document.createElement('h3');
@@ -178,24 +220,17 @@
         cardDiv.appendChild(cardName);
 
         const cardNickname = document.createElement('p');
-        cardNickname.textContent = card.nickName;
+        cardNickname.textContent = card.nickname;
         cardDiv.appendChild(cardNickname);
 
-        sectionDiv.appendChild(cardDiv);
+        cardListDiv.appendChild(cardDiv);
       });
-
-      boardDiv.appendChild(sectionDiv);
+      sectionDiv.appendChild(cardListDiv);
+      sectionContainer.appendChild(sectionDiv, sectionContainer.firstChild);
     });
 
-    boardContainer.appendChild(boardDiv);
-
-    // Add Edit button
-    const editButton = document.createElement('button');
-    editButton.textContent = 'Edit';
-    editButton.addEventListener('click', () => {
-      openEditPage(data.boardId);
-    });
-    boardContainer.appendChild(editButton);
+    // Append section container after the header container
+    boardContainer.appendChild(sectionContainer);
   }
 
   function getBoardIdFromUrl() {

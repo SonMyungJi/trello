@@ -15,21 +15,31 @@
 
     .board {
       display: flex;
+      flex-direction: column;
       overflow-x: auto;
       height: 100vh;
       padding: 20px;
       box-sizing: border-box;
+      justify-content: flex-start;
+    }
+
+    .board-header {
+      margin-bottom: 10px;
+    }
+
+    .section-container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
     }
 
     .section {
       flex: 0 0 auto;
-      width: 300px;
+      height: 100%;
       background-color: #fff;
-      margin: 10px;
+      margin: 0 10px;
       border-radius: 10px;
       box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-      display: flex;
-      flex-direction: column;
     }
 
     .card {
@@ -150,9 +160,17 @@
   </style>
 </head>
 <body>
-<div class="board" id="board-container"></div>
-<button class="edit-button" id="save-changes-button">Save Changes</button>
-
+<div class="board" id="board-container">
+  <div class="board-header-container">
+    <h1 class="board-header"><input type="text"></h1>
+  </div>
+  <div class="section-container">
+    <div class="section">
+      <h2 class="section-header"><input type="text"></h2>
+      <div class="card"></div>
+    </div>
+  </div>
+</div>
 <div class="modal" id="card-modal" style="display: none;">
   <div class="modal-content">
     <label for="cardName">카드 이름</label>
@@ -200,15 +218,19 @@
     <div class="createButtonContainer">
       <button id="createCardBtn">업데이트</button>
     </div>
-    </div>
   </div>
+</div>
+</div>
+<div class="save-button-container">
+  <button class="save-button" id="saveBtn">Save</button>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 <script>
-  // Function to fetch data from the API and populate the Edit page
+  let boardData = null; // Store the board data globally
+
   async function fetchAndRenderEditData(boardId) {
     try {
       const response = await fetch(`/api/boards/${boardId}`);
@@ -222,10 +244,10 @@
   // Function to render Edit page
   function renderEditPage(data) {
     const boardContainer = document.getElementById('board-container');
-    const boardDiv = document.createElement('div');
+    boardContainer.innerHTML = '';
 
-    // Set board styles
-    boardDiv.style.backgroundColor = data.boardColor;
+    const headerContainer = document.createElement('div');
+    boardContainer.appendChild(headerContainer);
 
     // Create board header
     const boardHeader = document.createElement('h1');
@@ -233,7 +255,7 @@
     boardNameInput.type = 'text';
     boardNameInput.value = data.boardName;
     boardHeader.appendChild(boardNameInput);
-    boardDiv.appendChild(boardHeader);
+    headerContainer.appendChild(boardHeader);
 
     // Create sections and cards (Editable elements)
     data.sectionResponseDtos.forEach((section, sectionIndex) => {
@@ -523,15 +545,92 @@
   });
 
 
-  // Save Changes 버튼 클릭 이벤트 처리
   const saveChangesButton = document.getElementById('save-changes-button');
-  saveChangesButton.addEventListener('click', () => {
-    // TODO: 수정된 데이터를 API로 전송하여 저장하는 로직 추가
+
+  // Save Changes 버튼 클릭 이벤트 핸들러
+  saveChangesButton.addEventListener('click', async () => {
+    if (!boardData) {
+      return;
+    }
+
+    // 보드 이름 업데이트
+    const newBoardName = document.querySelector('input[type="text"][id="boardName"]').value;
+    boardData.boardName = newBoardName;
+
+    // 각 섹션 이름 업데이트
+    const sectionDivs = document.querySelectorAll('.section');
+    const sectionRequestDtos = [];
+
+    sectionDivs.forEach((sectionDiv, index) => {
+      const sectionId = sectionDiv.id.split('-')[1];
+      const newSectionName = sectionDiv.querySelector('input[type="text"]').value;
+
+      sectionRequestDtos.push({
+        sectionName: newSectionName
+      });
+    });
+
+    // Async function to update sections
+    const updateSections = async () => {
+      try {
+        // 각 섹션별로 업데이트 요청 보내기
+        for (let i = 0; i < sectionRequestDtos.length; i++) {
+          const sectionId = boardData.sectionResponseDtos[i].sectionId;
+          const sectionRequestDto = sectionRequestDtos[i];
+          await updateSection(sectionId, sectionRequestDto);
+        }
+      } catch (error) {
+        console.error('Error updating sections:', error);
+      }
+    };
+
+    // 섹션 업데이트 요청 보내는 함수
+    const updateSection = async (sectionId, sectionRequestDto) => {
+      try {
+        const sectionResponse = await fetch(`/api/section/${sectionId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(sectionRequestDto),
+        });
+
+        if (!sectionResponse.ok) {
+          console.error('Failed to update section:', sectionResponse.statusText);
+        }
+      } catch (error) {
+        console.error('Error updating section:', error);
+      }
+    };
+
+    // 보드 업데이트 요청 보내기
+    try {
+      const response = await fetch(`/api/boards/${boardId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(boardData), // 업데이트된 보드 데이터 전송
+      });
+
+      if (response.ok) {
+        console.log('Board and section names updated successfully');
+
+        const redirectUrl = `/api/view/user/boards/${boardId}`;
+        window.location.href = redirectUrl;
+      } else {
+        console.error('Failed to update board and section names');
+      }
+    } catch (error) {
+      console.error('Error updating board and section names:', error);
+    }
   });
+
 
   // Open Edit page and fetch edit data
   const boardId = getBoardIdFromUrl();
   fetchAndRenderEditData(boardId);
+
 
 
 </script>
