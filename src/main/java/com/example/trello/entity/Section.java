@@ -31,7 +31,7 @@ public class Section {
   private String sectionName;
 
   @Column(nullable = false, unique = true)
-  private String sectionIndex; // section의 위치를 저장하기 위한 파라미터
+  private Long sectionIndex; // section의 위치를 저장하기 위한 파라미터
 
   @ManyToOne
   @JoinColumn(name = "boardId")

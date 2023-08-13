@@ -1,6 +1,7 @@
 package com.example.trello.controller;
 
 import com.example.trello.dto.ApiResponseDto;
+import com.example.trello.dto.CardIndexRequestDto;
 import com.example.trello.dto.CardRequestDto;
 import com.example.trello.dto.CardResponseDto;
 import com.example.trello.service.CardService;
@@ -40,6 +41,13 @@ public class CardController {
   ResponseEntity<CardResponseDto> updateCard(@PathVariable Long cardId,
       @RequestBody CardRequestDto requestDto) {
     CardResponseDto result = cardService.updateCard(cardId, requestDto);
+    return ResponseEntity.status(HttpStatus.OK).body(result);
+  }
+
+  @PutMapping("/card/{cardId}/index")
+  ResponseEntity<CardResponseDto> moveCard(@PathVariable Long cardId,
+      @RequestBody CardIndexRequestDto requestDto) {
+    CardResponseDto result = cardService.moveCard(cardId, requestDto);
     return ResponseEntity.status(HttpStatus.OK).body(result);
   }
 

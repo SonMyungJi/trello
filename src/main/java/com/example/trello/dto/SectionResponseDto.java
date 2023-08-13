@@ -13,7 +13,7 @@ public class SectionResponseDto {
 
   private Long sectionId;
   private String sectionName;
-  private String sectionIndex;
+  private Long sectionIndex;
   private List<CardResponseDto> cardList = new ArrayList<>();
 
   public SectionResponseDto(Section section) {

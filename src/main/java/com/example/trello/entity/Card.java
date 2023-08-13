@@ -44,7 +44,7 @@ public class Card {
   private String dueDate;
 
   @Column(nullable = false)
-  private String cardIndex; // card의 위치를 저장하기 위한 파라미터
+  private Long cardIndex; // card의 위치를 저장하기 위한 파라미터
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "sectionId")

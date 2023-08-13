@@ -1,5 +1,6 @@
 package com.example.trello.service;
 
+import com.example.trello.dto.CardIndexRequestDto;
 import com.example.trello.dto.CardRequestDto;
 import com.example.trello.dto.CardResponseDto;
 import com.example.trello.entity.Card;
@@ -38,6 +39,18 @@ public class CardService {
     card.setNickname(requestDto.getNickname());
     card.setDueDate(requestDto.getDueDate());
     card.setCardColor(requestDto.getCardColor());
+
+    return new CardResponseDto(card);
+  }
+
+  public CardResponseDto moveCard(Long cardId, CardIndexRequestDto requestDto) {
+    Card card = findCard(cardId);
+    Section section = sectionService.findSection(requestDto.getNewSectionId());
+
+    card.setSection(section);
+    card.setCardIndex(requestDto.getNewCardIndex());
+
+    cardRepository.save(card);
 
     return new CardResponseDto(card);
   }

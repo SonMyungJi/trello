@@ -15,7 +15,7 @@ public class CardResponseDto {
   private String nickname;
   private String dueDate;
   private String cardColor;
-  private String cardIndex;
+  private Long cardIndex;
   private List<CommentResponseDto> commentList = new ArrayList<>();
 
   public CardResponseDto(Card card) {
