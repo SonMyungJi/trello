@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 public class SectionRequestDto {
 
   private String sectionName;
-  private String sectionIndex;
+  private Long sectionIndex;
 }
