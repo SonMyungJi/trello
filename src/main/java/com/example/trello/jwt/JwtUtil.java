@@ -67,7 +67,7 @@ public class JwtUtil {
 //        }
 //        return null;
         Cookie[] cookies = request.getCookies();
-        if(cookies != null) {
+        if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals(AUTHORIZATION_HEADER)) {
                     try {
@@ -84,10 +84,10 @@ public class JwtUtil {
 
     // 토큰 검증
     public boolean validateToken(String token) {
-        try{
+        try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        }catch (SecurityException | MalformedJwtException | SignatureException e) {
+        } catch (SecurityException | MalformedJwtException | SignatureException e) {
             log.error("Token Error : 토큰 검증 실패");
             log.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
         } catch (ExpiredJwtException e) {
@@ -109,11 +109,12 @@ public class JwtUtil {
     }
 
     public String substringToken(String tokenValue) {
-        if(StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
+        if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
             return tokenValue.substring(7);
         }
         throw new NullPointerException("Not Found Token");
     }
+
     public boolean isTokenBlacklisted(String tokenValue) {
         TokenBlacklist tokenBlacklist = tokenBlacklistRepository.findByToken(tokenValue).orElse(null);
         return tokenBlacklist != null;

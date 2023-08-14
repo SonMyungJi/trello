@@ -12,7 +12,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -56,15 +55,15 @@ public class WebSecurityConfig {
             sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
     );
 
-
     http.authorizeHttpRequests((authorizeHttpRequests) ->
             authorizeHttpRequests
-                    .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
+                    .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+                    .permitAll() // resources 접근 허용 설정
                     .requestMatchers("/api/user/**").permitAll() // 로그인, 회원가입 누구나 가능.
                     .requestMatchers("/api/view/user/**").permitAll()
-                    .requestMatchers("/").permitAll()
+                    .requestMatchers("/").authenticated()
 
-                    .anyRequest().authenticated() // 그 외 모든 요청 인증처리
+                    .anyRequest().permitAll() // 그 외 모든 요청 인증처리
 
     );
 

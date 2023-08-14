@@ -56,6 +56,12 @@ public class BoardController {
     return ResponseEntity.ok().body(boardUserResponseDto);
   }
 
+  @GetMapping("/boards/{boardId}/users")
+  public ResponseEntity<List<String>> getSuggestions(@PathVariable Long boardId) {
+    List<String> boardUsers = boardService.getSuggestions(boardId);
+    return ResponseEntity.ok().body(boardUsers);
+  }
+
   // 보드 생성
   @PostMapping("/boards")
   public ResponseEntity<BoardResponseDto> createBoard(@RequestBody BoardRequestDto boardRequestDto,

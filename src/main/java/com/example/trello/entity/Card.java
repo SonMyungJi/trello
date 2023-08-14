@@ -28,7 +28,7 @@ public class Card {
   @Column(nullable = false)
   private Long cardId;
 
-  @Column(nullable = false)
+  @Column(nullable = true)
   private String cardName;
 
   @Column(nullable = true)
@@ -43,6 +43,9 @@ public class Card {
   @Column(nullable = true)
   private String dueDate;
 
+  @Column(nullable = false)
+  private Long cardIndex; // card의 위치를 저장하기 위한 파라미터
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "sectionId")
   private Section section;
@@ -54,8 +57,9 @@ public class Card {
     this.section = section;
     this.cardName = requestDto.getCardName();
     this.cardDesc = requestDto.getCardDesc();
-    this.cardColor = requestDto.getCardColor();
     this.nickname = requestDto.getNickname();
     this.dueDate = requestDto.getDueDate();
+    this.cardColor = requestDto.getCardColor();
+    this.cardIndex = requestDto.getCardIndex();
   }
 }

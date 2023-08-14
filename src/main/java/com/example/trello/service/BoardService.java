@@ -9,27 +9,27 @@ import com.example.trello.entity.BoardUserRoleEnum;
 import com.example.trello.entity.User;
 import com.example.trello.repository.BoardRepository;
 import com.example.trello.repository.UserRepository;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class BoardService{
+public class BoardService {
+
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
 
     // 보드 전체조회
-    public List<BoardResponseDto> getBoards(){
+    public List<BoardResponseDto> getBoards() {
         List<Board> boards = boardRepository.findAll();
         List<BoardResponseDto> boardResponseDtos = new ArrayList<>();
 
-        for (Board board : boards){
+        for (Board board : boards) {
             boardResponseDtos.add(new BoardResponseDto(board));
         }
 
@@ -37,7 +37,7 @@ public class BoardService{
     }
 
     // 보드 개별조회
-    public BoardResponseDto getBoard(Long id){
+    public BoardResponseDto getBoard(Long id) {
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("조회할 보드가 존재하지 않습니다.")
         );
@@ -46,20 +46,30 @@ public class BoardService{
     }
 
     // 보드 유저 조회 (전체보드)
-    public List<BoardUserResponseDto> getBoardsUser(){
+    public List<BoardUserResponseDto> getBoardsUser() {
         List<Board> boards = boardRepository.findAll();
         List<BoardUserResponseDto> boardUserResponseDtos = new ArrayList<>();
 
-        for (Board board : boards){
+        for (Board board : boards) {
             boardUserResponseDtos.add(new BoardUserResponseDto(board));
         }
 
         return boardUserResponseDtos;
     }
 
+    public List<String> getSuggestions(Long boardId) {
+        Board board = findBoard(boardId);
+        List<BoardUser> boardUsers = board.getBoardUsers();
+        List<String> nicknames = new ArrayList<>();
+        for (BoardUser boardUser : boardUsers) {
+            nicknames.add(boardUser.getUser().getNickname());
+        }
+        return nicknames;
+    }
+
 
     // 보드 유저 조회 (선택보드)
-    public BoardUserResponseDto getBoardUser(Long id){
+    public BoardUserResponseDto getBoardUser(Long id) {
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("조회할 보드가 존재하지 않습니다.")
         );
@@ -69,8 +79,8 @@ public class BoardService{
 
 
     // 보드 생성
-    public BoardResponseDto createBoard(BoardRequestDto boardRequestDto, User user){
-        if(user == null){
+    public BoardResponseDto createBoard(BoardRequestDto boardRequestDto, User user) {
+        if (user == null) {
             throw new IllegalArgumentException("로그인 후 시도해주세요.");
         }
 
@@ -87,12 +97,12 @@ public class BoardService{
 
     // 보드 수정
     @Transactional
-    public BoardResponseDto updateBoard(Long id, BoardRequestDto boardRequestDto,  User user){
+    public BoardResponseDto updateBoard(Long id, BoardRequestDto boardRequestDto, User user) {
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("수정할 보드가 존재하지 않습니다.")
         );
 
-        if(board.getCreator().getUserId().equals(user.getUserId())){
+        if (board.getCreator().getUserId().equals(user.getUserId())) {
             board.update(boardRequestDto);
         } else {
             throw new IllegalArgumentException("보드 생성자만 수정이 가능합니다.");
@@ -104,12 +114,12 @@ public class BoardService{
 
     // 보드 삭제
     @Transactional
-    public void deleteBoard(Long id, User user){
+    public void deleteBoard(Long id, User user) {
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("삭제할 보드가 존재하지 않습니다.")
         );
 
-        if(board.getCreator().getUserId().equals(user.getUserId())){
+        if (board.getCreator().getUserId().equals(user.getUserId())) {
             boardRepository.delete(board);
         } else {
             throw new IllegalArgumentException("보드 생성자만 삭제가 가능합니다.");
@@ -119,21 +129,22 @@ public class BoardService{
 
     // 보드 초대
     @Transactional
-    public void inviteBoard(Long boardid, Long userid, User user){
+    public void inviteBoard(Long boardid, Long userid, User user) {
         Board board = boardRepository.findById(boardid).orElseThrow(
                 () -> new IllegalArgumentException("초대할 보드가 존재하지 않습니다.")
         );
 
-//        if(!board.getCreator().getUserId().equals(user.getUserId())){
-//            throw new IllegalArgumentException("보드 생성자만 초대할 수 있습니다.");
-//        }
+        if (!board.getCreator().getUserId().equals(user.getUserId())) {
+            throw new IllegalArgumentException("보드 생성자만 초대할 수 있습니다.");
+        }
         validateBoardAdminRole(board, user);
 
         User invitedUser = userRepository.findById(userid).orElseThrow(
                 () -> new IllegalArgumentException("초대받을 유저가 존재하지 않습니다.")
         );
 
-        if(board.getBoardUsers().stream().anyMatch(boardUser -> boardUser.getUser().equals(invitedUser))){
+        if (board.getBoardUsers().stream()
+                .anyMatch(boardUser -> boardUser.getUser().equals(invitedUser))) {
             throw new IllegalArgumentException("이미 보드에 포함된 유저입니다.");
         } else {
             BoardUser boardUser = new BoardUser(invitedUser, board, BoardUserRoleEnum.USER);
@@ -152,14 +163,20 @@ public class BoardService{
     public boolean validateBoardAdminRole(Board board, User user) {
         log.info("validateUserRole()");
         boolean isAdmin = board.getBoardUsers().stream()
-                .anyMatch(boardUser -> boardUser.getUser().getUserId().equals(user.getUserId()) && boardUser.getRole() == BoardUserRoleEnum.ADMIN);
+                .anyMatch(boardUser -> boardUser.getUser().getUserId().equals(user.getUserId())
+                        && boardUser.getRole() == BoardUserRoleEnum.ADMIN);
 
         log.info(String.valueOf(isAdmin));
 
-        if(!isAdmin){
+        if (!isAdmin) {
             throw new IllegalArgumentException("관리자 권한입니다.");
         } else {
             return true;
         }
     }
+
+    public List<Board> getAllBoards() {
+        return boardRepository.findAll();
+    }
+
 }

@@ -1,13 +1,20 @@
 package com.example.trello.entity;
 
 import com.example.trello.dto.SectionRequestDto;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -17,11 +24,14 @@ public class Section {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
+    @Column(nullable = false)
     private Long sectionId;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = true)
     private String sectionName;
+
+    @Column(nullable = false, unique = true)
+    private Long sectionIndex; // section의 위치를 저장하기 위한 파라미터
 
     @ManyToOne
     @JoinColumn(name = "boardId")
@@ -33,6 +43,7 @@ public class Section {
     public Section(Board board, SectionRequestDto requestDto) {
         this.board = board;
         this.sectionName = requestDto.getSectionName();
+        this.sectionIndex = requestDto.getSectionIndex();
     }
 
     public void setSectionName(SectionRequestDto sectionRequestDto) {

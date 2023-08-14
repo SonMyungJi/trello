@@ -4,18 +4,10 @@ import com.example.trello.dto.SectionListResponseDto;
 import com.example.trello.dto.SectionRequestDto;
 import com.example.trello.dto.SectionResponseDto;
 import com.example.trello.service.SectionService;
-import java.util.concurrent.RejectedExecutionException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -46,7 +38,7 @@ public class SectionController {
     try {
       SectionResponseDto result = sectionService.updateSectionName(sectionId, requestDto);
       return ResponseEntity.ok().body(result);
-    } catch (RejectedExecutionException e) {
+    } catch (IllegalArgumentException e) {
       return ResponseEntity.badRequest().build();
     }
   }
